@@ -74,3 +74,8 @@ next-env.d.ts
 # OS
 .DS_Store
 Thumbs.db
+
+.agents/
+.claude/
+.cursor/
+.devin/
