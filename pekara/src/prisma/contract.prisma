@@ -1,0 +1,36 @@
+model Category {
+  id          Uuid                 @id @default(uuid())
+  name        VarChar(80)
+  slug        VarChar(100)         @unique
+  description VarChar(300)?
+  sortOrder   Int                  @default(0)
+  isActive    Boolean              @default(true)
+  createdAt   DateTime             @default(now())
+  updatedAt   temporal.updatedAt()
+
+  products    Product[]
+
+  @@index([isActive, sortOrder])
+}
+
+model Product {
+  id            Uuid                 @id @default(uuid())
+  categoryId    Uuid
+  name          VarChar(120)
+  slug          VarChar(140)         @unique
+  description   VarChar(1000)
+  priceMinor    Int
+  imageUrl      String?
+  imagePathname String?
+  imageWidth    Int?
+  imageHeight   Int?
+  isActive      Boolean              @default(true)
+  isAvailable   Boolean              @default(true)
+  sortOrder     Int                  @default(0)
+  createdAt     DateTime             @default(now())
+  updatedAt     temporal.updatedAt()
+
+  category      Category             @relation(fields:[categoryId], references:[id])
+
+  @@index([categoryId, isActive, isAvailable, sortOrder])
+}

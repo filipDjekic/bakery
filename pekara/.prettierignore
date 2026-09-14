@@ -1,0 +1,40 @@
+.next
+node_modules
+coverage
+playwright-report
+test-results
+dist
+pnpm-lock.yaml
+src/prisma/
+prisma-next.md
+# Dependencies
+/node_modules/
+
+# Next.js
+/.next/
+/out/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Tests
+/coverage/
+
+# Vercel
+.vercel/
+
+# TypeScript generated
+*.tsbuildinfo
+next-env.d.ts
+
+# OS
+.DS_Store
+Thumbs.db
