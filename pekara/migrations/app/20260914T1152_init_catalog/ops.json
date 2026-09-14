@@ -33,9 +33,7 @@
       {
         "description": "ensure table \"category\" does not exist",
         "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
-        "params": [
-          "\"public\".\"category\""
-        ]
+        "params": ["\"public\".\"category\""]
       }
     ],
     "execute": [
@@ -49,9 +47,7 @@
       {
         "description": "verify table \"category\" exists",
         "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
-        "params": [
-          "\"public\".\"category\""
-        ]
+        "params": ["\"public\".\"category\""]
       }
     ]
   },
@@ -72,9 +68,7 @@
       {
         "description": "ensure table \"product\" does not exist",
         "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
-        "params": [
-          "\"public\".\"product\""
-        ]
+        "params": ["\"public\".\"product\""]
       }
     ],
     "execute": [
@@ -88,9 +82,7 @@
       {
         "description": "verify table \"product\" exists",
         "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
-        "params": [
-          "\"public\".\"product\""
-        ]
+        "params": ["\"public\".\"product\""]
       }
     ]
   },
@@ -111,11 +103,7 @@
       {
         "description": "ensure constraint \"category_slug_key\" does not exist",
         "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
-        "params": [
-          "category_slug_key",
-          "public",
-          "\"public\".\"category\""
-        ]
+        "params": ["category_slug_key", "public", "\"public\".\"category\""]
       }
     ],
     "execute": [
@@ -128,11 +116,7 @@
       {
         "description": "verify constraint \"category_slug_key\" exists",
         "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
-        "params": [
-          "category_slug_key",
-          "public",
-          "\"public\".\"category\""
-        ]
+        "params": ["category_slug_key", "public", "\"public\".\"category\""]
       }
     ]
   },
@@ -153,11 +137,7 @@
       {
         "description": "ensure constraint \"product_slug_key\" does not exist",
         "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
-        "params": [
-          "product_slug_key",
-          "public",
-          "\"public\".\"product\""
-        ]
+        "params": ["product_slug_key", "public", "\"public\".\"product\""]
       }
     ],
     "execute": [
@@ -170,11 +150,7 @@
       {
         "description": "verify constraint \"product_slug_key\" exists",
         "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
-        "params": [
-          "product_slug_key",
-          "public",
-          "\"public\".\"product\""
-        ]
+        "params": ["product_slug_key", "public", "\"public\".\"product\""]
       }
     ]
   },
@@ -195,9 +171,7 @@
       {
         "description": "ensure index \"category_isActive_sortOrder_idx_43c1fe34\" does not exist",
         "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
-        "params": [
-          "\"public\".\"category_isActive_sortOrder_idx_43c1fe34\""
-        ]
+        "params": ["\"public\".\"category_isActive_sortOrder_idx_43c1fe34\""]
       }
     ],
     "execute": [
@@ -211,9 +185,7 @@
       {
         "description": "verify index \"category_isActive_sortOrder_idx_43c1fe34\" exists",
         "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
-        "params": [
-          "\"public\".\"category_isActive_sortOrder_idx_43c1fe34\""
-        ]
+        "params": ["\"public\".\"category_isActive_sortOrder_idx_43c1fe34\""]
       }
     ]
   },
@@ -234,9 +206,7 @@
       {
         "description": "ensure index \"product_categoryId_idx_15c304f2\" does not exist",
         "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
-        "params": [
-          "\"public\".\"product_categoryId_idx_15c304f2\""
-        ]
+        "params": ["\"public\".\"product_categoryId_idx_15c304f2\""]
       }
     ],
     "execute": [
@@ -250,9 +220,7 @@
       {
         "description": "verify index \"product_categoryId_idx_15c304f2\" exists",
         "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
-        "params": [
-          "\"public\".\"product_categoryId_idx_15c304f2\""
-        ]
+        "params": ["\"public\".\"product_categoryId_idx_15c304f2\""]
       }
     ]
   },

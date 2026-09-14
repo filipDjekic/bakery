@@ -16,9 +16,7 @@
       {
         "description": "ensure table \"bakerySettings\" does not exist",
         "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
-        "params": [
-          "\"public\".\"bakerySettings\""
-        ]
+        "params": ["\"public\".\"bakerySettings\""]
       }
     ],
     "execute": [
@@ -32,9 +30,7 @@
       {
         "description": "verify table \"bakerySettings\" exists",
         "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
-        "params": [
-          "\"public\".\"bakerySettings\""
-        ]
+        "params": ["\"public\".\"bakerySettings\""]
       }
     ]
   },
@@ -55,9 +51,7 @@
       {
         "description": "ensure table \"businessHours\" does not exist",
         "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
-        "params": [
-          "\"public\".\"businessHours\""
-        ]
+        "params": ["\"public\".\"businessHours\""]
       }
     ],
     "execute": [
@@ -71,9 +65,7 @@
       {
         "description": "verify table \"businessHours\" exists",
         "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
-        "params": [
-          "\"public\".\"businessHours\""
-        ]
+        "params": ["\"public\".\"businessHours\""]
       }
     ]
   },
@@ -94,9 +86,7 @@
       {
         "description": "ensure table \"order\" does not exist",
         "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
-        "params": [
-          "\"public\".\"order\""
-        ]
+        "params": ["\"public\".\"order\""]
       }
     ],
     "execute": [
@@ -110,9 +100,7 @@
       {
         "description": "verify table \"order\" exists",
         "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
-        "params": [
-          "\"public\".\"order\""
-        ]
+        "params": ["\"public\".\"order\""]
       }
     ]
   },
@@ -133,9 +121,7 @@
       {
         "description": "ensure table \"orderItem\" does not exist",
         "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
-        "params": [
-          "\"public\".\"orderItem\""
-        ]
+        "params": ["\"public\".\"orderItem\""]
       }
     ],
     "execute": [
@@ -149,9 +135,7 @@
       {
         "description": "verify table \"orderItem\" exists",
         "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
-        "params": [
-          "\"public\".\"orderItem\""
-        ]
+        "params": ["\"public\".\"orderItem\""]
       }
     ]
   },
@@ -172,9 +156,7 @@
       {
         "description": "ensure table \"orderStatusHistory\" does not exist",
         "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
-        "params": [
-          "\"public\".\"orderStatusHistory\""
-        ]
+        "params": ["\"public\".\"orderStatusHistory\""]
       }
     ],
     "execute": [
@@ -188,9 +170,7 @@
       {
         "description": "verify table \"orderStatusHistory\" exists",
         "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
-        "params": [
-          "\"public\".\"orderStatusHistory\""
-        ]
+        "params": ["\"public\".\"orderStatusHistory\""]
       }
     ]
   },
@@ -211,11 +191,7 @@
       {
         "description": "ensure constraint \"order_orderNumber_key\" does not exist",
         "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
-        "params": [
-          "order_orderNumber_key",
-          "public",
-          "\"public\".\"order\""
-        ]
+        "params": ["order_orderNumber_key", "public", "\"public\".\"order\""]
       }
     ],
     "execute": [
@@ -228,11 +204,7 @@
       {
         "description": "verify constraint \"order_orderNumber_key\" exists",
         "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
-        "params": [
-          "order_orderNumber_key",
-          "public",
-          "\"public\".\"order\""
-        ]
+        "params": ["order_orderNumber_key", "public", "\"public\".\"order\""]
       }
     ]
   },
@@ -253,11 +225,7 @@
       {
         "description": "ensure constraint \"order_idempotencyKey_key\" does not exist",
         "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
-        "params": [
-          "order_idempotencyKey_key",
-          "public",
-          "\"public\".\"order\""
-        ]
+        "params": ["order_idempotencyKey_key", "public", "\"public\".\"order\""]
       }
     ],
     "execute": [
@@ -270,11 +238,7 @@
       {
         "description": "verify constraint \"order_idempotencyKey_key\" exists",
         "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
-        "params": [
-          "order_idempotencyKey_key",
-          "public",
-          "\"public\".\"order\""
-        ]
+        "params": ["order_idempotencyKey_key", "public", "\"public\".\"order\""]
       }
     ]
   },
@@ -295,9 +259,7 @@
       {
         "description": "ensure index \"businessHours_bakerySettingsId_idx_c2580c9d\" does not exist",
         "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
-        "params": [
-          "\"public\".\"businessHours_bakerySettingsId_idx_c2580c9d\""
-        ]
+        "params": ["\"public\".\"businessHours_bakerySettingsId_idx_c2580c9d\""]
       }
     ],
     "execute": [
@@ -311,9 +273,7 @@
       {
         "description": "verify index \"businessHours_bakerySettingsId_idx_c2580c9d\" exists",
         "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
-        "params": [
-          "\"public\".\"businessHours_bakerySettingsId_idx_c2580c9d\""
-        ]
+        "params": ["\"public\".\"businessHours_bakerySettingsId_idx_c2580c9d\""]
       }
     ]
   },
@@ -373,9 +333,7 @@
       {
         "description": "ensure index \"order_createdAt_idx_9575dbd7\" does not exist",
         "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
-        "params": [
-          "\"public\".\"order_createdAt_idx_9575dbd7\""
-        ]
+        "params": ["\"public\".\"order_createdAt_idx_9575dbd7\""]
       }
     ],
     "execute": [
@@ -389,9 +347,7 @@
       {
         "description": "verify index \"order_createdAt_idx_9575dbd7\" exists",
         "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
-        "params": [
-          "\"public\".\"order_createdAt_idx_9575dbd7\""
-        ]
+        "params": ["\"public\".\"order_createdAt_idx_9575dbd7\""]
       }
     ]
   },
@@ -412,9 +368,7 @@
       {
         "description": "ensure index \"order_pickupAt_idx_8ab8b8d5\" does not exist",
         "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
-        "params": [
-          "\"public\".\"order_pickupAt_idx_8ab8b8d5\""
-        ]
+        "params": ["\"public\".\"order_pickupAt_idx_8ab8b8d5\""]
       }
     ],
     "execute": [
@@ -428,9 +382,7 @@
       {
         "description": "verify index \"order_pickupAt_idx_8ab8b8d5\" exists",
         "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
-        "params": [
-          "\"public\".\"order_pickupAt_idx_8ab8b8d5\""
-        ]
+        "params": ["\"public\".\"order_pickupAt_idx_8ab8b8d5\""]
       }
     ]
   },
@@ -451,9 +403,7 @@
       {
         "description": "ensure index \"order_status_createdAt_idx_58610442\" does not exist",
         "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
-        "params": [
-          "\"public\".\"order_status_createdAt_idx_58610442\""
-        ]
+        "params": ["\"public\".\"order_status_createdAt_idx_58610442\""]
       }
     ],
     "execute": [
@@ -467,9 +417,7 @@
       {
         "description": "verify index \"order_status_createdAt_idx_58610442\" exists",
         "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
-        "params": [
-          "\"public\".\"order_status_createdAt_idx_58610442\""
-        ]
+        "params": ["\"public\".\"order_status_createdAt_idx_58610442\""]
       }
     ]
   },
@@ -490,9 +438,7 @@
       {
         "description": "ensure index \"orderItem_orderId_idx_d284871b\" does not exist",
         "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
-        "params": [
-          "\"public\".\"orderItem_orderId_idx_d284871b\""
-        ]
+        "params": ["\"public\".\"orderItem_orderId_idx_d284871b\""]
       }
     ],
     "execute": [
@@ -506,9 +452,7 @@
       {
         "description": "verify index \"orderItem_orderId_idx_d284871b\" exists",
         "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
-        "params": [
-          "\"public\".\"orderItem_orderId_idx_d284871b\""
-        ]
+        "params": ["\"public\".\"orderItem_orderId_idx_d284871b\""]
       }
     ]
   },
@@ -529,9 +473,7 @@
       {
         "description": "ensure index \"orderItem_productId_idx_5858600a\" does not exist",
         "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
-        "params": [
-          "\"public\".\"orderItem_productId_idx_5858600a\""
-        ]
+        "params": ["\"public\".\"orderItem_productId_idx_5858600a\""]
       }
     ],
     "execute": [
@@ -545,9 +487,7 @@
       {
         "description": "verify index \"orderItem_productId_idx_5858600a\" exists",
         "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
-        "params": [
-          "\"public\".\"orderItem_productId_idx_5858600a\""
-        ]
+        "params": ["\"public\".\"orderItem_productId_idx_5858600a\""]
       }
     ]
   },
@@ -607,9 +547,7 @@
       {
         "description": "ensure index \"orderStatusHistory_orderId_idx_d284871b\" does not exist",
         "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
-        "params": [
-          "\"public\".\"orderStatusHistory_orderId_idx_d284871b\""
-        ]
+        "params": ["\"public\".\"orderStatusHistory_orderId_idx_d284871b\""]
       }
     ],
     "execute": [
@@ -623,9 +561,7 @@
       {
         "description": "verify index \"orderStatusHistory_orderId_idx_d284871b\" exists",
         "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
-        "params": [
-          "\"public\".\"orderStatusHistory_orderId_idx_d284871b\""
-        ]
+        "params": ["\"public\".\"orderStatusHistory_orderId_idx_d284871b\""]
       }
     ]
   },

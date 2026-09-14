@@ -430,7 +430,7 @@
               "createdAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamptz-temporal@1",
+                  "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
                 }
               },
@@ -488,7 +488,7 @@
               "updatedAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamptz-temporal@1",
+                  "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
                 }
               }
@@ -1508,7 +1508,7 @@
             "category": {
               "columns": {
                 "createdAt": {
-                  "codecId": "pg/timestamptz-temporal@1",
+                  "codecId": "pg/timestamptz-string@1",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
@@ -1564,7 +1564,7 @@
                   "nullable": false
                 },
                 "updatedAt": {
-                  "codecId": "pg/timestamptz-temporal@1",
+                  "codecId": "pg/timestamptz-string@1",
                   "nativeType": "timestamptz",
                   "nullable": false
                 }
@@ -2164,10 +2164,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "91f809354a00d517030632f43fe9ca87eca2ea1fc8b276945e412f9960b163d3"
+    "storageHash": "df3c197207f4d8cba59c685206f1a30902736ea9767849cd194eae4782440681"
   },
   "execution": {
-    "executionHash": "fe109d328bcb6d32ec5eda2062ba3c8b2c47c77bcb6d40ff166ca725f8ad45a1",
+    "executionHash": "91e6e25f94c7adc5bb137de1f9320ce760c34c9c3775b8de105f6738530d1d62",
     "mutations": {
       "defaults": [
         {
@@ -2235,11 +2235,11 @@
         },
         {
           "onCreate": {
-            "id": "instantNow",
+            "id": "timestampNow",
             "kind": "generator"
           },
           "onUpdate": {
-            "id": "instantNow",
+            "id": "timestampNow",
             "kind": "generator"
           },
           "ref": {

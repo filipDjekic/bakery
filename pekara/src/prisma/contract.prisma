@@ -1,12 +1,14 @@
+// use prisma-8
 model Category {
-  id          Uuid                 @id @default(uuid())
+  id          Uuid                       @id @default(uuid())
   name        VarChar(80)
-  slug        VarChar(100)         @unique
+  slug        VarChar(100)               @unique
   description VarChar(300)?
-  sortOrder   Int                  @default(0)
-  isActive    Boolean              @default(true)
-  createdAt   DateTime             @default(now())
-  updatedAt   temporal.updatedAt()
+  sortOrder   Int                        @default(0)
+  isActive    Boolean                    @default(true)
+
+  createdAt   temporal.createdAtString()
+  updatedAt   temporal.updatedAtString()
 
   products    Product[]
 
@@ -20,14 +22,17 @@ model Product {
   slug          VarChar(140)               @unique
   description   VarChar(1000)
   priceMinor    Int
+
   imageUrl      String?
   imagePathname String?
   imageWidth    Int?
   imageHeight   Int?
+
   isActive      Boolean                    @default(true)
   isAvailable   Boolean                    @default(true)
   sortOrder     Int                        @default(0)
-  createdAt     TimestamptzString          @default(now())
+
+  createdAt     temporal.createdAtString()
   updatedAt     temporal.updatedAtString()
 
   category      Category                   @relation(fields:[categoryId], references:[id])
@@ -67,7 +72,7 @@ model Order {
 
   cancellationReason VarChar(300)?
 
-  createdAt          TimestamptzString          @default(now())
+  createdAt          temporal.createdAtString()
   updatedAt          temporal.updatedAtString()
 
   items              OrderItem[]
@@ -79,7 +84,7 @@ model Order {
 }
 
 model OrderItem {
-  id             Uuid              @id @default(uuid())
+  id             Uuid                       @id @default(uuid())
   orderId        Uuid
   productId      Uuid?
 
@@ -88,16 +93,17 @@ model OrderItem {
   quantity       Int
   subtotalMinor  Int
 
-  createdAt      TimestamptzString @default(now())
+  createdAt      temporal.createdAtString()
 
-  order          Order             @relation(fields:[orderId], references:[id], onDelete: Cascade)
-  product        Product?          @relation(fields:[productId], references:[id], onDelete: SetNull)
+  order          Order                      @relation(fields:[orderId], references:[id], onDelete: Cascade)
+
+  product        Product?                   @relation(fields:[productId], references:[id], onDelete: SetNull)
 
   @@index([orderId])
 }
 
 model OrderStatusHistory {
-  id              Uuid              @id @default(uuid())
+  id              Uuid                       @id @default(uuid())
   orderId         Uuid
 
   fromStatus      OrderStatus?
@@ -106,9 +112,9 @@ model OrderStatusHistory {
   changedByUserId String?
   reason          VarChar(300)?
 
-  createdAt       TimestamptzString @default(now())
+  createdAt       temporal.createdAtString()
 
-  order           Order             @relation(fields:[orderId], references:[id], onDelete: Cascade)
+  order           Order                      @relation(fields:[orderId], references:[id], onDelete: Cascade)
 
   @@index([orderId, createdAt])
 }
@@ -130,7 +136,7 @@ model BakerySettings {
 
   notificationEmail         VarChar(254)?
 
-  createdAt                 TimestamptzString          @default(now())
+  createdAt                 temporal.createdAtString()
   updatedAt                 temporal.updatedAtString()
 
   businessHours             BusinessHours[]
@@ -144,7 +150,7 @@ model BusinessHours {
   openMinute       Int
   closeMinute      Int
 
-  createdAt        TimestamptzString          @default(now())
+  createdAt        temporal.createdAtString()
   updatedAt        temporal.updatedAtString()
 
   bakerySettings   BakerySettings             @relation(fields:[bakerySettingsId], references:[id], onDelete: Cascade)

@@ -94,19 +94,31 @@ export default class M extends Migration<Start, End> {
             default: lit('default'),
             codecRef: { codecId: 'pg/text@1' },
           }),
-          col('closeMinute', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('closeMinute', 'int4', {
+            notNull: true,
+            codecRef: { codecId: 'pg/int4@1' },
+          }),
           col('createdAt', 'timestamptz', {
             notNull: true,
             default: fn('now()'),
             codecRef: { codecId: 'pg/timestamptz-string@1' },
           }),
-          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
-          col('openMinute', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('id', 'uuid', {
+            notNull: true,
+            codecRef: { codecId: 'pg/uuid@1' },
+          }),
+          col('openMinute', 'int4', {
+            notNull: true,
+            codecRef: { codecId: 'pg/int4@1' },
+          }),
           col('updatedAt', 'timestamptz', {
             notNull: true,
             codecRef: { codecId: 'pg/timestamptz-string@1' },
           }),
-          col('weekday', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('weekday', 'int4', {
+            notNull: true,
+            codecRef: { codecId: 'pg/int4@1' },
+          }),
         ],
         constraints: [primaryKey(['id'])],
       }),
@@ -137,8 +149,14 @@ export default class M extends Migration<Start, End> {
             notNull: true,
             codecRef: { codecId: 'sql/varchar@1', typeParams: { length: 20 } },
           }),
-          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
-          col('idempotencyKey', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('id', 'uuid', {
+            notNull: true,
+            codecRef: { codecId: 'pg/uuid@1' },
+          }),
+          col('idempotencyKey', 'uuid', {
+            notNull: true,
+            codecRef: { codecId: 'pg/uuid@1' },
+          }),
           col('note', 'character varying(500)', {
             codecRef: { codecId: 'sql/varchar@1', typeParams: { length: 500 } },
           }),
@@ -146,7 +164,10 @@ export default class M extends Migration<Start, End> {
             notNull: true,
             codecRef: { codecId: 'sql/varchar@1', typeParams: { length: 32 } },
           }),
-          col('payloadHash', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('payloadHash', 'text', {
+            notNull: true,
+            codecRef: { codecId: 'pg/text@1' },
+          }),
           col('pickupAt', 'timestamptz', {
             notNull: true,
             codecRef: { codecId: 'pg/timestamptz-string@1' },
@@ -156,8 +177,14 @@ export default class M extends Migration<Start, End> {
             default: lit('NEW'),
             codecRef: { codecId: 'pg/text@1' },
           }),
-          col('subtotalMinor', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
-          col('totalMinor', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('subtotalMinor', 'int4', {
+            notNull: true,
+            codecRef: { codecId: 'pg/int4@1' },
+          }),
+          col('totalMinor', 'int4', {
+            notNull: true,
+            codecRef: { codecId: 'pg/int4@1' },
+          }),
           col('updatedAt', 'timestamptz', {
             notNull: true,
             codecRef: { codecId: 'pg/timestamptz-string@1' },
@@ -180,16 +207,31 @@ export default class M extends Migration<Start, End> {
             default: fn('now()'),
             codecRef: { codecId: 'pg/timestamptz-string@1' },
           }),
-          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
-          col('orderId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('id', 'uuid', {
+            notNull: true,
+            codecRef: { codecId: 'pg/uuid@1' },
+          }),
+          col('orderId', 'uuid', {
+            notNull: true,
+            codecRef: { codecId: 'pg/uuid@1' },
+          }),
           col('productId', 'uuid', { codecRef: { codecId: 'pg/uuid@1' } }),
           col('productName', 'character varying(120)', {
             notNull: true,
             codecRef: { codecId: 'sql/varchar@1', typeParams: { length: 120 } },
           }),
-          col('quantity', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
-          col('subtotalMinor', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
-          col('unitPriceMinor', 'int4', { notNull: true, codecRef: { codecId: 'pg/int4@1' } }),
+          col('quantity', 'int4', {
+            notNull: true,
+            codecRef: { codecId: 'pg/int4@1' },
+          }),
+          col('subtotalMinor', 'int4', {
+            notNull: true,
+            codecRef: { codecId: 'pg/int4@1' },
+          }),
+          col('unitPriceMinor', 'int4', {
+            notNull: true,
+            codecRef: { codecId: 'pg/int4@1' },
+          }),
         ],
         constraints: [primaryKey(['id'])],
       }),
@@ -197,19 +239,30 @@ export default class M extends Migration<Start, End> {
         schema: 'public',
         table: 'orderStatusHistory',
         columns: [
-          col('changedByUserId', 'text', { codecRef: { codecId: 'pg/text@1' } }),
+          col('changedByUserId', 'text', {
+            codecRef: { codecId: 'pg/text@1' },
+          }),
           col('createdAt', 'timestamptz', {
             notNull: true,
             default: fn('now()'),
             codecRef: { codecId: 'pg/timestamptz-string@1' },
           }),
           col('fromStatus', 'text', { codecRef: { codecId: 'pg/text@1' } }),
-          col('id', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
-          col('orderId', 'uuid', { notNull: true, codecRef: { codecId: 'pg/uuid@1' } }),
+          col('id', 'uuid', {
+            notNull: true,
+            codecRef: { codecId: 'pg/uuid@1' },
+          }),
+          col('orderId', 'uuid', {
+            notNull: true,
+            codecRef: { codecId: 'pg/uuid@1' },
+          }),
           col('reason', 'character varying(300)', {
             codecRef: { codecId: 'sql/varchar@1', typeParams: { length: 300 } },
           }),
-          col('toStatus', 'text', { notNull: true, codecRef: { codecId: 'pg/text@1' } }),
+          col('toStatus', 'text', {
+            notNull: true,
+            codecRef: { codecId: 'pg/text@1' },
+          }),
         ],
         constraints: [
           primaryKey(['id']),
@@ -295,7 +348,11 @@ export default class M extends Migration<Start, End> {
         foreignKey: {
           name: 'businessHours_bakerySettingsId_fkey',
           columns: ['bakerySettingsId'],
-          references: { schema: 'public', table: 'bakerySettings', columns: ['id'] },
+          references: {
+            schema: 'public',
+            table: 'bakerySettings',
+            columns: ['id'],
+          },
           onDelete: 'cascade',
         },
       }),

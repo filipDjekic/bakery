@@ -1,6 +1,6 @@
 ---
-from: "8.0.0-rc.8"
-to: "8.0.0-rc.9"
+from: '8.0.0-rc.8'
+to: '8.0.0-rc.9'
 changes:
   - id: reemit-supabase-extension-version
     summary: |
@@ -9,14 +9,14 @@ changes:
     summary: |
       MongoDB wildcard index `include` and `exclude` projections in Prisma schema files must use native PSL lists instead of encoded list strings.
     detection:
-      glob: "**/*.prisma"
+      glob: '**/*.prisma'
       matches:
         - '\b(?:include|exclude)\s*:\s*"\[[^"\r\n]*\]"'
   - id: mongo-text-index-weights-use-native-records
     summary: |
       MongoDB text-index `weights` in Prisma schema files must use native PSL records instead of encoded JSON strings.
     detection:
-      glob: "**/*.prisma"
+      glob: '**/*.prisma'
       matches:
         - '\bweights\s*:\s*"\{\s*(?:\\.|[^"\\])*\}"'
   - id: explicit-enum-sort-values
@@ -29,7 +29,7 @@ changes:
     summary: |
       MongoDB Prisma schema files must not carry `@default(...)`, `@updatedAt`, or `@db.*` attributes; the Mongo interpreter never lowered them and now rejects them.
     detection:
-      glob: "**/*.prisma"
+      glob: '**/*.prisma'
       matches:
         - '@(?:default\(|updatedAt\b|db\.)'
 ---

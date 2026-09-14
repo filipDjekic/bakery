@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const businessHoursIntervalSchema = z
   .object({
@@ -7,6 +7,6 @@ export const businessHoursIntervalSchema = z
     closeMinute: z.number().int().min(1).max(1440),
   })
   .refine(({ openMinute, closeMinute }) => openMinute < closeMinute, {
-    message: "closeMinute mora biti veći od openMinute",
-    path: ["closeMinute"],
+    message: 'closeMinute mora biti veći od openMinute',
+    path: ['closeMinute'],
   });

@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "contract:emit": "prisma contract emit"
+    "contract:emit": "prisma contract emit",
+    "db:seed": "node --env-file=.env src/prisma/seed.ts"
   },
   "dependencies": {
     "@prisma/orm-postgres": "8.0.0-rc.9",
