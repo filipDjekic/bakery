@@ -14,23 +14,155 @@ model Category {
 }
 
 model Product {
-  id            Uuid                 @id @default(uuid())
+  id            Uuid                       @id @default(uuid())
   categoryId    Uuid
   name          VarChar(120)
-  slug          VarChar(140)         @unique
+  slug          VarChar(140)               @unique
   description   VarChar(1000)
   priceMinor    Int
   imageUrl      String?
   imagePathname String?
   imageWidth    Int?
   imageHeight   Int?
-  isActive      Boolean              @default(true)
-  isAvailable   Boolean              @default(true)
-  sortOrder     Int                  @default(0)
-  createdAt     DateTime             @default(now())
-  updatedAt     temporal.updatedAt()
+  isActive      Boolean                    @default(true)
+  isAvailable   Boolean                    @default(true)
+  sortOrder     Int                        @default(0)
+  createdAt     TimestamptzString          @default(now())
+  updatedAt     temporal.updatedAtString()
 
-  category      Category             @relation(fields:[categoryId], references:[id])
+  category      Category                   @relation(fields:[categoryId], references:[id])
+  orderItems    OrderItem[]
 
   @@index([categoryId, isActive, isAvailable, sortOrder])
+}
+
+enum OrderStatus {
+  @@type("pg/text@1")
+
+  NEW
+  ACCEPTED
+  IN_PREPARATION
+  READY
+  COMPLETED
+  CANCELLED
+}
+
+model Order {
+  id                 Uuid                       @id @default(uuid())
+  orderNumber        VarChar(32)                @unique
+  idempotencyKey     Uuid                       @unique
+  payloadHash        String
+  status             OrderStatus                @default(NEW)
+
+  customerName       VarChar(100)
+  customerPhone      VarChar(20)
+  customerEmail      VarChar(254)?
+  note               VarChar(500)?
+
+  pickupAt           TimestamptzString
+
+  currencyCode       VarChar(3)
+  subtotalMinor      Int
+  totalMinor         Int
+
+  cancellationReason VarChar(300)?
+
+  createdAt          TimestamptzString          @default(now())
+  updatedAt          temporal.updatedAtString()
+
+  items              OrderItem[]
+  statusHistory      OrderStatusHistory[]
+
+  @@index([status, createdAt])
+  @@index([createdAt])
+  @@index([pickupAt])
+}
+
+model OrderItem {
+  id             Uuid              @id @default(uuid())
+  orderId        Uuid
+  productId      Uuid?
+
+  productName    VarChar(120)
+  unitPriceMinor Int
+  quantity       Int
+  subtotalMinor  Int
+
+  createdAt      TimestamptzString @default(now())
+
+  order          Order             @relation(fields:[orderId], references:[id], onDelete: Cascade)
+  product        Product?          @relation(fields:[productId], references:[id], onDelete: SetNull)
+
+  @@index([orderId])
+}
+
+model OrderStatusHistory {
+  id              Uuid              @id @default(uuid())
+  orderId         Uuid
+
+  fromStatus      OrderStatus?
+  toStatus        OrderStatus
+
+  changedByUserId String?
+  reason          VarChar(300)?
+
+  createdAt       TimestamptzString @default(now())
+
+  order           Order             @relation(fields:[orderId], references:[id], onDelete: Cascade)
+
+  @@index([orderId, createdAt])
+}
+
+model BakerySettings {
+  id                        String                     @id @default("default")
+
+  bakeryName                VarChar(120)
+  phone                     VarChar(30)
+  address                   VarChar(250)
+
+  timezone                  VarChar(100)               @default("Europe/Belgrade")
+  currencyCode              VarChar(3)                 @default("RSD")
+
+  orderAcceptingEnabled     Boolean                    @default(true)
+  minimumPreparationMinutes Int                        @default(30)
+  maximumAdvanceDays        Int                        @default(7)
+  pickupSlotMinutes         Int                        @default(15)
+
+  notificationEmail         VarChar(254)?
+
+  createdAt                 TimestamptzString          @default(now())
+  updatedAt                 temporal.updatedAtString()
+
+  businessHours             BusinessHours[]
+}
+
+model BusinessHours {
+  id               Uuid                       @id @default(uuid())
+
+  bakerySettingsId String                     @default("default")
+  weekday          Int
+  openMinute       Int
+  closeMinute      Int
+
+  createdAt        TimestamptzString          @default(now())
+  updatedAt        temporal.updatedAtString()
+
+  bakerySettings   BakerySettings             @relation(fields:[bakerySettingsId], references:[id], onDelete: Cascade)
+
+  @@index([bakerySettingsId, weekday, openMinute])
+}
+
+model ActionRateLimitBucket {
+  id            Uuid              @id @default(uuid())
+
+  keyHash       String
+  action        String
+
+  windowStart   TimestamptzString
+  windowSeconds Int
+  count         Int               @default(0)
+  expiresAt     TimestamptzString
+
+  @@unique([keyHash, action, windowStart, windowSeconds])
+  @@index([expiresAt])
 }

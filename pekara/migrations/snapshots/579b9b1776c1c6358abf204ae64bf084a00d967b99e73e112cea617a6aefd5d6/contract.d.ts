@@ -33,9 +33,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'91f809354a00d517030632f43fe9ca87eca2ea1fc8b276945e412f9960b163d3'>;
+  StorageHashBase<'579b9b1776c1c6358abf204ae64bf084a00d967b99e73e112cea617a6aefd5d6'>;
 export type ExecutionHash =
-  ExecutionHashBase<'fe109d328bcb6d32ec5eda2062ba3c8b2c47c77bcb6d40ff166ca725f8ad45a1'>;
+  ExecutionHashBase<'635f445023b3510d1d7872953e811ea970d6b85d8388888b91be0e60722bcfee'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -241,15 +241,6 @@ type DefaultLiteralValue<CodecId extends string, Encoded> = CodecId extends keyo
 
 export type FieldOutputTypes = {
   readonly public: {
-    readonly ActionRateLimitBucket: {
-      readonly id: CodecTypes['pg/uuid@1']['output'];
-      readonly keyHash: CodecTypes['pg/text@1']['output'];
-      readonly action: CodecTypes['pg/text@1']['output'];
-      readonly windowStart: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly windowSeconds: CodecTypes['pg/int4@1']['output'];
-      readonly count: CodecTypes['pg/int4@1']['output'];
-      readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['output'];
-    };
     readonly BakerySettings: {
       readonly id: CodecTypes['pg/text@1']['output'];
       readonly bakeryName: Varchar<120>;
@@ -344,15 +335,6 @@ export type FieldOutputTypes = {
 };
 export type FieldInputTypes = {
   readonly public: {
-    readonly ActionRateLimitBucket: {
-      readonly id: CodecTypes['pg/uuid@1']['input'];
-      readonly keyHash: CodecTypes['pg/text@1']['input'];
-      readonly action: CodecTypes['pg/text@1']['input'];
-      readonly windowStart: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly windowSeconds: CodecTypes['pg/int4@1']['input'];
-      readonly count: CodecTypes['pg/int4@1']['input'];
-      readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['input'];
-    };
     readonly BakerySettings: {
       readonly id: CodecTypes['pg/text@1']['input'];
       readonly bakeryName: CodecTypes['sql/varchar@1']['input'];
@@ -447,15 +429,6 @@ export type FieldInputTypes = {
 };
 export type StorageColumnTypes = {
   readonly public: {
-    readonly actionRateLimitBucket: {
-      readonly action: CodecTypes['pg/text@1']['output'];
-      readonly count: CodecTypes['pg/int4@1']['output'];
-      readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly id: CodecTypes['pg/uuid@1']['output'];
-      readonly keyHash: CodecTypes['pg/text@1']['output'];
-      readonly windowSeconds: CodecTypes['pg/int4@1']['output'];
-      readonly windowStart: CodecTypes['pg/timestamptz-string@1']['output'];
-    };
     readonly bakerySettings: {
       readonly address: Varchar<250>;
       readonly bakeryName: Varchar<120>;
@@ -550,15 +523,6 @@ export type StorageColumnTypes = {
 };
 export type StorageColumnInputTypes = {
   readonly public: {
-    readonly actionRateLimitBucket: {
-      readonly action: CodecTypes['pg/text@1']['input'];
-      readonly count: CodecTypes['pg/int4@1']['input'];
-      readonly expiresAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly id: CodecTypes['pg/uuid@1']['input'];
-      readonly keyHash: CodecTypes['pg/text@1']['input'];
-      readonly windowSeconds: CodecTypes['pg/int4@1']['input'];
-      readonly windowStart: CodecTypes['pg/timestamptz-string@1']['input'];
-    };
     readonly bakerySettings: {
       readonly address: CodecTypes['sql/varchar@1']['input'];
       readonly bakeryName: CodecTypes['sql/varchar@1']['input'];
@@ -669,64 +633,6 @@ type ContractBase = Omit<
         readonly kind: 'postgres-schema';
         readonly entries: {
           readonly table: {
-            readonly actionRateLimitBucket: {
-              columns: {
-                readonly id: {
-                  readonly nativeType: 'uuid';
-                  readonly codecId: 'pg/uuid@1';
-                  readonly nullable: false;
-                };
-                readonly keyHash: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly action: {
-                  readonly nativeType: 'text';
-                  readonly codecId: 'pg/text@1';
-                  readonly nullable: false;
-                };
-                readonly windowStart: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                };
-                readonly windowSeconds: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                };
-                readonly count: {
-                  readonly nativeType: 'int4';
-                  readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/int4@1', 0>;
-                  };
-                };
-                readonly expiresAt: {
-                  readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                  readonly nullable: false;
-                };
-              };
-              primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [
-                {
-                  readonly columns: readonly ['keyHash', 'action', 'windowStart', 'windowSeconds'];
-                },
-              ];
-              indexes: readonly [
-                {
-                  readonly name: 'actionRateLimitBucket_expiresAt_idx_6b6b8c10';
-                  readonly prefix: 'actionRateLimitBucket_expiresAt_idx';
-                  readonly columns: readonly ['expiresAt'];
-                  readonly unique: false;
-                },
-              ];
-              foreignKeys: readonly [];
-            };
             readonly bakerySettings: {
               columns: {
                 readonly id: {
@@ -1422,67 +1328,11 @@ type ContractBase = Omit<
       readonly namespace: 'public' & NamespaceId;
       readonly model: 'BusinessHours';
     };
-    readonly actionRateLimitBucket: {
-      readonly namespace: 'public' & NamespaceId;
-      readonly model: 'ActionRateLimitBucket';
-    };
   };
   readonly domain: {
     readonly namespaces: {
       readonly public: {
         readonly models: {
-          readonly ActionRateLimitBucket: {
-            readonly fields: {
-              readonly id: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
-              };
-              readonly keyHash: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly action: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
-              };
-              readonly windowStart: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-              readonly windowSeconds: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly count: {
-                readonly nullable: false;
-                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
-              };
-              readonly expiresAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
-                };
-              };
-            };
-            readonly relations: Record<string, never>;
-            readonly storage: {
-              readonly table: 'actionRateLimitBucket';
-              readonly namespaceId: 'public';
-              readonly fields: {
-                readonly id: { readonly column: 'id' };
-                readonly keyHash: { readonly column: 'keyHash' };
-                readonly action: { readonly column: 'action' };
-                readonly windowStart: { readonly column: 'windowStart' };
-                readonly windowSeconds: { readonly column: 'windowSeconds' };
-                readonly count: { readonly column: 'count' };
-                readonly expiresAt: { readonly column: 'expiresAt' };
-              };
-            };
-          };
           readonly BakerySettings: {
             readonly fields: {
               readonly id: {
@@ -2212,14 +2062,6 @@ type ContractBase = Omit<
     readonly executionHash: ExecutionHash;
     readonly mutations: {
       readonly defaults: readonly [
-        {
-          readonly ref: {
-            readonly namespace: 'public';
-            readonly table: 'actionRateLimitBucket';
-            readonly column: 'id';
-          };
-          readonly onCreate: { readonly kind: 'generator'; readonly id: 'uuidv4' };
-        },
         {
           readonly ref: {
             readonly namespace: 'public';

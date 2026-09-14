@@ -1,0 +1,122 @@
+[
+  {
+    "id": "table.actionRateLimitBucket",
+    "label": "Create table \"actionRateLimitBucket\"",
+    "summary": "Creates table \"actionRateLimitBucket\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "actionRateLimitBucket"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"actionRateLimitBucket\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"actionRateLimitBucket\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"actionRateLimitBucket\"",
+        "sql": "CREATE TABLE \"public\".\"actionRateLimitBucket\" (\n  \"action\" text NOT NULL,\n  \"count\" int4 DEFAULT 0 NOT NULL,\n  \"expiresAt\" timestamptz NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"keyHash\" text NOT NULL,\n  \"windowSeconds\" int4 NOT NULL,\n  \"windowStart\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"actionRateLimitBucket\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"actionRateLimitBucket\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.actionRateLimitBucket.actionRateLimitBucket_keyHash_action_windowStart_windowSeconds_key",
+    "label": "Add unique constraint on \"actionRateLimitBucket\" (keyHash, action, windowStart, windowSeconds)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "actionRateLimitBucket_keyHash_action_windowStart_windowSeconds_key",
+        "table": "actionRateLimitBucket"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"actionRateLimitBucket_keyHash_action_windowStart_windowSeconds_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "actionRateLimitBucket_keyHash_action_windowStart_windowSeconds_key",
+          "public",
+          "\"public\".\"actionRateLimitBucket\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"actionRateLimitBucket_keyHash_action_windowStart_windowSeconds_key\"",
+        "sql": "ALTER TABLE \"public\".\"actionRateLimitBucket\" ADD CONSTRAINT \"actionRateLimitBucket_keyHash_action_windowStart_windowSeconds_key\" UNIQUE (\"keyHash\", \"action\", \"windowStart\", \"windowSeconds\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"actionRateLimitBucket_keyHash_action_windowStart_windowSeconds_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "actionRateLimitBucket_keyHash_action_windowStart_windowSeconds_key",
+          "public",
+          "\"public\".\"actionRateLimitBucket\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.actionRateLimitBucket.actionRateLimitBucket_expiresAt_idx_6b6b8c10",
+    "label": "Create index \"actionRateLimitBucket_expiresAt_idx_6b6b8c10\" on \"actionRateLimitBucket\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "actionRateLimitBucket_expiresAt_idx_6b6b8c10",
+        "table": "actionRateLimitBucket"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"actionRateLimitBucket_expiresAt_idx_6b6b8c10\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"actionRateLimitBucket_expiresAt_idx_6b6b8c10\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"actionRateLimitBucket_expiresAt_idx_6b6b8c10\"",
+        "sql": "CREATE INDEX \"actionRateLimitBucket_expiresAt_idx_6b6b8c10\" ON \"public\".\"actionRateLimitBucket\" (\"expiresAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"actionRateLimitBucket_expiresAt_idx_6b6b8c10\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"actionRateLimitBucket_expiresAt_idx_6b6b8c10\""
+        ]
+      }
+    ]
+  }
+]
