@@ -1,13 +1,13 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 const navigation = [
   {
-    label: "Početna",
-    href: "/",
+    label: 'Početna',
+    href: '/',
   },
   {
-    label: "Proizvodi",
-    href: "/products",
+    label: 'Proizvodi',
+    href: '/proizvodi',
   },
 ];
 
@@ -19,7 +19,7 @@ export function PublicNav() {
           <li key={item.href}>
             <Link
               href={item.href}
-              className="text-sm font-medium text-zinc-700 transition-colors hover:text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-4"
+              className="text-sm font-medium text-zinc-700 transition-colors hover:text-zinc-950 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-4 focus-visible:outline-none"
             >
               {item.label}
             </Link>

@@ -1,16 +1,16 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-import { db } from "@/prisma/db";
+import { CartCount } from '@/features/cart/components/cart-count';
+import { db } from '@/prisma/db';
 
-import { Container } from "./container";
-import { MobileNav } from "./mobile-nav";
-import { PublicNav } from "./public-nav";
+import { Container } from './container';
+import { MobileNav } from './mobile-nav';
+import { PublicNav } from './public-nav';
 
 export async function PublicHeader() {
-  const settings = await db.orm.public.BakerySettings
-    .select("bakeryName")
+  const settings = await db.orm.public.BakerySettings.select('bakeryName')
     .where({
-      id: "default",
+      id: 'default',
     })
     .first();
 
@@ -20,25 +20,22 @@ export async function PublicHeader() {
         <div className="flex h-16 items-center justify-between gap-4">
           <Link
             href="/"
-            className="min-w-0 shrink text-xl font-bold tracking-tight text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-4"
+            className="min-w-0 shrink text-xl font-bold tracking-tight text-zinc-950 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-4 focus-visible:outline-none"
           >
             <span className="block truncate">
-              {settings?.bakeryName ?? "Pekara"}
+              {settings?.bakeryName ?? 'Pekara'}
             </span>
           </Link>
 
           <div className="flex shrink-0 items-center gap-3 sm:gap-4">
             <PublicNav />
 
-            <div
-              aria-label="Korpa, trenutno 0 artikala"
-              className="rounded-md border border-zinc-200 px-3 py-2 text-sm font-medium text-zinc-700"
+            <Link
+              href="/korpa"
+              className="rounded-md border border-zinc-200 px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 hover:text-zinc-950 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 focus-visible:outline-none"
             >
-              Korpa
-              <span className="ml-2 rounded-full bg-zinc-100 px-2 py-0.5 text-xs">
-                0
-              </span>
-            </div>
+              <CartCount />
+            </Link>
 
             <MobileNav />
           </div>

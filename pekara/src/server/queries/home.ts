@@ -1,4 +1,6 @@
-import { db } from "@/prisma/db";
+import 'server-only';
+
+import { db } from '@/prisma/db';
 
 export type HomepageCategory = {
   id: string;
@@ -14,9 +16,9 @@ export type HomepageBusinessHours = {
 };
 
 function getWeekdayInTimezone(timezone: string): number {
-  const weekday = new Intl.DateTimeFormat("en-US", {
+  const weekday = new Intl.DateTimeFormat('en-US', {
     timeZone: timezone,
-    weekday: "short",
+    weekday: 'short',
   }).format(new Date());
 
   const weekdays: Record<string, number> = {
@@ -33,12 +35,12 @@ function getWeekdayInTimezone(timezone: string): number {
 }
 
 export async function getHomepageData() {
-  const settings = await db.orm.public.BakerySettings
-    .include("businessHours", (hours) =>
-      hours.orderBy((hour) => hour.openMinute.asc()),
-    )
+  const settings = await db.orm.public.BakerySettings.include(
+    'businessHours',
+    (hours) => hours.orderBy((hour) => hour.openMinute.asc()),
+  )
     .where({
-      id: "default",
+      id: 'default',
     })
     .first();
 
@@ -46,10 +48,9 @@ export async function getHomepageData() {
     throw new Error("BakerySettings with id 'default' does not exist.");
   }
 
-  const categoryRows = await db.orm.public.Category
-    .where({
-      isActive: true,
-    })
+  const categoryRows = await db.orm.public.Category.where({
+    isActive: true,
+  })
     .orderBy((category) => category.sortOrder.asc())
     .all();
 
@@ -64,14 +65,13 @@ export async function getHomepageData() {
 
   const todayWeekday = getWeekdayInTimezone(settings.timezone);
 
-  const todayBusinessHours: HomepageBusinessHours[] =
-    settings.businessHours
-      .filter((hours) => hours.weekday === todayWeekday)
-      .map((hours) => ({
-        weekday: hours.weekday,
-        openMinute: hours.openMinute,
-        closeMinute: hours.closeMinute,
-      }));
+  const todayBusinessHours: HomepageBusinessHours[] = settings.businessHours
+    .filter((hours) => hours.weekday === todayWeekday)
+    .map((hours) => ({
+      weekday: hours.weekday,
+      openMinute: hours.openMinute,
+      closeMinute: hours.closeMinute,
+    }));
 
   return {
     settings,

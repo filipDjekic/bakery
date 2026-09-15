@@ -1,14 +1,17 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-import { db } from "@/prisma/db";
+import { db } from '@/prisma/db';
 
-import { Container } from "./container";
+import { Container } from './container';
 
 export async function PublicFooter() {
-  const settings = await db.orm.public.BakerySettings
-    .select("bakeryName", "address", "phone")
+  const settings = await db.orm.public.BakerySettings.select(
+    'bakeryName',
+    'address',
+    'phone',
+  )
     .where({
-      id: "default",
+      id: 'default',
     })
     .first();
 
@@ -21,9 +24,9 @@ export async function PublicFooter() {
           <div>
             <Link
               href="/"
-              className="font-semibold text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-950"
+              className="font-semibold text-zinc-950 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:outline-none"
             >
-              {settings?.bakeryName ?? "Pekara"}
+              {settings?.bakeryName ?? 'Pekara'}
             </Link>
 
             {settings ? (
@@ -42,10 +45,7 @@ export async function PublicFooter() {
             ) : null}
           </div>
 
-          <nav
-            aria-label="Navigacija u podnožju"
-            className="sm:text-right"
-          >
+          <nav aria-label="Navigacija u podnožju" className="sm:text-right">
             <ul className="space-y-2">
               <li>
                 <Link
@@ -58,7 +58,7 @@ export async function PublicFooter() {
 
               <li>
                 <Link
-                  href="/products"
+                  href="/proizvodi"
                   className="text-sm text-zinc-600 hover:text-zinc-950"
                 >
                   Proizvodi
@@ -70,7 +70,7 @@ export async function PublicFooter() {
 
         <div className="border-t border-zinc-200 py-5">
           <p className="text-sm text-zinc-500">
-            © {currentYear} {settings?.bakeryName ?? "Pekara"}. Sva prava
+            © {currentYear} {settings?.bakeryName ?? 'Pekara'}. Sva prava
             zadržana.
           </p>
         </div>
