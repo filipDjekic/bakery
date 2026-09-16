@@ -21,6 +21,12 @@ export function AdminSidebar() {
             Porudžbine
           </Link>
           <Link
+            href="/admin/products"
+            className="hover:bg-surface-muted focus-visible:ring-primary block rounded-md px-3 py-2 font-medium focus-visible:ring-2 focus-visible:outline-none"
+          >
+            Proizvodi
+          </Link>
+          <Link
             href="/"
             className="text-muted hover:bg-surface-muted focus-visible:ring-primary block rounded-md px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
           >

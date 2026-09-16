@@ -21,3 +21,18 @@ export const ORDER_LIMITS = {
   orderNumberAttempts: 5,
   maximumTotalMinor: 2_147_483_647,
 } as const;
+
+export const PRODUCT_LIMITS = {
+  name: 120,
+  slug: 140,
+  description: 1000,
+  maximumPriceMinor: 2_147_483_647,
+  minimumSortOrder: -1_000_000,
+  maximumSortOrder: 1_000_000,
+} as const;
+
+export const PRODUCT_IMAGE_LIMITS = {
+  maximumBytes: 3 * 1024 * 1024,
+  maximumDimension: 12_000,
+  allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+} as const;

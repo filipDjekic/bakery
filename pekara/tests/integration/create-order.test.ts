@@ -149,8 +149,9 @@ test('creates an atomic NEW order from authoritative product prices', async () =
   assert.equal('customerPhone' in (confirmation ?? {}), false);
 });
 
-test('blocks unavailable products and changed display prices without creating an order', async () => {
+test('blocks unavailable or inactive products and changed display prices without creating an order', async () => {
   const unavailable = request(unavailableProductId, 5_000);
+  const inactive = request(availableProductId, 12_345);
   const changedPrice = request(availableProductId, 1);
 
   await assert.rejects(
@@ -164,8 +165,25 @@ test('blocks unavailable products and changed display prices without creating an
       error instanceof OrderDomainError && error.code === 'PRICE_CHANGED',
   );
 
+  await db.orm.public.Product.where({ id: availableProductId }).update({
+    isActive: false,
+  });
+  try {
+    await assert.rejects(
+      createOrder(inactive, { now: fixedNow }),
+      (error: unknown) =>
+        error instanceof OrderDomainError &&
+        error.code === 'PRODUCT_UNAVAILABLE',
+    );
+  } finally {
+    await db.orm.public.Product.where({ id: availableProductId }).update({
+      isActive: true,
+    });
+  }
+
   for (const idempotencyKey of [
     unavailable.idempotencyKey,
+    inactive.idempotencyKey,
     changedPrice.idempotencyKey,
   ]) {
     assert.equal(
