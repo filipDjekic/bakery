@@ -67,12 +67,10 @@ const customerPhoneSchema = z
     return normalizedPhone;
   });
 
-const pickupAtSchema = z
-  .string()
-  .datetime({
-    offset: true,
-    message: 'Izaberite ispravan termin preuzimanja.',
-  });
+const pickupAtSchema = z.string().datetime({
+  offset: true,
+  message: 'Izaberite ispravan termin preuzimanja.',
+});
 
 const pickupDateSchema = z
   .string()
@@ -92,6 +90,7 @@ export const checkoutItemSchema = z
       .int('Količina mora biti ceo broj.')
       .min(CART_LIMITS.minItemQuantity)
       .max(CART_LIMITS.maxItemQuantity),
+    displayPriceMinor: z.number().int().nonnegative().optional(),
   })
   .strict();
 

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,11 +11,15 @@ import { useCartStore } from '@/features/cart/store/cart-store';
 import type { PickupSlot } from '@/server/services/pickup-slots';
 import {
   checkoutFormSchema,
-  checkoutRequestSchema,
   type CheckoutFormInput,
   type CheckoutFormValues,
 } from '@/validation/checkout';
 
+import {
+  createDraftSignature,
+  CreateOrderApiError,
+  createOrderRequest,
+} from '../api/create-order';
 import { CheckoutCartSummary } from './checkout-cart-summary';
 import { CheckoutSubmitButton } from './checkout-submit-button';
 import { PickupSelector } from './pickup-selector';
@@ -26,6 +31,24 @@ type PickupSlotsResponse = {
 
 const inputClassName =
   'border-border bg-surface text-foreground focus-visible:ring-primary mt-2 min-h-11 w-full rounded-md border px-3 py-2 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none';
+const IDEMPOTENCY_SESSION_KEY = 'bakery:checkout-idempotency';
+
+const orderErrorMessages: Partial<Record<CreateOrderApiError['code'], string>> =
+  {
+    VALIDATION_ERROR: 'Proverite unesene podatke i pokušajte ponovo.',
+    PRODUCT_UNAVAILABLE:
+      'Jedan ili više proizvoda više nisu dostupni. Vratite se u korpu.',
+    PRICE_CHANGED:
+      'Cena jednog ili više proizvoda je promenjena. Osvežite korpu pre ponovnog slanja.',
+    INVALID_PICKUP_SLOT:
+      'Izabrani termin više nije dostupan. Izaberite novi termin.',
+    ORDERS_DISABLED: 'Pekara trenutno ne prima nove porudžbine.',
+    IDEMPOTENCY_CONFLICT:
+      'Podaci su promenjeni tokom ponovnog slanja. Pokušajte još jednom.',
+    RATE_LIMITED: 'Previše pokušaja. Sačekajte pre ponovnog slanja.',
+    INTERNAL_ERROR:
+      'Porudžbinu trenutno nije moguće poslati. Pokušajte ponovo.',
+  };
 
 function isPickupSlotsResponse(value: unknown): value is PickupSlotsResponse {
   if (!value || typeof value !== 'object') {
@@ -46,7 +69,9 @@ function isPickupSlotsResponse(value: unknown): value is PickupSlotsResponse {
 }
 
 export function CheckoutForm() {
+  const router = useRouter();
   const items = useCartStore((state) => state.items);
+  const clearCart = useCartStore((state) => state.clear);
   const hasHydrated = useCartHydration();
   const requestController = useRef<AbortController>(null);
   const [slots, setSlots] = useState<PickupSlot[]>([]);
@@ -54,7 +79,7 @@ export function CheckoutForm() {
   const [bakeryTimezone, setBakeryTimezone] = useState<string | null>(null);
   const [isLoadingSlots, setIsLoadingSlots] = useState(false);
   const [slotLoadError, setSlotLoadError] = useState<string | null>(null);
-  const [preparedMessage, setPreparedMessage] = useState('');
+  const [submitMessage, setSubmitMessage] = useState('');
   const {
     register,
     handleSubmit,
@@ -86,7 +111,7 @@ export function CheckoutForm() {
     setSelectedDate(date);
     setValue('pickupAt', '');
     clearErrors('pickupAt');
-    setPreparedMessage('');
+    setSubmitMessage('');
     setSlots([]);
     setBakeryTimezone(null);
     setSlotLoadError(null);
@@ -132,12 +157,11 @@ export function CheckoutForm() {
     }
   }
 
-  async function prepareOrder(values: CheckoutFormValues) {
-    setPreparedMessage('');
+  async function submitOrder(values: CheckoutFormValues) {
+    setSubmitMessage('');
     clearErrors('root');
 
-    const request = checkoutRequestSchema.safeParse({
-      idempotencyKey: crypto.randomUUID(),
+    const draft = {
       customerName: values.customerName,
       customerPhone: values.customerPhone,
       customerEmail: values.customerEmail,
@@ -146,18 +170,55 @@ export function CheckoutForm() {
       items: items.map((item) => ({
         productId: item.productId,
         quantity: item.quantity,
+        displayPriceMinor: item.displayPriceMinor,
       })),
-    });
+    };
+    const signature = await createDraftSignature(draft);
+    let idempotencyKey = crypto.randomUUID();
 
-    if (!request.success) {
-      setError('root', {
-        message:
-          'Podaci porudžbine nisu validni. Proverite korpu i unesena polja.',
-      });
-      return;
+    try {
+      const stored = sessionStorage.getItem(IDEMPOTENCY_SESSION_KEY);
+      const parsed: unknown = stored ? JSON.parse(stored) : null;
+
+      if (
+        parsed &&
+        typeof parsed === 'object' &&
+        'signature' in parsed &&
+        'idempotencyKey' in parsed &&
+        parsed.signature === signature &&
+        typeof parsed.idempotencyKey === 'string'
+      ) {
+        idempotencyKey = parsed.idempotencyKey;
+      }
+    } catch {
+      sessionStorage.removeItem(IDEMPOTENCY_SESSION_KEY);
     }
 
-    setPreparedMessage('Podaci su validni i spremni za slanje porudžbine.');
+    sessionStorage.setItem(
+      IDEMPOTENCY_SESSION_KEY,
+      JSON.stringify({ signature, idempotencyKey }),
+    );
+
+    try {
+      const confirmation = await createOrderRequest({
+        idempotencyKey,
+        ...draft,
+      });
+
+      sessionStorage.removeItem(IDEMPOTENCY_SESSION_KEY);
+      clearCart();
+      router.push(`/porudzbina/${confirmation.orderId}`);
+    } catch (error) {
+      const message =
+        error instanceof CreateOrderApiError
+          ? (orderErrorMessages[error.code] ?? error.message)
+          : 'Mrežna greška. Proverite vezu i pokušajte ponovo.';
+
+      setError('root', {
+        message,
+      });
+      setSubmitMessage('Korpa je sačuvana i možete pokušati ponovo.');
+    }
   }
 
   if (!hasHydrated) {
@@ -195,7 +256,7 @@ export function CheckoutForm() {
     <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_24rem]">
       <form
         noValidate
-        onSubmit={handleSubmit(prepareOrder)}
+        onSubmit={handleSubmit(submitOrder)}
         className="border-border bg-surface rounded-xl border p-5 sm:p-7"
       >
         <h2 className="text-foreground text-xl font-semibold">
@@ -310,7 +371,7 @@ export function CheckoutForm() {
           </p>
         ) : null}
         <p role="status" aria-live="polite" className="mt-5 min-h-6 text-sm">
-          {preparedMessage}
+          {submitMessage}
         </p>
 
         <CheckoutSubmitButton

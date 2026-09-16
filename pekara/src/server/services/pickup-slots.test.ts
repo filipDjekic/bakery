@@ -10,6 +10,7 @@ import { generatePickupSlots } from './pickup-slots.ts';
 const settings: PickupBakerySettings = {
   id: 'default',
   timezone: 'Europe/Belgrade',
+  currencyCode: 'RSD',
   orderAcceptingEnabled: true,
   minimumPreparationMinutes: 30,
   maximumAdvanceDays: 7,

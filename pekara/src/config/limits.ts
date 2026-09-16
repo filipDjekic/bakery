@@ -16,3 +16,8 @@ export const ORDER_RATE_LIMIT_POLICIES = [
   { limit: 5, windowSeconds: 10 * 60 },
   { limit: 20, windowSeconds: 60 * 60 },
 ] as const;
+
+export const ORDER_LIMITS = {
+  orderNumberAttempts: 5,
+  maximumTotalMinor: 2_147_483_647,
+} as const;
