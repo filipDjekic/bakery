@@ -172,3 +172,78 @@ model ActionRateLimitBucket {
   @@unique([keyHash, action, windowStart, windowSeconds])
   @@index([expiresAt])
 }
+
+enum UserRole {
+  @@type("pg/text@1")
+
+  STAFF
+  ADMIN
+}
+
+model User {
+  id            String                     @id
+  name          String
+  email         String                     @unique
+  emailVerified Boolean                    @default(false)
+  image         String?
+  role          UserRole                   @default(STAFF)
+  isActive      Boolean                    @default(true)
+  createdAt     temporal.createdAtString()
+  updatedAt     temporal.updatedAtString()
+
+  sessions      Session[]
+  accounts      Account[]
+}
+
+model Session {
+  id        String                     @id
+  expiresAt TimestamptzString
+  token     String                     @unique
+  createdAt temporal.createdAtString()
+  updatedAt temporal.updatedAtString()
+  ipAddress String?
+  userAgent String?
+  userId    String
+
+  user      User                       @relation(fields:[userId], references:[id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Account {
+  id                    String                     @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  TimestamptzString?
+  refreshTokenExpiresAt TimestamptzString?
+  scope                 String?
+  password              String?
+  createdAt             temporal.createdAtString()
+  updatedAt             temporal.updatedAtString()
+
+  user                  User                       @relation(fields:[userId], references:[id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Verification {
+  id         String                     @id
+  identifier String
+  value      String
+  expiresAt  TimestamptzString
+  createdAt  temporal.createdAtString()
+  updatedAt  temporal.updatedAtString()
+
+  @@index([identifier])
+}
+
+model RateLimit {
+  id          String @id
+  key         String @unique
+  count       Int
+  lastRequest BigInt
+}
