@@ -15,6 +15,12 @@ export function AdminSidebar() {
             Početna
           </Link>
           <Link
+            href="/admin/orders"
+            className="hover:bg-surface-muted focus-visible:ring-primary block rounded-md px-3 py-2 font-medium focus-visible:ring-2 focus-visible:outline-none"
+          >
+            Porudžbine
+          </Link>
+          <Link
             href="/"
             className="text-muted hover:bg-surface-muted focus-visible:ring-primary block rounded-md px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
           >

@@ -31,6 +31,13 @@ export function AdminMobileNav() {
             Početna
           </Link>
           <Link
+            href="/admin/orders"
+            onClick={() => setIsOpen(false)}
+            className="block rounded-md px-3 py-2 font-medium"
+          >
+            Porudžbine
+          </Link>
+          <Link
             href="/"
             onClick={() => setIsOpen(false)}
             className="text-muted block rounded-md px-3 py-2"
