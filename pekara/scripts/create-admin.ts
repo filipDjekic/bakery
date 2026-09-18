@@ -50,11 +50,20 @@ async function main() {
   const name = process.env.ADMIN_NAME;
   const password = process.env.ADMIN_PASSWORD;
 
+  if (
+    process.env.NODE_ENV === 'production' &&
+    process.env.CONFIRM_PRODUCTION_ADMIN_BOOTSTRAP !== 'CREATE_FIRST_ADMIN'
+  ) {
+    throw new Error('Production admin bootstrap was not explicitly confirmed.');
+  }
+
   if (!email || !name || !password) {
     throw new Error(
       'Set ADMIN_EMAIL, ADMIN_NAME and ADMIN_PASSWORD for this one command.',
     );
   }
+
+  delete process.env.ADMIN_PASSWORD;
 
   const admin = await createFirstAdmin({ email, name, password });
   console.info(`Administrator created: ${admin.email}`);

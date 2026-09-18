@@ -18,16 +18,39 @@ export type BlobStorage = {
   delete(pathname: string): Promise<void>;
 };
 
-export const vercelBlobStorage: BlobStorage = {
-  async upload(pathname, bytes, contentType) {
-    const blob = await put(pathname, Buffer.from(bytes), {
-      access: 'public',
-      addRandomSuffix: false,
-      contentType,
-    });
-    return { url: blob.url, pathname: blob.pathname };
-  },
-  async delete(pathname) {
-    await del(pathname);
-  },
+type BlobClient = {
+  put: typeof put;
+  del: typeof del;
 };
+
+function productionBlobToken(
+  environment: NodeJS.ProcessEnv = process.env,
+): string {
+  const token = environment.BLOB_READ_WRITE_TOKEN;
+  if (!token || token !== token.trim()) {
+    throw new Error('BLOB_READ_WRITE_TOKEN is not configured correctly.');
+  }
+  return token;
+}
+
+export function createVercelBlobStorage(
+  client: BlobClient = { put, del },
+  tokenProvider: () => string = productionBlobToken,
+): BlobStorage {
+  return {
+    async upload(pathname, bytes, contentType) {
+      const blob = await client.put(pathname, Buffer.from(bytes), {
+        access: 'public',
+        addRandomSuffix: false,
+        contentType,
+        token: tokenProvider(),
+      });
+      return { url: blob.url, pathname: blob.pathname };
+    },
+    async delete(pathname) {
+      await client.del(pathname, { token: tokenProvider() });
+    },
+  };
+}
+
+export const vercelBlobStorage = createVercelBlobStorage();

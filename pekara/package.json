@@ -26,6 +26,9 @@
     "format:check": "prettier --check .",
     "prisma:generate": "prisma contract emit",
     "contract:emit": "prisma contract emit",
+    "env:check:production": "node --conditions=react-server --experimental-strip-types scripts/check-production-env.ts",
+    "db:migrate:production": "node --conditions=react-server --experimental-strip-types scripts/migrate-production.ts",
+    "db:verify": "prisma db verify",
     "e2e:seed": "node --env-file=.env.test --conditions=react-server --experimental-strip-types e2e/fixtures/seed.ts",
     "db:seed": "node --env-file=.env src/prisma/seed.ts",
     "admin:create": "node --conditions=react-server --experimental-strip-types scripts/create-admin.ts"
