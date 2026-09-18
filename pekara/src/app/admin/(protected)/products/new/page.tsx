@@ -1,8 +1,11 @@
 import { ProductForm } from '@/features/admin-products/components/product-form';
 import { getAdminCategoryOptions } from '@/server/queries/admin-products';
 
+export const instant = false;
+
 export default async function NewProductPage() {
   const categories = await getAdminCategoryOptions();
+
   return (
     <div>
       <div className="mb-6">
@@ -11,6 +14,7 @@ export default async function NewProductPage() {
           Aktivan proizvod mora imati validnu sliku.
         </p>
       </div>
+
       <ProductForm categories={categories} />
     </div>
   );

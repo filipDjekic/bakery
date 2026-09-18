@@ -11,6 +11,8 @@ function first(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
 
+export const instant = false;
+
 export default async function AdminOrdersPage({
   searchParams,
 }: AdminOrdersPageProps) {

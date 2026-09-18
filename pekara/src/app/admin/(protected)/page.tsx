@@ -7,6 +7,8 @@ import { OrderStatusCards } from '@/features/admin-orders/components/order-statu
 import { RecentNewOrders } from '@/features/admin-orders/components/recent-new-orders';
 import { getAdminDashboard } from '@/server/queries/admin-dashboard';
 
+export const instant = false;
+
 export default async function AdminHomePage() {
   await connection();
   const dashboard = await getAdminDashboard();

@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { ProductsTable } from '@/features/admin-products/components/products-table';
 import { getAdminProducts } from '@/server/queries/admin-products';
 
+export const instant = false;
+
 export default async function AdminProductsPage() {
   const products = await getAdminProducts();
   return (

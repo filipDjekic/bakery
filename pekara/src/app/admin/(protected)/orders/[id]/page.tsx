@@ -4,20 +4,56 @@ import { OrderStatusActions } from '@/features/admin-orders/components/order-sta
 import { formatRsd } from '@/lib/money';
 import { getAdminOrder } from '@/server/queries/admin-order';
 
-export default async function AdminOrderPage({ params }: { params: Promise<{ id: string }> }) {
+export const instant = false;
+
+export default async function AdminOrderPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
+
   const order = await getAdminOrder(id);
-  if (!order) notFound();
+
+  if (!order) {
+    notFound();
+  }
+
   return (
     <div>
-      <h1 className="text-2xl font-bold">Porudžbina {order.orderNumber}</h1>
-      <p className="mt-2">Status: <strong>{order.status}</strong></p>
-      <p>Kupac: {order.customerName}</p>
-      <p>Ukupno: {formatRsd(order.totalMinor)}</p>
-      <ul className="mt-6 space-y-2">
-        {order.items.map((item) => <li key={item.id}>{item.productName} × {item.quantity}</li>)}
+      <h1 className="text-2xl font-bold">
+        Porudžbina {order.orderNumber}
+      </h1>
+
+      <p className="mt-2">
+        Status: <strong>{order.status}</strong>
+      </p>
+
+      <p>
+        <span className="font-bold">Kupac: </span>
+        {order.customerName}
+      </p>
+
+      <p>
+        <span className="font-bold">Ukupno: </span>
+        {formatRsd(order.totalMinor)}
+      </p>
+
+      <p className="font-bold text-lg mt-6">Detalji porudzbine: </p>
+      <div className="mb-6">
+        <ul className="space-y-1 list-disc pl-6 marker:text-primary">
+        {order.items.map((item) => (
+          <li key={item.id}>
+            {item.productName} × {item.quantity}
+          </li>
+        ))}
       </ul>
-      <OrderStatusActions id={order.id} status={order.status} />
+      </div>
+
+      <OrderStatusActions
+        id={order.id}
+        status={order.status}
+      />
     </div>
   );
 }

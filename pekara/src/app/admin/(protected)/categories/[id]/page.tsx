@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import { CategoryForm } from '@/features/categories/components/category-form';
 import { getAdminCategory } from '@/server/queries/admin-categories';
 
+export const instant = false;
+
 export default async function EditCategoryPage({
   params,
 }: {

@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { CategoriesTable } from '@/features/categories/components/categories-table';
 import { getAdminCategories } from '@/server/queries/admin-categories';
 
+export const instant = false;
+
 export default async function AdminCategoriesPage() {
   const categories = await getAdminCategories();
   return (

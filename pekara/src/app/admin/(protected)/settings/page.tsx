@@ -3,6 +3,8 @@ import { OrderSettingsForm } from '@/features/settings/components/order-settings
 import { WorkingHoursEditor } from '@/features/settings/components/working-hours-editor';
 import { getAdminSettings } from '@/server/queries/admin-settings';
 
+export const instant = false;
+
 export default async function AdminSettingsPage() {
   const settings = await getAdminSettings();
   return (
