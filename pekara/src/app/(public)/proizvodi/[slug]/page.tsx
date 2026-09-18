@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { Container } from '@/components/layout/container';
@@ -13,6 +14,20 @@ type ProductDetailsPageProps = {
     slug: string;
   }>;
 };
+
+export async function generateMetadata({ params }: ProductDetailsPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await getPublicProductBySlug(slug);
+  if (!product) return { title: 'Proizvod nije pronađen', robots: { index: false, follow: false } };
+  const description = product.description.slice(0, 160);
+  const url = `/proizvodi/${encodeURIComponent(product.slug)}`;
+  return {
+    title: product.name,
+    description,
+    alternates: { canonical: url },
+    openGraph: { type: 'website', url, title: product.name, description, images: product.imageUrl ? [{ url: product.imageUrl, alt: product.name }] : undefined },
+  };
+}
 
 export default async function ProductDetailsPage({
   params,

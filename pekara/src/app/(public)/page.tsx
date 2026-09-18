@@ -1,9 +1,21 @@
 import Link from 'next/link';
+import type { Metadata } from 'next';
 
 import { Container } from '@/components/layout/container';
 import { HomeFeaturedProducts } from '@/features/catalog/components/home-featured-products';
 import { TodaysHours } from '@/features/settings/components/todays-hours';
 import { getHomepageData } from '@/server/queries/home';
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { settings } = await getHomepageData();
+  const description = `Sveži pekarski proizvodi pekare ${settings.bakeryName}. Poručite online za preuzimanje na adresi ${settings.address}.`;
+  return {
+    title: settings.bakeryName,
+    description,
+    alternates: { canonical: '/' },
+    openGraph: { type: 'website', url: '/', title: settings.bakeryName, description, siteName: settings.bakeryName, locale: 'sr_RS' },
+  };
+}
 
 export default async function HomePage() {
   const { settings, categories, todayBusinessHours } = await getHomepageData();

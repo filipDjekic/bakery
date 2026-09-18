@@ -1,5 +1,9 @@
+import type { Metadata } from 'next';
+
 import { Container } from '@/components/layout/container';
 import { Cart } from '@/features/cart/components/cart';
+
+export const metadata: Metadata = { title: 'Korpa', robots: { index: false, follow: false } };
 
 export default function CartPage() {
   return (

@@ -9,8 +9,7 @@ test('admin logs in, updates a new order and sees persisted status after reload'
   await page.goto('/admin/orders');
   await page.getByRole('link', { name: seed.orderNumber }).click();
   await expect(page).toHaveURL(`/admin/orders/${seed.orderId}`);
-  await page.getByLabel('Novi status').selectOption('ACCEPTED');
-  await page.getByRole('button', { name: 'Promeni status' }).click();
+  await page.getByRole('button', { name: 'Postavi status ACCEPTED' }).click();
   await expect(page.getByRole('status')).toHaveText('Status je sačuvan.');
   await page.reload();
   await expect(page.getByText('Status:')).toContainText('ACCEPTED');

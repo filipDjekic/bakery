@@ -74,6 +74,7 @@ export function CheckoutForm() {
   const clearCart = useCartStore((state) => state.clear);
   const hasHydrated = useCartHydration();
   const requestController = useRef<AbortController>(null);
+  const submitErrorRef = useRef<HTMLParagraphElement>(null);
   const [slots, setSlots] = useState<PickupSlot[]>([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [bakeryTimezone, setBakeryTimezone] = useState<string | null>(null);
@@ -105,6 +106,10 @@ export function CheckoutForm() {
     },
     [],
   );
+
+  useEffect(() => {
+    if (errors.root?.message) submitErrorRef.current?.focus();
+  }, [errors.root?.message]);
 
   async function loadSlots(date: string) {
     requestController.current?.abort();
@@ -366,7 +371,7 @@ export function CheckoutForm() {
         />
 
         {errors.root?.message ? (
-          <p role="alert" className="mt-5 text-sm text-red-700">
+          <p ref={submitErrorRef} role="alert" tabIndex={-1} className="mt-5 text-sm text-red-700 focus:outline-none">
             {errors.root.message}
           </p>
         ) : null}

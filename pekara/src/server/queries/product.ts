@@ -55,3 +55,13 @@ export async function getPublicProductBySlug(
     },
   };
 }
+
+export async function getPublicProductSitemapEntries() {
+  const products = await db.orm.public.Product.include('category')
+    .where({ isActive: true })
+    .orderBy((product) => product.slug.asc())
+    .all();
+  return products
+    .filter((product) => product.category.isActive)
+    .map((product) => ({ slug: product.slug, updatedAt: new Date(product.updatedAt) }));
+}

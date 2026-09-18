@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
 import { AdminHeader } from '@/components/layout/admin-header';
@@ -7,6 +8,8 @@ import {
   AuthenticationRequiredError,
   requireStaff,
 } from '@/server/auth/authorization';
+
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 type ProtectedAdminLayoutProps = {
   children: ReactNode;
