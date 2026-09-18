@@ -8,6 +8,10 @@ export const OBSERVABILITY_EVENTS = {
   orderCreateFailed: 'order.create.failed',
   orderStatusChanged: 'order.status.changed',
   orderStatusChangeFailed: 'order.status.change_failed',
+  customerEmailSent: 'email.customer_confirmation.sent',
+  customerEmailFailed: 'email.customer_confirmation.failed',
+  bakeryEmailSent: 'email.bakery_notification.sent',
+  bakeryEmailFailed: 'email.bakery_notification.failed',
 } as const;
 
 export type ObservabilityEvent =
@@ -23,6 +27,8 @@ export type EventFields = {
   durationMs?: number;
   errorCode?: string;
   outcome?: string;
+  deliveryId?: string;
+  recipientType?: 'customer' | 'bakery';
 };
 
 export function errorCodeFor(error: unknown): string {

@@ -70,6 +70,10 @@ test('returns 400 without calling the service for invalid date input', async () 
 test('returns an empty slot list for a date outside the configured range', async () => {
   const settings: PickupBakerySettings = {
     id: 'default',
+    bakeryName: 'Test pekara',
+    phone: '+38111111111',
+    address: 'Test adresa',
+    notificationEmail: null,
     timezone: 'Europe/Belgrade',
     currencyCode: 'RSD',
     orderAcceptingEnabled: true,

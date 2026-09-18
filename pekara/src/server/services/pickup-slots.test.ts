@@ -9,6 +9,10 @@ import { generatePickupSlots } from './pickup-slots.ts';
 
 const settings: PickupBakerySettings = {
   id: 'default',
+  bakeryName: 'Test pekara',
+  phone: '+38111111111',
+  address: 'Test adresa',
+  notificationEmail: null,
   timezone: 'Europe/Belgrade',
   currencyCode: 'RSD',
   orderAcceptingEnabled: true,

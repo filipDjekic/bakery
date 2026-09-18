@@ -16,7 +16,7 @@ function createAuthConfiguration(disableSignUp: boolean) {
 
   return betterAuth({
     appName: 'Pekara Admin',
-    baseURL: process.env.APP_URL,
+    baseURL: process.env.BETTER_AUTH_URL ?? process.env.APP_URL,
     trustedOrigins: [...getTrustedApplicationOrigins()],
     secret,
     database: prismaAdapter(authPrisma, {

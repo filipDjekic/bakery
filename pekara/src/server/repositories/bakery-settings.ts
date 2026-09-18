@@ -12,6 +12,10 @@ export type PickupBakerySettings = {
   minimumPreparationMinutes: number;
   maximumAdvanceDays: number;
   pickupSlotMinutes: number;
+  bakeryName: string;
+  phone: string;
+  address: string;
+  notificationEmail: string | null;
 };
 
 export async function getPickupBakerySettings(): Promise<PickupBakerySettings> {
@@ -23,6 +27,10 @@ export async function getPickupBakerySettings(): Promise<PickupBakerySettings> {
     'minimumPreparationMinutes',
     'maximumAdvanceDays',
     'pickupSlotMinutes',
+    'bakeryName',
+    'phone',
+    'address',
+    'notificationEmail',
   )
     .where({ id: DEFAULT_BAKERY_SETTINGS_ID })
     .first();

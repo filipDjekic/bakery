@@ -119,13 +119,27 @@ function request(productId = availableProductId, displayPriceMinor = 12_345) {
 test('creates an atomic NEW order from authoritative product prices', async () => {
   const input = request();
   const parsed = checkoutRequestSchema.parse(input);
+  let customerNotificationAttempted = false;
+  let bakeryNotificationAttempted = false;
   const result = await createOrder(input, {
     now: fixedNow,
     payloadHash: createCheckoutPayloadHash(parsed),
+    notifications: {
+      sendCustomer: async () => {
+        customerNotificationAttempted = true;
+        throw new Error('Simulated provider outage');
+      },
+      sendBakery: async () => {
+        bakeryNotificationAttempted = true;
+        throw new Error('Simulated provider outage');
+      },
+    },
   });
 
   assert.equal(result.status, 'NEW');
   assert.equal(result.totalMinor, 24_690);
+  assert.equal(customerNotificationAttempted, true);
+  assert.equal(bakeryNotificationAttempted, true);
   assert.match(result.orderNumber, /^PK-\d{6}-[2-9A-HJ-NP-Z]{6}$/);
 
   const order = await db.orm.public.Order.include('items')

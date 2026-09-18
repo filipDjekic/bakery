@@ -15,6 +15,8 @@ import {
   checkoutRequestSchema,
   type CheckoutRequest,
 } from '../../validation/checkout.ts';
+import { sendBakeryNewOrder } from '../email/send-bakery-new-order.ts';
+import { sendCustomerOrderConfirmation } from '../email/send-customer-order-confirmation.ts';
 import { getPickupBakerySettings } from '../repositories/bakery-settings.ts';
 import { getBusinessHoursForWeekday } from '../repositories/business-hours.ts';
 import {
@@ -40,11 +42,48 @@ export class OrderDomainError extends Error {
 type CreateOrderOptions = {
   now?: DateTime;
   payloadHash?: string;
+  notifications?: {
+    sendCustomer: typeof sendCustomerOrderConfirmation;
+    sendBakery: typeof sendBakeryNewOrder;
+  };
 };
+
+const EMAIL_SETTLE_TIMEOUT_MS = 8_000;
+
+async function settleNotification(
+  notification: Promise<unknown>,
+): Promise<void> {
+  let timeout: ReturnType<typeof setTimeout> | undefined;
+  try {
+    await Promise.race([
+      notification.catch(() => undefined),
+      new Promise<void>((resolve) => {
+        timeout = setTimeout(resolve, EMAIL_SETTLE_TIMEOUT_MS);
+      }),
+    ]);
+  } finally {
+    if (timeout) clearTimeout(timeout);
+  }
+}
+
+function startNotification(factory: () => Promise<unknown>): Promise<void> {
+  try {
+    return settleNotification(factory());
+  } catch {
+    return Promise.resolve();
+  }
+}
 
 export async function createOrder(
   input: unknown,
-  { now = DateTime.utc(), payloadHash }: CreateOrderOptions = {},
+  {
+    now = DateTime.utc(),
+    payloadHash,
+    notifications = {
+      sendCustomer: sendCustomerOrderConfirmation,
+      sendBakery: sendBakeryNewOrder,
+    },
+  }: CreateOrderOptions = {},
 ): Promise<OrderConfirmationDto> {
   const parsed = checkoutRequestSchema.safeParse(input);
 
@@ -172,7 +211,7 @@ export async function createOrder(
     attempt += 1
   ) {
     try {
-      return await persistOrder({
+      const confirmation = await persistOrder({
         orderNumber: generateOrderNumber(now, settings.timezone),
         idempotencyKey: request.idempotencyKey,
         payloadHash: canonicalHash,
@@ -185,6 +224,28 @@ export async function createOrder(
         totalMinor,
         items: snapshots,
       });
+      const emailData = {
+        orderId: confirmation.orderId,
+        orderNumber: confirmation.orderNumber,
+        customerName: request.customerName,
+        customerEmail: request.customerEmail,
+        pickupAt: confirmation.pickupAt,
+        totalMinor: confirmation.totalMinor,
+        currencyCode: confirmation.currencyCode,
+        timezone: settings.timezone,
+        items: snapshots,
+        bakery: {
+          name: settings.bakeryName,
+          address: settings.address,
+          phone: settings.phone,
+          notificationEmail: settings.notificationEmail,
+        },
+      };
+      await Promise.all([
+        startNotification(() => notifications.sendCustomer(emailData)),
+        startNotification(() => notifications.sendBakery(emailData)),
+      ]);
+      return confirmation;
     } catch (error) {
       if (
         !isOrderNumberConflict(error) ||
