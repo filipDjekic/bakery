@@ -1,5 +1,7 @@
 import 'dotenv/config';
 
+import { pathToFileURL } from 'node:url';
+
 import { z } from 'zod';
 
 import { createBootstrapAuth } from '../src/server/auth/auth.ts';
@@ -23,9 +25,14 @@ export async function createFirstAdmin(input: unknown): Promise<{
   email: string;
 }> {
   const parsed = adminInputSchema.parse(input);
+
   const existingAdmin = await authPrisma.user.findFirst({
-    where: { role: 'ADMIN' },
-    select: { id: true },
+    where: {
+      role: 'ADMIN',
+    },
+    select: {
+      id: true,
+    },
   });
 
   if (existingAdmin) {
@@ -33,13 +40,23 @@ export async function createFirstAdmin(input: unknown): Promise<{
   }
 
   const auth = createBootstrapAuth();
+
   const created = await auth.api.signUpEmail({
     body: parsed,
   });
+
   const admin = await authPrisma.user.update({
-    where: { id: created.user.id },
-    data: { role: 'ADMIN', isActive: true },
-    select: { id: true, email: true },
+    where: {
+      id: created.user.id,
+    },
+    data: {
+      role: 'ADMIN',
+      isActive: true,
+    },
+    select: {
+      id: true,
+      email: true,
+    },
   });
 
   return admin;
@@ -54,7 +71,9 @@ async function main() {
     process.env.NODE_ENV === 'production' &&
     process.env.CONFIRM_PRODUCTION_ADMIN_BOOTSTRAP !== 'CREATE_FIRST_ADMIN'
   ) {
-    throw new Error('Production admin bootstrap was not explicitly confirmed.');
+    throw new Error(
+      'Production admin bootstrap was not explicitly confirmed.',
+    );
   }
 
   if (!email || !name || !password) {
@@ -63,21 +82,31 @@ async function main() {
     );
   }
 
-  delete process.env.ADMIN_PASSWORD;
+  //delete process.env.ADMIN_PASSWORD;
 
-  const admin = await createFirstAdmin({ email, name, password });
+  const admin = await createFirstAdmin({
+    email,
+    name,
+    password,
+  });
+
   console.info(`Administrator created: ${admin.email}`);
 }
 
-if (import.meta.url === `file://${process.argv[1]?.replaceAll('\\', '/')}`) {
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(process.argv[1]).href
+) {
   main()
     .catch((error: unknown) => {
       if (error instanceof AdminAlreadyExistsError) {
         console.error(error.message);
       } else if (error instanceof z.ZodError) {
         console.error('Admin input is invalid or the password is too weak.');
+        console.error(error.issues);
       } else {
         console.error('Administrator could not be created.');
+        console.error(error);
       }
 
       process.exitCode = 1;
