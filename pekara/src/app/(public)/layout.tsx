@@ -1,4 +1,3 @@
-import { connection } from 'next/server';
 import type { ReactNode } from 'react';
 
 import { PublicFooter } from '@/components/layout/public-footer';
@@ -8,9 +7,7 @@ type PublicLayoutProps = {
   children: ReactNode;
 };
 
-export default async function PublicLayout({ children }: PublicLayoutProps) {
-  await connection();
-
+export default function PublicLayout({ children }: PublicLayoutProps) {
   return (
     <div className="flex min-h-screen flex-col">
       <PublicHeader />

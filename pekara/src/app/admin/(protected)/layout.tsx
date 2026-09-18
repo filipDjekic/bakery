@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import { connection } from 'next/server';
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
@@ -10,6 +11,7 @@ import {
 } from '@/server/auth/authorization';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
+export const instant = false;
 
 type ProtectedAdminLayoutProps = {
   children: ReactNode;
@@ -18,6 +20,7 @@ type ProtectedAdminLayoutProps = {
 export default async function ProtectedAdminLayout({
   children,
 }: ProtectedAdminLayoutProps) {
+  await connection();
   let user;
 
   try {

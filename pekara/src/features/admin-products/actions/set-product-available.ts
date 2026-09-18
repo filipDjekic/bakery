@@ -1,9 +1,13 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, updateTag } from 'next/cache';
 
 import { db } from '../../../prisma/db.ts';
 import { requireAdmin } from '../../../server/auth/authorization.ts';
+import {
+  productCacheTag,
+  PUBLIC_CACHE_TAGS,
+} from '../../../server/cache/tags.ts';
 import { ProductDomainError } from '../../../server/services/product-mutation.ts';
 import { productToggleSchema } from '../../../validation/product.ts';
 
@@ -27,6 +31,8 @@ export async function setProductAvailable(
   await db.orm.public.Product.where({ id: parsed.data.id }).update({
     isAvailable: parsed.data.value,
   });
+  updateTag(PUBLIC_CACHE_TAGS.catalog);
+  updateTag(productCacheTag(parsed.data.id));
   revalidatePath('/');
   revalidatePath('/proizvodi');
   revalidatePath('/admin/products');

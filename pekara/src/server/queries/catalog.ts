@@ -1,6 +1,9 @@
 import 'server-only';
 
+import { cacheLife, cacheTag } from 'next/cache';
+
 import { db } from '../../prisma/db.ts';
+import { PUBLIC_CACHE_TAGS } from '../cache/tags.ts';
 
 export type CatalogProduct = {
   id: string;
@@ -36,6 +39,10 @@ export type PublicCatalog = {
 export async function getPublicCatalog(
   requestedCategorySlug?: string,
 ): Promise<PublicCatalog> {
+  'use cache';
+  cacheLife('hours');
+  cacheTag(PUBLIC_CACHE_TAGS.catalog, PUBLIC_CACHE_TAGS.categories);
+
   const categoryRows = await db.orm.public.Category.include(
     'products',
     (products) =>

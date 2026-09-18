@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { connection } from 'next/server';
 
 import { ManualRefreshButton } from '@/features/admin-orders/components/manual-refresh-button';
 import { OrderPolling } from '@/features/admin-orders/components/order-polling';
@@ -7,6 +8,7 @@ import { RecentNewOrders } from '@/features/admin-orders/components/recent-new-o
 import { getAdminDashboard } from '@/server/queries/admin-dashboard';
 
 export default async function AdminHomePage() {
+  await connection();
   const dashboard = await getAdminDashboard();
 
   return (

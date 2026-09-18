@@ -1,8 +1,12 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, updateTag } from 'next/cache';
 
 import { requireAdmin } from '../../../server/auth/authorization.ts';
+import {
+  productCacheTag,
+  PUBLIC_CACHE_TAGS,
+} from '../../../server/cache/tags.ts';
 import { vercelBlobStorage } from '../../../server/images/blob-storage.ts';
 import { replaceProductImage } from '../../../server/services/replace-product-image.ts';
 import { updateProduct } from '../../../server/services/update-product.ts';
@@ -40,6 +44,8 @@ export async function updateProductAction(
           { ...values, id, changeSlug },
           async () => undefined,
         );
+    updateTag(PUBLIC_CACHE_TAGS.catalog);
+    updateTag(productCacheTag(id));
     revalidatePath('/');
     revalidatePath('/proizvodi');
     revalidatePath(`/proizvodi/${result.slug}`);

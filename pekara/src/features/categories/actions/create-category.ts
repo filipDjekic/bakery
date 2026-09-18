@@ -1,8 +1,9 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, updateTag } from 'next/cache';
 
 import { requireAdmin } from '../../../server/auth/authorization.ts';
+import { PUBLIC_CACHE_TAGS } from '../../../server/cache/tags.ts';
 import { createCategory } from '../../../server/services/categories.ts';
 import { categoryActionError } from './category-action-error.ts';
 import type { CategoryActionState } from './category-action-state.ts';
@@ -18,6 +19,8 @@ export async function createCategoryAction(
       categoryValuesFromFormData(formData),
       async () => undefined,
     );
+    updateTag(PUBLIC_CACHE_TAGS.catalog);
+    updateTag(PUBLIC_CACHE_TAGS.categories);
     revalidatePath('/');
     revalidatePath('/proizvodi');
     revalidatePath('/admin/categories');

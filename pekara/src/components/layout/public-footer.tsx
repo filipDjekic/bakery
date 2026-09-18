@@ -1,21 +1,11 @@
 import Link from 'next/link';
 
-import { db } from '@/prisma/db';
+import { getPublicChromeSettings } from '@/server/queries/public-settings';
 
 import { Container } from './container';
 
 export async function PublicFooter() {
-  const settings = await db.orm.public.BakerySettings.select(
-    'bakeryName',
-    'address',
-    'phone',
-  )
-    .where({
-      id: 'default',
-    })
-    .first();
-
-  const currentYear = new Date().getFullYear();
+  const settings = await getPublicChromeSettings();
 
   return (
     <footer className="border-t border-zinc-200 bg-zinc-50">
@@ -70,8 +60,8 @@ export async function PublicFooter() {
 
         <div className="border-t border-zinc-200 py-5">
           <p className="text-sm text-zinc-500">
-            © {currentYear} {settings?.bakeryName ?? 'Pekara'}. Sva prava
-            zadržana.
+            © {settings?.currentYear} {settings?.bakeryName ?? 'Pekara'}. Sva
+            prava zadržana.
           </p>
         </div>
       </Container>

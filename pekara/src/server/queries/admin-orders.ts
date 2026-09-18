@@ -9,10 +9,16 @@ import { requireStaff } from '../auth/authorization.ts';
 import { getPickupBakerySettings } from '../repositories/bakery-settings.ts';
 
 export const ADMIN_ORDERS_PAGE_SIZE = 25;
+const ADMIN_ORDERS_MAX_PAGE = 100_000;
 
 const filterSchema = z
   .object({
-    page: z.coerce.number().int().positive().catch(1),
+    page: z.coerce
+      .number()
+      .int()
+      .positive()
+      .max(ADMIN_ORDERS_MAX_PAGE)
+      .catch(1),
     status: z
       .enum([
         'NEW',

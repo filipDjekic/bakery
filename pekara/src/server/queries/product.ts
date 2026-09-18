@@ -1,8 +1,10 @@
 import 'server-only';
 
 import type { Varchar } from '@prisma/orm-postgres/target/codec-types';
+import { cacheLife, cacheTag } from 'next/cache';
 
 import { db } from '@/prisma/db';
+import { productCacheTag, PUBLIC_CACHE_TAGS } from '@/server/cache/tags';
 
 import type { CatalogProduct } from './catalog';
 
@@ -26,6 +28,10 @@ function isValidProductSlug(slug: string): slug is string & Varchar<140> {
 export async function getPublicProductBySlug(
   slug: string,
 ): Promise<PublicProductDetail | null> {
+  'use cache';
+  cacheLife('hours');
+  cacheTag(PUBLIC_CACHE_TAGS.catalog, PUBLIC_CACHE_TAGS.categories);
+
   if (!isValidProductSlug(slug)) {
     return null;
   }
@@ -37,6 +43,8 @@ export async function getPublicProductBySlug(
   if (!product || !product.category.isActive) {
     return null;
   }
+
+  cacheTag(productCacheTag(product.id));
 
   return {
     id: product.id,
@@ -57,11 +65,18 @@ export async function getPublicProductBySlug(
 }
 
 export async function getPublicProductSitemapEntries() {
+  'use cache';
+  cacheLife('hours');
+  cacheTag(PUBLIC_CACHE_TAGS.catalog, PUBLIC_CACHE_TAGS.categories);
+
   const products = await db.orm.public.Product.include('category')
     .where({ isActive: true })
     .orderBy((product) => product.slug.asc())
     .all();
   return products
     .filter((product) => product.category.isActive)
-    .map((product) => ({ slug: product.slug, updatedAt: new Date(product.updatedAt) }));
+    .map((product) => ({
+      slug: product.slug,
+      updatedAt: new Date(product.updatedAt),
+    }));
 }

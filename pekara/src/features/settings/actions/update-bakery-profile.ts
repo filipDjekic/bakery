@@ -1,7 +1,8 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, updateTag } from 'next/cache';
 import { requireAdmin } from '../../../server/auth/authorization.ts';
+import { PUBLIC_CACHE_TAGS } from '../../../server/cache/tags.ts';
 import { updateBakeryProfile } from '../../../server/services/settings.ts';
 import { settingsActionError } from './settings-action-error.ts';
 import type { SettingsActionState } from './settings-action-state.ts';
@@ -22,6 +23,7 @@ export async function updateBakeryProfileAction(
       },
       async () => undefined,
     );
+    updateTag(PUBLIC_CACHE_TAGS.settings);
     revalidatePath('/');
     revalidatePath('/admin/settings');
     return {

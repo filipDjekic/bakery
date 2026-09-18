@@ -1,6 +1,10 @@
 import 'server-only';
 
+import { cacheLife, cacheTag } from 'next/cache';
+import { connection } from 'next/server';
+
 import { db } from '../../prisma/db.ts';
+import { PUBLIC_CACHE_TAGS } from '../cache/tags.ts';
 
 export type HomepageCategory = {
   id: string;
@@ -34,7 +38,11 @@ function getWeekdayInTimezone(timezone: string): number {
   return weekdays[weekday] ?? 1;
 }
 
-export async function getHomepageData() {
+async function getCachedHomepageData() {
+  'use cache';
+  cacheLife('hours');
+  cacheTag(PUBLIC_CACHE_TAGS.settings, PUBLIC_CACHE_TAGS.categories);
+
   const settings = await db.orm.public.BakerySettings.include(
     'businessHours',
     (hours) => hours.orderBy((hour) => hour.openMinute.asc()),
@@ -63,8 +71,16 @@ export async function getHomepageData() {
       description: category.description,
     }));
 
-  const todayWeekday = getWeekdayInTimezone(settings.timezone);
+  return {
+    settings,
+    categories,
+  };
+}
 
+export async function getHomepageData() {
+  const { settings, categories } = await getCachedHomepageData();
+  await connection();
+  const todayWeekday = getWeekdayInTimezone(settings.timezone);
   const todayBusinessHours: HomepageBusinessHours[] = settings.businessHours
     .filter((hours) => hours.weekday === todayWeekday)
     .map((hours) => ({
@@ -73,9 +89,5 @@ export async function getHomepageData() {
       closeMinute: hours.closeMinute,
     }));
 
-  return {
-    settings,
-    categories,
-    todayBusinessHours,
-  };
+  return { settings, categories, todayBusinessHours };
 }

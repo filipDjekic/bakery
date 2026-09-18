@@ -26,7 +26,7 @@ export function ProductCard({ product }: ProductCardProps) {
             src={product.imageUrl}
             alt={product.name}
             fill
-            sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 33vw"
+            sizes="(max-width: 639px) calc(100vw - 2rem), (max-width: 1023px) calc(50vw - 2.25rem), (max-width: 1279px) calc(33vw - 2.5rem), 18rem"
             className="object-cover transition-transform duration-300 hover:scale-[1.02]"
           />
         ) : (

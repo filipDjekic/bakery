@@ -1,7 +1,12 @@
-import { randomUUID } from 'node:crypto';
-
 import { createCheckoutPayloadHash } from '../../../lib/payload-hash.ts';
+import { reportUnexpectedError } from '../../../server/errors/sentry.ts';
 import { mapErrorToResponse } from '../../../server/errors/http-error-mapper.ts';
+import {
+  errorCodeFor,
+  logEvent,
+  OBSERVABILITY_EVENTS,
+} from '../../../server/logging/events.ts';
+import { requestIdFor } from '../../../server/logging/request-id.ts';
 import {
   createClientFingerprint,
   getClientIpFromTrustedHeader,
@@ -29,15 +34,6 @@ type OrdersPostDependencies = {
   isIdempotencyConflict: (error: unknown) => boolean;
 };
 
-const REQUEST_ID_PATTERN = /^[A-Za-z0-9._:-]{1,100}$/;
-
-function requestIdFor(request: Request): string {
-  const supplied = request.headers.get('x-request-id');
-  return supplied && REQUEST_ID_PATTERN.test(supplied)
-    ? supplied
-    : randomUUID();
-}
-
 async function enforceRequestRateLimit(request: Request): Promise<void> {
   const secret = process.env.RATE_LIMIT_HMAC_SECRET;
 
@@ -62,6 +58,21 @@ export function createOrdersPostHandler(
 ) {
   return async function POST(request: Request): Promise<Response> {
     const requestId = requestIdFor(request);
+    const startedAt = performance.now();
+
+    function validationFailure(error: OrderDomainError): Response {
+      logEvent(
+        {
+          requestId,
+          event: OBSERVABILITY_EVENTS.orderCreateFailed,
+          route: '/api/orders',
+          durationMs: Math.round(performance.now() - startedAt),
+          errorCode: error.code,
+        },
+        'error',
+      );
+      return mapErrorToResponse(error, requestId);
+    }
 
     try {
       let body: unknown;
@@ -69,22 +80,20 @@ export function createOrdersPostHandler(
       try {
         body = await request.json();
       } catch {
-        return mapErrorToResponse(
+        return validationFailure(
           new OrderDomainError('VALIDATION_ERROR', 'Malformed JSON.'),
-          requestId,
         );
       }
 
       const parsed = checkoutRequestSchema.safeParse(body);
 
       if (!parsed.success) {
-        return mapErrorToResponse(
+        return validationFailure(
           new OrderDomainError(
             'VALIDATION_ERROR',
             'Invalid request.',
             parsed.error.issues,
           ),
-          requestId,
         );
       }
 
@@ -100,14 +109,17 @@ export function createOrdersPostHandler(
         isUniqueConflict: dependencies.isIdempotencyConflict,
       });
 
-      console.info(
-        JSON.stringify({
-          level: 'info',
-          event: 'public_order_request_completed',
+      logEvent(
+        {
           requestId,
+          event: OBSERVABILITY_EVENTS.orderCreateSucceeded,
+          route: '/api/orders',
           outcome: result.kind,
           orderId: result.value.orderId,
-        }),
+          orderNumber: result.value.orderNumber,
+          durationMs: Math.round(performance.now() - startedAt),
+        },
+        'info',
       );
 
       return Response.json(result.value, {
@@ -115,14 +127,22 @@ export function createOrdersPostHandler(
         headers: { 'X-Request-Id': requestId },
       });
     } catch (error) {
-      console.error(
-        JSON.stringify({
-          level: 'error',
-          event: 'public_order_request_failed',
+      const errorCode = errorCodeFor(error);
+      logEvent(
+        {
           requestId,
-          errorName: error instanceof Error ? error.name : 'UnknownError',
-        }),
+          event: OBSERVABILITY_EVENTS.orderCreateFailed,
+          route: '/api/orders',
+          durationMs: Math.round(performance.now() - startedAt),
+          errorCode,
+        },
+        'error',
       );
+      reportUnexpectedError(error, {
+        requestId,
+        event: OBSERVABILITY_EVENTS.orderCreateFailed,
+        route: '/api/orders',
+      });
 
       const response = mapErrorToResponse(error, requestId);
       response.headers.set('X-Request-Id', requestId);

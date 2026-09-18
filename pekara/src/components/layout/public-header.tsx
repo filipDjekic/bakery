@@ -1,18 +1,14 @@
 import Link from 'next/link';
 
 import { CartCount } from '@/features/cart/components/cart-count';
-import { db } from '@/prisma/db';
+import { getPublicChromeSettings } from '@/server/queries/public-settings';
 
 import { Container } from './container';
 import { MobileNav } from './mobile-nav';
 import { PublicNav } from './public-nav';
 
 export async function PublicHeader() {
-  const settings = await db.orm.public.BakerySettings.select('bakeryName')
-    .where({
-      id: 'default',
-    })
-    .first();
+  const settings = await getPublicChromeSettings();
 
   return (
     <header className="relative z-40 border-b border-zinc-200 bg-white">

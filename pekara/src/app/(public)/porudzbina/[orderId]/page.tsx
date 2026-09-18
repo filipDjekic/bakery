@@ -5,7 +5,12 @@ import { Container } from '@/components/layout/container';
 import { OrderConfirmation } from '@/features/orders/components/order-confirmation';
 import { getPublicOrderConfirmation } from '@/server/queries/order-confirmation';
 
-export const metadata: Metadata = { title: 'Potvrda porudžbine', robots: { index: false, follow: false } };
+export const metadata: Metadata = {
+  title: 'Potvrda porudžbine',
+  robots: { index: false, follow: false },
+};
+
+export const instant = false;
 
 type OrderConfirmationPageProps = {
   params: Promise<{ orderId: string }>;

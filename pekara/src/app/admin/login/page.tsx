@@ -1,9 +1,13 @@
 import { redirect } from 'next/navigation';
+import { connection } from 'next/server';
 
 import { LoginForm } from '@/features/admin-auth/components/login-form';
 import { getCurrentUser } from '@/server/auth/current-user';
 
+export const instant = false;
+
 export default async function AdminLoginPage() {
+  await connection();
   const user = await getCurrentUser();
 
   if (user) {

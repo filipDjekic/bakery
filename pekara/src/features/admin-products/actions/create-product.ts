@@ -1,8 +1,12 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, updateTag } from 'next/cache';
 
 import { requireAdmin } from '../../../server/auth/authorization.ts';
+import {
+  productCacheTag,
+  PUBLIC_CACHE_TAGS,
+} from '../../../server/cache/tags.ts';
 import { vercelBlobStorage } from '../../../server/images/blob-storage.ts';
 import { createProduct } from '../../../server/services/create-product.ts';
 import { productActionError } from './product-action-error.ts';
@@ -26,6 +30,8 @@ export async function createProductAction(
       { ...productValuesFromFormData(formData), image },
       { authorize: async () => undefined, storage: vercelBlobStorage },
     );
+    updateTag(PUBLIC_CACHE_TAGS.catalog);
+    updateTag(productCacheTag(product.id));
     revalidatePath('/');
     revalidatePath('/proizvodi');
     revalidatePath('/admin/products');

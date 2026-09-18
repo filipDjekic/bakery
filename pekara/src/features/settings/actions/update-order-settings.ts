@@ -1,7 +1,8 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, updateTag } from 'next/cache';
 import { requireAdmin } from '../../../server/auth/authorization.ts';
+import { PUBLIC_CACHE_TAGS } from '../../../server/cache/tags.ts';
 import { updateOrderSettings } from '../../../server/services/settings.ts';
 import { settingsActionError } from './settings-action-error.ts';
 import type { SettingsActionState } from './settings-action-state.ts';
@@ -24,6 +25,7 @@ export async function updateOrderSettingsAction(
       },
       async () => undefined,
     );
+    updateTag(PUBLIC_CACHE_TAGS.settings);
     revalidatePath('/');
     revalidatePath('/checkout');
     revalidatePath('/api/pickup-slots');
