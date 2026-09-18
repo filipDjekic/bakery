@@ -24,7 +24,9 @@
     "test:e2e:local": "pnpm run integration:db:up && pnpm run test:e2e",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "prisma:generate": "prisma contract emit",
     "contract:emit": "prisma contract emit",
+    "e2e:seed": "node --env-file=.env.test --conditions=react-server --experimental-strip-types e2e/fixtures/seed.ts",
     "db:seed": "node --env-file=.env src/prisma/seed.ts",
     "admin:create": "node --conditions=react-server --experimental-strip-types scripts/create-admin.ts"
   },

@@ -1,0 +1,77 @@
+name: Quality
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint, typecheck, unit tests and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: pekara
+    env:
+      DATABASE_URL: postgresql://pekara_ci:pekara_ci@127.0.0.1:5432/pekara_ci_test
+      APP_URL: http://127.0.0.1:3000
+      BETTER_AUTH_SECRET: ci-only-auth-secret-with-at-least-32-characters
+      RATE_LIMIT_HMAC_SECRET: ci-only-rate-limit-secret-with-at-least-32-characters
+      ALLOW_INTEGRATION_DB_RESET: "true"
+      SENTRY_ENVIRONMENT: ci
+      NEXT_PUBLIC_SENTRY_ENVIRONMENT: ci
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: pekara_ci_test
+          POSTGRES_USER: pekara_ci
+          POSTGRES_PASSWORD: pekara_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U pekara_ci -d pekara_ci_test"
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js and pnpm
+        uses: pnpm/setup@v1
+        with:
+          version: 12.4.1
+          runtime: node@24
+          cache: true
+          working-directory: pekara
+          require-lockfile: true
+          install: false
+
+      - name: Install dependencies from lockfile
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma contract
+        run: pnpm prisma:generate
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Prepare build database
+        run: pnpm integration:db:prepare
+
+      - name: Production build
+        run: pnpm build
