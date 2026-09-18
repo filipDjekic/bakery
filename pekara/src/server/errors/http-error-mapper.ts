@@ -1,75 +1,78 @@
 import 'server-only';
 
-import type { OrderErrorCode, PublicErrorResponse } from '../../types/order.ts';
+import type { OrderErrorCode } from '../../types/order.ts';
+import {
+  AuthenticationRequiredError,
+  AuthorizationDeniedError,
+} from '../auth/authorization.ts';
 import { OrderRateLimitExceededError } from '../rate-limit/order-rate-limit.ts';
 import { OrderDomainError } from '../services/create-order.ts';
 import { IdempotencyConflictError } from '../services/idempotency.ts';
+import { AppError } from './app-error.ts';
+import type { AppErrorCode } from './error-codes.ts';
+import { normalizeAppError } from './safe-action-result.ts';
 
-const ERROR_STATUS: Record<OrderErrorCode, number> = {
-  VALIDATION_ERROR: 400,
-  NOT_FOUND: 404,
-  CONFLICT: 409,
-  PRODUCT_UNAVAILABLE: 409,
-  PRICE_CHANGED: 409,
-  INVALID_PICKUP_SLOT: 409,
-  ORDERS_DISABLED: 409,
-  IDEMPOTENCY_CONFLICT: 409,
-  RATE_LIMITED: 429,
-  INTERNAL_ERROR: 500,
-};
+function knownHttpError(error: unknown): AppError | null {
+  if (error instanceof OrderDomainError)
+    return new AppError({ code: error.code as AppErrorCode, cause: error });
+  if (error instanceof IdempotencyConflictError)
+    return new AppError({ code: 'IDEMPOTENCY_CONFLICT', cause: error });
+  if (error instanceof OrderRateLimitExceededError)
+    return new AppError({
+      code: 'RATE_LIMITED',
+      details: { retryAfterSeconds: error.retryAfterSeconds },
+      cause: error,
+    });
+  if (error instanceof AuthenticationRequiredError)
+    return new AppError({ code: 'AUTHENTICATION_REQUIRED', cause: error });
+  if (error instanceof AuthorizationDeniedError)
+    return new AppError({ code: 'AUTHORIZATION_DENIED', cause: error });
+  return null;
+}
 
-const SAFE_MESSAGES: Record<OrderErrorCode, string> = {
-  VALIDATION_ERROR: 'Podaci zahteva nisu validni.',
-  NOT_FOUND: 'Traženi resurs ne postoji.',
-  CONFLICT: 'Zahtev je u konfliktu sa trenutnim stanjem.',
-  PRODUCT_UNAVAILABLE: 'Jedan ili više proizvoda više nisu dostupni.',
-  PRICE_CHANGED: 'Cena jednog ili više proizvoda je promenjena.',
-  INVALID_PICKUP_SLOT: 'Izabrani termin više nije dostupan.',
-  ORDERS_DISABLED: 'Primanje porudžbina je trenutno isključeno.',
-  IDEMPOTENCY_CONFLICT:
-    'Isti ključ zahteva je već iskorišćen sa drugim podacima.',
-  RATE_LIMITED: 'Previše pokušaja. Pokušajte ponovo kasnije.',
-  INTERNAL_ERROR: 'Došlo je do interne greške. Pokušajte ponovo.',
-};
+export function createAppErrorResponse(
+  error: AppError,
+  requestId: string,
+): Response {
+  const body = {
+    error: {
+      code: error.code,
+      message: error.safeMessage,
+      ...(error.details ? { details: error.details } : {}),
+    },
+    requestId,
+  };
+  const headers = new Headers({ 'X-Request-Id': requestId });
+  const retryAfter = error.details?.retryAfterSeconds;
+  if (typeof retryAfter === 'number')
+    headers.set('Retry-After', String(retryAfter));
+  return Response.json(body, { status: error.status, headers });
+}
 
 export function createErrorResponse(
   code: OrderErrorCode,
   requestId: string,
   retryAfterSeconds?: number,
 ): Response {
-  const body: PublicErrorResponse = {
-    error: { code, message: SAFE_MESSAGES[code] },
+  return createAppErrorResponse(
+    new AppError({
+      code: code as AppErrorCode,
+      ...(retryAfterSeconds === undefined
+        ? {}
+        : { details: { retryAfterSeconds } }),
+    }),
     requestId,
-  };
-  const headers = new Headers();
-  headers.set('X-Request-Id', requestId);
-
-  if (retryAfterSeconds !== undefined) {
-    headers.set('Retry-After', String(retryAfterSeconds));
-  }
-
-  return Response.json(body, { status: ERROR_STATUS[code], headers });
+  );
 }
 
-export function mapOrderErrorToResponse(
+export function mapErrorToResponse(
   error: unknown,
   requestId: string,
 ): Response {
-  if (error instanceof OrderDomainError) {
-    return createErrorResponse(error.code, requestId);
-  }
-
-  if (error instanceof IdempotencyConflictError) {
-    return createErrorResponse('IDEMPOTENCY_CONFLICT', requestId);
-  }
-
-  if (error instanceof OrderRateLimitExceededError) {
-    return createErrorResponse(
-      'RATE_LIMITED',
-      requestId,
-      error.retryAfterSeconds,
-    );
-  }
-
-  return createErrorResponse('INTERNAL_ERROR', requestId);
+  return createAppErrorResponse(
+    normalizeAppError(error, knownHttpError),
+    requestId,
+  );
 }
+
+export const mapOrderErrorToResponse = mapErrorToResponse;

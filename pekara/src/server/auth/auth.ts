@@ -5,6 +5,7 @@ import { APIError } from 'better-auth/api';
 import { betterAuth } from 'better-auth';
 
 import { authPrisma } from './prisma.ts';
+import { getTrustedApplicationOrigins } from './origin.ts';
 
 function createAuthConfiguration(disableSignUp: boolean) {
   const secret = process.env.BETTER_AUTH_SECRET;
@@ -16,6 +17,7 @@ function createAuthConfiguration(disableSignUp: boolean) {
   return betterAuth({
     appName: 'Pekara Admin',
     baseURL: process.env.APP_URL,
+    trustedOrigins: [...getTrustedApplicationOrigins()],
     secret,
     database: prismaAdapter(authPrisma, {
       provider: 'postgresql',

@@ -27,6 +27,18 @@ export function AdminSidebar() {
             Proizvodi
           </Link>
           <Link
+            href="/admin/categories"
+            className="hover:bg-surface-muted focus-visible:ring-primary block rounded-md px-3 py-2 font-medium focus-visible:ring-2 focus-visible:outline-none"
+          >
+            Kategorije
+          </Link>
+          <Link
+            href="/admin/settings"
+            className="hover:bg-surface-muted focus-visible:ring-primary block rounded-md px-3 py-2 font-medium focus-visible:ring-2 focus-visible:outline-none"
+          >
+            Podešavanja
+          </Link>
+          <Link
             href="/"
             className="text-muted hover:bg-surface-muted focus-visible:ring-primary block rounded-md px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
           >

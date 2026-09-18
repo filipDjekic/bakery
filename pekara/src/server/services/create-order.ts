@@ -4,6 +4,7 @@ import { DateTime } from 'luxon';
 import type { ZodIssue } from 'zod';
 
 import { ORDER_LIMITS } from '../../config/limits.ts';
+import { calculateMoneyTotalMinor } from '../../lib/money.ts';
 import { generateOrderNumber } from '../../lib/order-number.ts';
 import { createCheckoutPayloadHash } from '../../lib/payload-hash.ts';
 import type {
@@ -113,7 +114,6 @@ export async function createOrder(
     products.map((product) => [product.id, product]),
   );
   const snapshots: OrderItemSnapshot[] = [];
-  let totalMinor = 0;
 
   for (const item of request.items) {
     const product = productsById.get(item.productId);
@@ -141,7 +141,6 @@ export async function createOrder(
     }
 
     const subtotalMinor = product.priceMinor * item.quantity;
-    totalMinor += subtotalMinor;
     snapshots.push({
       productId: product.id,
       productName: product.name,
@@ -151,10 +150,14 @@ export async function createOrder(
     });
   }
 
-  if (
-    !Number.isSafeInteger(totalMinor) ||
-    totalMinor > ORDER_LIMITS.maximumTotalMinor
-  ) {
+  let totalMinor: number;
+
+  try {
+    totalMinor = calculateMoneyTotalMinor(
+      snapshots,
+      ORDER_LIMITS.maximumTotalMinor,
+    );
+  } catch {
     throw new OrderDomainError(
       'CONFLICT',
       'Ukupan iznos porudžbine nije validan.',

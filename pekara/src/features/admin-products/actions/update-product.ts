@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { requireAdmin } from '../../../server/auth/authorization.ts';
 import { vercelBlobStorage } from '../../../server/images/blob-storage.ts';
 import { replaceProductImage } from '../../../server/services/replace-product-image.ts';
 import { updateProduct } from '../../../server/services/update-product.ts';
@@ -17,26 +18,28 @@ export async function updateProductAction(
   _previous: ProductActionState,
   formData: FormData,
 ): Promise<ProductActionState> {
-  const id = String(formData.get('id') ?? '');
-  const values = productValuesFromFormData(formData);
-  const changeSlug = formData.get('changeSlug') === 'on';
   try {
+    await requireAdmin();
+    const id = String(formData.get('id') ?? '');
+    const values = productValuesFromFormData(formData);
+    const changeSlug = formData.get('changeSlug') === 'on';
     const file = optionalImageFromFormData(formData);
     const result = file
       ? await replaceProductImage({
           upload: () => uploadProductImage(file),
           updateDatabase: async (image) => {
-            const updated = await updateProduct({
-              ...values,
-              id,
-              changeSlug,
-              image,
-            });
+            const updated = await updateProduct(
+              { ...values, id, changeSlug, image },
+              async () => undefined,
+            );
             return { value: updated, oldPathname: updated.oldImagePathname };
           },
           storage: vercelBlobStorage,
         })
-      : await updateProduct({ ...values, id, changeSlug });
+      : await updateProduct(
+          { ...values, id, changeSlug },
+          async () => undefined,
+        );
     revalidatePath('/');
     revalidatePath('/proizvodi');
     revalidatePath(`/proizvodi/${result.slug}`);

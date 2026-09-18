@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 
+import { requireAdmin } from '../../../server/auth/authorization.ts';
 import { vercelBlobStorage } from '../../../server/images/blob-storage.ts';
 import { createProduct } from '../../../server/services/create-product.ts';
 import { productActionError } from './product-action-error.ts';
@@ -18,11 +19,12 @@ export async function createProductAction(
 ): Promise<ProductActionState> {
   let image = null;
   try {
+    await requireAdmin();
     const file = optionalImageFromFormData(formData);
     image = file ? await uploadProductImage(file) : null;
     const product = await createProduct(
       { ...productValuesFromFormData(formData), image },
-      { storage: vercelBlobStorage },
+      { authorize: async () => undefined, storage: vercelBlobStorage },
     );
     revalidatePath('/');
     revalidatePath('/proizvodi');

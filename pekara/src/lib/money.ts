@@ -14,3 +14,47 @@ export function formatRsd(minorUnits: number): string {
 
   return rsdFormatter.format(minorUnits / MINOR_UNITS_PER_MAJOR_UNIT);
 }
+
+type MoneyLine = {
+  unitPriceMinor: number;
+  quantity: number;
+};
+
+export function calculateMoneyTotalMinor(
+  lines: readonly MoneyLine[],
+  maximumTotalMinor = Number.MAX_SAFE_INTEGER,
+): number {
+  if (!Number.isSafeInteger(maximumTotalMinor) || maximumTotalMinor < 0) {
+    throw new TypeError('Maximum money total must be a non-negative safe integer.');
+  }
+
+  let totalMinor = 0;
+
+  for (const { unitPriceMinor, quantity } of lines) {
+    if (
+      !Number.isSafeInteger(unitPriceMinor) ||
+      unitPriceMinor < 0 ||
+      !Number.isSafeInteger(quantity) ||
+      quantity < 0
+    ) {
+      throw new TypeError(
+        'Money lines require non-negative safe integer prices and quantities.',
+      );
+    }
+
+    const subtotalMinor = unitPriceMinor * quantity;
+    const nextTotalMinor = totalMinor + subtotalMinor;
+
+    if (
+      !Number.isSafeInteger(subtotalMinor) ||
+      !Number.isSafeInteger(nextTotalMinor) ||
+      nextTotalMinor > maximumTotalMinor
+    ) {
+      throw new RangeError('Money total exceeds the supported limit.');
+    }
+
+    totalMinor = nextTotalMinor;
+  }
+
+  return totalMinor;
+}

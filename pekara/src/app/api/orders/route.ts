@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { createCheckoutPayloadHash } from '../../../lib/payload-hash.ts';
-import { mapOrderErrorToResponse } from '../../../server/errors/http-error-mapper.ts';
+import { mapErrorToResponse } from '../../../server/errors/http-error-mapper.ts';
 import {
   createClientFingerprint,
   getClientIpFromTrustedHeader,
@@ -69,7 +69,7 @@ export function createOrdersPostHandler(
       try {
         body = await request.json();
       } catch {
-        return mapOrderErrorToResponse(
+        return mapErrorToResponse(
           new OrderDomainError('VALIDATION_ERROR', 'Malformed JSON.'),
           requestId,
         );
@@ -78,7 +78,7 @@ export function createOrdersPostHandler(
       const parsed = checkoutRequestSchema.safeParse(body);
 
       if (!parsed.success) {
-        return mapOrderErrorToResponse(
+        return mapErrorToResponse(
           new OrderDomainError(
             'VALIDATION_ERROR',
             'Invalid request.',
@@ -124,7 +124,7 @@ export function createOrdersPostHandler(
         }),
       );
 
-      const response = mapOrderErrorToResponse(error, requestId);
+      const response = mapErrorToResponse(error, requestId);
       response.headers.set('X-Request-Id', requestId);
       return response;
     }

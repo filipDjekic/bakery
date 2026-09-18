@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { db } from '@/prisma/db';
+import { db } from '../../prisma/db.ts';
 
 export type HomepageCategory = {
   id: string;

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { test } from 'vitest';
 
 import { CART_LIMITS, CHECKOUT_LIMITS } from '../config/limits.ts';
 import { normalizeCustomerPhone } from '../lib/phone.ts';

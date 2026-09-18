@@ -32,10 +32,12 @@ function assertValidSettings(settings: PickupBakerySettings): void {
   if (
     !Number.isInteger(settings.minimumPreparationMinutes) ||
     settings.minimumPreparationMinutes < 0 ||
+    settings.minimumPreparationMinutes > 240 ||
     !Number.isInteger(settings.maximumAdvanceDays) ||
     settings.maximumAdvanceDays < 0 ||
+    settings.maximumAdvanceDays > 30 ||
     !Number.isInteger(settings.pickupSlotMinutes) ||
-    settings.pickupSlotMinutes <= 0
+    ![5, 10, 15, 20, 30, 60].includes(settings.pickupSlotMinutes)
   ) {
     throw new Error('Bakery pickup settings are invalid.');
   }

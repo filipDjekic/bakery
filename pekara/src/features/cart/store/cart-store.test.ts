@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { beforeEach, test } from 'node:test';
+import { beforeEach, test } from 'vitest';
 
 import { CART_LIMITS } from '../../../config/limits.ts';
 import type { AddCartItemInput } from '../types.ts';
@@ -99,6 +99,24 @@ test('keeps quantities unchanged at the minimum and per-item boundaries', () => 
     { ok: false, reason: 'ITEM_QUANTITY_LIMIT' },
   );
   assert.equal(useCartStore.getState().items[0]?.quantity, 1);
+});
+
+test('rejects unsafe item prices and operations on missing products', () => {
+  assert.deepEqual(
+    useCartStore.getState().addItem({
+      ...product(1),
+      displayPriceMinor: Number.MAX_SAFE_INTEGER,
+    }),
+    { ok: false, reason: 'INVALID_ITEM' },
+  );
+  assert.deepEqual(useCartStore.getState().increment('missing'), {
+    ok: false,
+    reason: 'ITEM_NOT_FOUND',
+  });
+  assert.deepEqual(useCartStore.getState().removeItem('missing'), {
+    ok: false,
+    reason: 'ITEM_NOT_FOUND',
+  });
 });
 
 test('clear empties the cart', () => {

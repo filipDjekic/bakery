@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon';
+import Link from 'next/link';
 
 import { formatRsd } from '@/lib/money';
 import type { AdminOrdersResult } from '@/server/queries/admin-orders';
@@ -53,7 +54,9 @@ export function OrdersTable({ orders, timezone }: OrdersTableProps) {
           {orders.map((order) => (
             <tr key={order.id}>
               <td className="px-4 py-3 font-semibold whitespace-nowrap">
-                {order.orderNumber}
+                <Link className="underline" href={`/admin/orders/${order.id}`}>
+                  {order.orderNumber}
+                </Link>
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
                 {localTime(order.createdAt, timezone)}

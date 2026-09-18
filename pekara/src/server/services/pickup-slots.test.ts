@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { afterEach, test, vi } from 'vitest';
 
 import { DateTime } from 'luxon';
 
@@ -24,6 +24,23 @@ function hours(
 ): PickupBusinessHours {
   return { weekday, openMinute, closeMinute };
 }
+
+afterEach(() => {
+  vi.useRealTimers();
+});
+
+test('uses the fake system clock deterministically when now is omitted', () => {
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date('2026-09-14T07:00:00.000Z'));
+
+  const slots = generatePickupSlots({
+    date: '2026-09-14',
+    settings,
+    businessHours: [hours(1, 480, 600)],
+  });
+
+  assert.equal(slots[0]?.value, '2026-09-14T07:30:00.000Z');
+});
 
 test('generates only prepared future slots across split intervals', () => {
   const slots = generatePickupSlots({

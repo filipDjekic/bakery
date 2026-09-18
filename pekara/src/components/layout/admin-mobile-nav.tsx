@@ -45,6 +45,20 @@ export function AdminMobileNav() {
             Proizvodi
           </Link>
           <Link
+            href="/admin/categories"
+            onClick={() => setIsOpen(false)}
+            className="block rounded-md px-3 py-2 font-medium"
+          >
+            Kategorije
+          </Link>
+          <Link
+            href="/admin/settings"
+            onClick={() => setIsOpen(false)}
+            className="block rounded-md px-3 py-2 font-medium"
+          >
+            Podešavanja
+          </Link>
+          <Link
             href="/"
             onClick={() => setIsOpen(false)}
             className="text-muted block rounded-md px-3 py-2"

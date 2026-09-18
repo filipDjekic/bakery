@@ -36,3 +36,11 @@ export const PRODUCT_IMAGE_LIMITS = {
   maximumDimension: 12_000,
   allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
 } as const;
+
+export const CATEGORY_LIMITS = {
+  name: 80,
+  slug: 100,
+  description: 300,
+  minimumSortOrder: -1_000_000,
+  maximumSortOrder: 1_000_000,
+} as const;
