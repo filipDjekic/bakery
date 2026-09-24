@@ -84,7 +84,7 @@ export default async function ProductDetailsPage({
             <p className="text-primary text-sm font-semibold tracking-wider uppercase">
               {product.category.name}
             </p>
-            <h1 className="text-foreground mt-3 text-4xl font-bold tracking-tight break-words sm:text-5xl">
+            <h1 className="text-foreground mt-3 text-4xl font-bold tracking-tight wrap-break-word sm:text-5xl">
               {product.name}
             </h1>
 
@@ -100,7 +100,7 @@ export default async function ProductDetailsPage({
               )}
             </div>
 
-            <p className="text-muted mt-8 text-base leading-8 break-words whitespace-pre-line">
+            <p className="text-muted mt-8 text-base leading-8 wrap-break-word whitespace-pre-line">
               {product.description}
             </p>
 

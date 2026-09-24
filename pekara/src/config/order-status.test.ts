@@ -4,9 +4,27 @@ import { test } from 'vitest';
 import type { PublicOrderStatus } from '../types/order.ts';
 import {
   canTransitionOrderStatus,
+  ORDER_STATUS_META,
   ORDER_STATUS_TRANSITIONS,
   TERMINAL_ORDER_STATUSES,
 } from './order-status.ts';
+
+test('UI metadata covers every order status with a visible label', () => {
+  const statuses: PublicOrderStatus[] = [
+    'NEW',
+    'ACCEPTED',
+    'IN_PREPARATION',
+    'READY',
+    'COMPLETED',
+    'CANCELLED',
+  ];
+
+  assert.deepEqual(Object.keys(ORDER_STATUS_META), statuses);
+  for (const status of statuses) {
+    assert.ok(ORDER_STATUS_META[status].label.length > 0);
+    assert.ok(ORDER_STATUS_META[status].badgeClassName.length > 0);
+  }
+});
 
 test('allows only forward workflow transitions and cancellation', () => {
   assert.equal(canTransitionOrderStatus('NEW', 'ACCEPTED'), true);

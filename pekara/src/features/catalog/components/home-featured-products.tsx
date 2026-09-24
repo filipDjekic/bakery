@@ -41,7 +41,7 @@ export function HomeFeaturedProducts({
           {categories.map((category) => (
             <Link
               key={category.id}
-              href="/proizvodi"
+              href={`/proizvodi?category=${category.name.toLowerCase()}`}
               className="group rounded-lg border border-zinc-200 p-6 transition-colors hover:border-zinc-400 hover:bg-zinc-50 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 focus-visible:outline-none"
             >
               <h3 className="text-lg font-semibold text-zinc-950">

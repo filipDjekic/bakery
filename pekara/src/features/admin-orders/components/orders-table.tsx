@@ -4,21 +4,11 @@ import Link from 'next/link';
 import { formatRsd } from '@/lib/money';
 import type { AdminOrdersResult } from '@/server/queries/admin-orders';
 
+import { OrderStatusBadge } from './order-status-badge';
+
 type OrdersTableProps = {
   orders: AdminOrdersResult['orders'];
   timezone: string;
-};
-
-const statusLabels: Record<
-  AdminOrdersResult['orders'][number]['status'],
-  string
-> = {
-  NEW: 'Nova',
-  ACCEPTED: 'Prihvaćena',
-  IN_PREPARATION: 'U pripremi',
-  READY: 'Spremna',
-  COMPLETED: 'Završena',
-  CANCELLED: 'Otkazana',
 };
 
 function localTime(value: string, timezone: string): string {
@@ -69,7 +59,7 @@ export function OrdersTable({ orders, timezone }: OrdersTableProps) {
                 {formatRsd(order.totalMinor)}
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
-                {statusLabels[order.status]}
+                <OrderStatusBadge status={order.status} />
               </td>
             </tr>
           ))}
