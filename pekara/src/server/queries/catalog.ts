@@ -36,9 +36,7 @@ export type PublicCatalog = {
   selectedCategorySlug: string | null;
 };
 
-export async function getPublicCatalog(
-  requestedCategorySlug?: string,
-): Promise<PublicCatalog> {
+async function getCachedPublicCatalog(): Promise<CatalogCategory[]> {
   'use cache';
   cacheLife('hours');
   cacheTag(PUBLIC_CACHE_TAGS.catalog, PUBLIC_CACHE_TAGS.categories);
@@ -57,7 +55,7 @@ export async function getPublicCatalog(
     .orderBy((category) => category.id.asc())
     .all();
 
-  const allCategories: CatalogCategory[] = categoryRows.map((category) => ({
+  return categoryRows.map((category) => ({
     id: category.id,
     name: category.name,
     slug: category.slug,
@@ -74,7 +72,12 @@ export async function getPublicCatalog(
       isAvailable: product.isAvailable,
     })),
   }));
+}
 
+export async function getPublicCatalog(
+  requestedCategorySlug?: string,
+): Promise<PublicCatalog> {
+  const allCategories = await getCachedPublicCatalog();
   const selectedCategory = requestedCategorySlug
     ? allCategories.find((category) => category.slug === requestedCategorySlug)
     : undefined;

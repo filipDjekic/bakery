@@ -25,7 +25,7 @@ describe('homepage components', () => {
     expect(html).toContain('/proizvodi?category=hlebovi-i-peciva');
   });
 
-  it('renders an unavailable featured product with a disabled action', () => {
+  it('renders an unavailable featured product without an add action', () => {
     const html = renderToStaticMarkup(
       <ProductCard
         product={{
@@ -43,8 +43,7 @@ describe('homepage components', () => {
     );
 
     expect(html).toContain('Rasprodato');
-    expect(html).toContain('disabled');
-    expect(html).toContain('Nije dostupno');
+    expect(html).not.toContain('Dodaj Kroasan u korpu');
   });
 
   it('keeps the cart count accessible before hydration', () => {

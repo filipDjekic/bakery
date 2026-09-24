@@ -37,12 +37,6 @@ export async function PublicHeader() {
               <ShoppingBasket aria-hidden size={19} />
               <CartCount />
             </Link>
-            <Link
-              href="/proizvodi"
-              className="bg-primary hover:bg-primary-hover focus-visible:ring-primary hidden min-h-11 items-center rounded-lg px-5 py-2 text-sm font-semibold text-white transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none sm:inline-flex"
-            >
-              Poruči
-            </Link>
             <MobileNav />
           </div>
         </div>

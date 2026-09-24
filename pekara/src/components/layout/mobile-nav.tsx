@@ -57,15 +57,6 @@ export function MobileNav() {
                   </Link>
                 </li>
               ))}
-              <li className="mt-2">
-                <Link
-                  href="/proizvodi"
-                  onClick={() => setIsOpen(false)}
-                  className="bg-primary hover:bg-primary-hover focus-visible:ring-primary flex min-h-11 items-center justify-center rounded-lg px-4 py-3 font-semibold text-white transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-                >
-                  Poruči
-                </Link>
-              </li>
             </ul>
           </nav>
         </div>

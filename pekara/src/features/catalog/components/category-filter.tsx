@@ -9,10 +9,10 @@ type CategoryFilterProps = {
 
 function filterLinkClass(isSelected: boolean): string {
   return [
-    'inline-flex min-h-11 items-center justify-center rounded-full border px-4 py-2 text-sm font-semibold transition-colors',
+    'inline-flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap rounded-full border px-4 py-2 text-sm font-semibold transition-colors',
     'focus-visible:ring-primary focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
     isSelected
-      ? 'border-primary bg-primary text-white'
+      ? 'border-primary bg-primary text-white shadow-sm'
       : 'border-border bg-surface text-foreground hover:border-primary hover:text-primary',
   ].join(' ');
 }
@@ -27,14 +27,14 @@ export function CategoryFilter({
 
   return (
     <nav aria-label="Filtriranje proizvoda po kategoriji">
-      <ul className="flex flex-wrap gap-2">
+      <ul className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
         <li>
           <Link
             href="/proizvodi"
             aria-current={selectedCategorySlug === null ? 'page' : undefined}
             className={filterLinkClass(selectedCategorySlug === null)}
           >
-            Sve kategorije
+            Sve
           </Link>
         </li>
 

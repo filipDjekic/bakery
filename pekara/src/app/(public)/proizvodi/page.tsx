@@ -1,12 +1,13 @@
+import { CreditCard, PackageCheck, ShoppingBasket, Wheat } from 'lucide-react';
+
 import { Container } from '@/components/layout/container';
-import { CatalogGrid } from '@/features/catalog/components/catalog-grid';
+import { CatalogBrowser } from '@/features/catalog/components/catalog-browser';
+import { CatalogEmptyState } from '@/features/catalog/components/catalog-empty-state';
 import { CategoryFilter } from '@/features/catalog/components/category-filter';
 import { getPublicCatalog } from '@/server/queries/catalog';
 
 type ProductsPageProps = {
-  searchParams: Promise<{
-    category?: string | string[];
-  }>;
+  searchParams: Promise<{ category?: string | string[] }>;
 };
 
 export default async function ProductsPage({
@@ -17,32 +18,46 @@ export default async function ProductsPage({
     typeof categoryParam === 'string' ? categoryParam : undefined;
   const { categories, filterCategories, selectedCategorySlug } =
     await getPublicCatalog(requestedCategorySlug);
+  const products = categories.flatMap((category) => category.products);
 
   return (
-    <div className="py-12 sm:py-16 lg:py-20">
+    <div className="py-10 sm:py-12 lg:py-16">
       <Container>
-        <header className="max-w-3xl">
-          <p className="text-primary text-sm font-semibold tracking-wider uppercase">
-            Sveža ponuda
-          </p>
-          <h1 className="text-foreground mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
-            Proizvodi
-          </h1>
-          <p className="text-muted mt-5 text-lg leading-8">
-            Pregledajte našu ponudu sveže pripremljenih pekarskih proizvoda.
-          </p>
-        </header>
-
-        <div className="mt-10">
-          <CategoryFilter
-            categories={filterCategories}
-            selectedCategorySlug={selectedCategorySlug}
+        {products.length || filterCategories.length ? (
+          <CatalogBrowser
+            products={products}
+            categoryFilter={
+              <CategoryFilter
+                categories={filterCategories}
+                selectedCategorySlug={selectedCategorySlug}
+              />
+            }
           />
-        </div>
+        ) : (
+          <CatalogEmptyState />
+        )}
 
-        <div className="mt-12">
-          <CatalogGrid categories={categories} />
-        </div>
+        <section
+          aria-label="Prednosti poručivanja"
+          className="border-border bg-surface-muted mt-14 grid gap-px overflow-hidden rounded-2xl border sm:grid-cols-2 lg:grid-cols-4"
+        >
+          {[
+            { label: 'Sveže pripremljeno', icon: Wheat },
+            { label: 'Online poručivanje', icon: ShoppingBasket },
+            { label: 'Preuzimanje bez čekanja', icon: PackageCheck },
+            { label: 'Plaćanje pri preuzimanju', icon: CreditCard },
+          ].map(({ label, icon: Icon }) => (
+            <div
+              key={label}
+              className="bg-surface flex items-center gap-3 p-5 text-sm font-semibold"
+            >
+              <span className="bg-surface-muted text-primary inline-flex size-10 shrink-0 items-center justify-center rounded-full">
+                <Icon aria-hidden size={19} />
+              </span>
+              {label}
+            </div>
+          ))}
+        </section>
       </Container>
     </div>
   );
