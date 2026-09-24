@@ -3,12 +3,14 @@ import 'server-only';
 import { DateTime } from 'luxon';
 import { z } from 'zod';
 
+import { ACTIVE_ORDER_STATUSES } from '../../config/order-status.ts';
 import { db } from '../../prisma/db.ts';
 import type { PublicOrderStatus } from '../../types/order.ts';
 import { requireStaff } from '../auth/authorization.ts';
 import { getPickupBakerySettings } from '../repositories/bakery-settings.ts';
 
 export const ADMIN_ORDERS_PAGE_SIZE = 25;
+export const ACTIVE_ADMIN_ORDERS_LIMIT = 100;
 const ADMIN_ORDERS_MAX_PAGE = 100_000;
 
 const filterSchema = z
@@ -82,6 +84,11 @@ export type AdminOrdersResult = {
     totalItems: number;
     totalPages: number;
   };
+  timezone: string;
+};
+
+export type ActiveAdminOrdersResult = {
+  orders: AdminOrdersResult['orders'];
   timezone: string;
 };
 
@@ -179,6 +186,40 @@ export async function getAdminOrders(
       totalItems: count.count,
       totalPages,
     },
+    timezone: settings.timezone,
+  };
+}
+
+export async function getActiveAdminOrders(
+  authorize: StaffAuthorizer = requireStaff,
+): Promise<ActiveAdminOrdersResult> {
+  await authorize();
+  const settings = await getPickupBakerySettings();
+  const rows = await db.orm.public.Order.select(
+    'id',
+    'orderNumber',
+    'status',
+    'customerName',
+    'pickupAt',
+    'totalMinor',
+    'currencyCode',
+    'createdAt',
+  )
+    .where((order) => order.status.in([...ACTIVE_ORDER_STATUSES]))
+    .orderBy([
+      (order) => order.pickupAt.asc(),
+      (order) => order.createdAt.asc(),
+      (order) => order.id.asc(),
+    ])
+    .limit(ACTIVE_ADMIN_ORDERS_LIMIT)
+    .all();
+
+  return {
+    orders: rows.map((order) => ({
+      ...order,
+      pickupAt: new Date(order.pickupAt).toISOString(),
+      createdAt: new Date(order.createdAt).toISOString(),
+    })),
     timezone: settings.timezone,
   };
 }

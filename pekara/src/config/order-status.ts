@@ -64,6 +64,19 @@ export const TERMINAL_ORDER_STATUSES = new Set<PublicOrderStatus>([
   'CANCELLED',
 ]);
 
+export const ACTIVE_ORDER_STATUSES = [
+  'NEW',
+  'ACCEPTED',
+  'IN_PREPARATION',
+  'READY',
+] as const satisfies readonly PublicOrderStatus[];
+
+export function isActiveOrderStatus(status: PublicOrderStatus): boolean {
+  return ACTIVE_ORDER_STATUSES.includes(
+    status as (typeof ACTIVE_ORDER_STATUSES)[number],
+  );
+}
+
 export function canTransitionOrderStatus(
   current: PublicOrderStatus,
   target: PublicOrderStatus,

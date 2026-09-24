@@ -3,10 +3,12 @@ import { test } from 'vitest';
 
 import type { PublicOrderStatus } from '../types/order.ts';
 import {
+  ACTIVE_ORDER_STATUSES,
   canTransitionOrderStatus,
   ORDER_STATUS_META,
   ORDER_STATUS_TRANSITIONS,
   TERMINAL_ORDER_STATUSES,
+  isActiveOrderStatus,
 } from './order-status.ts';
 
 test('UI metadata covers every order status with a visible label', () => {
@@ -24,6 +26,21 @@ test('UI metadata covers every order status with a visible label', () => {
     assert.ok(ORDER_STATUS_META[status].label.length > 0);
     assert.ok(ORDER_STATUS_META[status].badgeClassName.length > 0);
   }
+});
+
+test('active queue statuses contain every non-terminal workflow state', () => {
+  assert.deepEqual(ACTIVE_ORDER_STATUSES, [
+    'NEW',
+    'ACCEPTED',
+    'IN_PREPARATION',
+    'READY',
+  ]);
+  assert.equal(isActiveOrderStatus('NEW'), true);
+  assert.equal(isActiveOrderStatus('ACCEPTED'), true);
+  assert.equal(isActiveOrderStatus('IN_PREPARATION'), true);
+  assert.equal(isActiveOrderStatus('READY'), true);
+  assert.equal(isActiveOrderStatus('COMPLETED'), false);
+  assert.equal(isActiveOrderStatus('CANCELLED'), false);
 });
 
 test('allows only forward workflow transitions and cancellation', () => {

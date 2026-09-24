@@ -12,6 +12,7 @@ export function OrderFilters({ filters }: OrderFiltersProps) {
       method="get"
       className="border-border bg-surface grid gap-4 rounded-xl border p-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto_auto] lg:items-end"
     >
+      <input type="hidden" name="view" value="all" />
       <div>
         <label htmlFor="status" className="text-sm font-medium">
           Status
@@ -62,7 +63,7 @@ export function OrderFilters({ filters }: OrderFiltersProps) {
         Primeni
       </button>
       <Link
-        href="/admin/orders"
+        href="/admin/orders?view=all"
         className="border-border hover:bg-surface-muted inline-flex min-h-10 items-center justify-center rounded-md border px-4 py-2 font-semibold"
       >
         Resetuj

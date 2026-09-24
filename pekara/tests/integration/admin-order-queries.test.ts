@@ -7,7 +7,9 @@ import type { Varchar } from '@prisma/orm-postgres/target/codec-types';
 import { db } from '../../src/prisma/db.ts';
 import { getAdminDashboard } from '../../src/server/queries/admin-dashboard.ts';
 import {
+  ACTIVE_ADMIN_ORDERS_LIMIT,
   ADMIN_ORDERS_PAGE_SIZE,
+  getActiveAdminOrders,
   getAdminOrders,
 } from '../../src/server/queries/admin-orders.ts';
 import { getPickupBakerySettings } from '../../src/server/repositories/bakery-settings.ts';
@@ -46,7 +48,10 @@ before(async () => {
       customerPhone: varchar('+381641234567', 20),
       customerEmail: null,
       note: null,
-      pickupAt: now.plus({ hours: index + 1 }).toISO()!,
+      pickupAt:
+        index === 0
+          ? now.minus({ hours: 1 }).toISO()!
+          : now.plus({ hours: index === 2 ? 2 : index + 1 }).toISO()!,
       currencyCode: varchar('RSD', 3),
       subtotalMinor: 1000 + index,
       totalMinor: 1000 + index,
@@ -103,6 +108,49 @@ test('orders query filters by status and paginates newest-first on the server', 
         index === 0 || order.createdAt <= orders[index - 1]!.createdAt,
     ),
   );
+});
+
+test('active queue includes only operational statuses and is pickup-first with stable ordering', async () => {
+  const result = await getActiveAdminOrders(authorize);
+  const seeded = result.orders.filter((order) =>
+    order.orderNumber.startsWith(orderNumberPrefix),
+  );
+
+  assert.deepEqual(
+    new Set(seeded.map((order) => order.status)),
+    new Set(['NEW', 'ACCEPTED', 'IN_PREPARATION', 'READY']),
+  );
+  assert.equal(
+    seeded.some(
+      (order) => order.status === 'COMPLETED' || order.status === 'CANCELLED',
+    ),
+    false,
+  );
+  assert.ok(result.orders.length <= ACTIVE_ADMIN_ORDERS_LIMIT);
+  assert.equal(seeded[0]?.status, 'NEW');
+  assert.ok(
+    result.orders.every((order, index, orders) => {
+      if (index === 0) return true;
+      const previous = orders[index - 1]!;
+      return (
+        previous.pickupAt < order.pickupAt ||
+        (previous.pickupAt === order.pickupAt &&
+          (previous.createdAt < order.createdAt ||
+            (previous.createdAt === order.createdAt &&
+              previous.id <= order.id)))
+      );
+    }),
+  );
+  assert.deepEqual(Object.keys(result.orders[0] ?? {}).sort(), [
+    'createdAt',
+    'currencyCode',
+    'customerName',
+    'id',
+    'orderNumber',
+    'pickupAt',
+    'status',
+    'totalMinor',
+  ]);
 });
 
 test('date filter uses bakery-local dates and excessive pages clamp to the end', async () => {
