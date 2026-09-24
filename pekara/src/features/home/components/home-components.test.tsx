@@ -5,6 +5,7 @@ import { CartCount } from '@/features/cart/components/cart-count';
 import { ProductCard } from '@/features/catalog/components/product-card';
 
 import { HomeCategories } from './home-categories';
+import { HomeHero } from './home-hero';
 
 describe('homepage components', () => {
   it('links every category to its slug filter', () => {
@@ -49,5 +50,43 @@ describe('homepage components', () => {
   it('keeps the cart count accessible before hydration', () => {
     const html = renderToStaticMarkup(<CartCount />);
     expect(html).toContain('aria-label="Korpa, trenutno 0 artikala"');
+  });
+
+  it('renders explicit closing and next-opening status text', () => {
+    const base = {
+      todayHoursLabel: '06:00–20:00',
+      nextPickupAt: null,
+      nextPickupLabel: null,
+    };
+    const openHtml = renderToStaticMarkup(
+      <HomeHero
+        bakeryName="Mrvica"
+        address="Glavna 1"
+        operational={{
+          ...base,
+          isOpen: true,
+          closesAt: '2026-09-21T18:00:00.000Z',
+          closesAtLabel: '20:00',
+          opensAtNext: null,
+          opensAtNextLabel: null,
+        }}
+      />,
+    );
+    const closedHtml = renderToStaticMarkup(
+      <HomeHero
+        bakeryName="Mrvica"
+        address="Glavna 1"
+        operational={{
+          ...base,
+          isOpen: false,
+          closesAt: null,
+          closesAtLabel: null,
+          opensAtNext: '2026-09-22T04:00:00.000Z',
+          opensAtNextLabel: 'sutra u 06:00',
+        }}
+      />,
+    );
+    expect(openHtml).toContain('Otvoreno · do 20:00');
+    expect(closedHtml).toContain('Zatvoreno · otvara se sutra u 06:00');
   });
 });

@@ -10,9 +10,14 @@ import { ProductCard } from '@/features/catalog/components/product-card';
 import { productImageAspectRatio } from '@/features/catalog/lib/product-image';
 import { formatRsd } from '@/lib/money';
 import {
+  buildProductStructuredData,
+  serializeJsonLd,
+} from '@/lib/structured-data';
+import {
   getPublicProductBySlug,
   getRelatedPublicProducts,
 } from '@/server/queries/product';
+import { getPublicChromeContent } from '@/server/queries/public-settings';
 
 type ProductDetailsPageProps = {
   params: Promise<{
@@ -52,7 +57,10 @@ export default async function ProductDetailsPage({
   params,
 }: ProductDetailsPageProps) {
   const { slug } = await params;
-  const product = await getPublicProductBySlug(slug);
+  const [product, settings] = await Promise.all([
+    getPublicProductBySlug(slug),
+    getPublicChromeContent(),
+  ]);
 
   if (!product) {
     notFound();
@@ -61,9 +69,30 @@ export default async function ProductDetailsPage({
     product.category.id,
     product.id,
   );
+  const productUrl = new URL(
+    `/proizvodi/${encodeURIComponent(product.slug)}`,
+    process.env.APP_URL ?? 'http://localhost:3000',
+  ).href;
+  const structuredData = buildProductStructuredData({
+    product: {
+      ...product,
+      imageUrl: product.imageUrl
+        ? new URL(
+            product.imageUrl,
+            process.env.APP_URL ?? 'http://localhost:3000',
+          ).href
+        : null,
+    },
+    url: productUrl,
+    currencyCode: settings?.currencyCode ?? 'RSD',
+  });
 
   return (
     <div className="py-10 sm:py-14 lg:py-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(structuredData) }}
+      />
       <Container>
         <nav aria-label="Putanja do proizvoda" className="mb-8">
           <ol className="text-muted flex flex-wrap items-center gap-2 text-sm">

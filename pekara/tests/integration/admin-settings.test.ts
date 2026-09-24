@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import type { Varchar } from '@prisma/orm-postgres/target/codec-types';
 import { db } from '../../src/prisma/db.ts';
-import { getHomepageData } from '../../src/server/queries/home.ts';
+import { getCachedHomepageContent } from '../../src/server/queries/home.ts';
 import { getAdminSettings } from '../../src/server/queries/admin-settings.ts';
 import { getPickupBakerySettings } from '../../src/server/repositories/bakery-settings.ts';
 import { getBusinessHoursForWeekday } from '../../src/server/repositories/business-hours.ts';
@@ -65,7 +65,7 @@ test('updates profile and public homepage reads database values', async () => {
     },
     authorize,
   );
-  const home = await getHomepageData();
+  const home = await getCachedHomepageContent();
   assert.equal(home.settings.bakeryName, 'Test pekara 9.1');
   assert.equal(home.settings.address, 'Test adresa 91');
   await assert.rejects(

@@ -4,6 +4,7 @@ import { DateTime } from 'luxon';
 import { cacheLife, cacheTag } from 'next/cache';
 import { connection } from 'next/server';
 
+import { calculateCurrentBusinessState } from '../../lib/business-state.ts';
 import { formatBusinessHours } from '../../lib/format-business-hours.ts';
 import { db } from '../../prisma/db.ts';
 import { PUBLIC_CACHE_TAGS } from '../cache/tags.ts';
@@ -38,10 +39,15 @@ export type HomepageBusinessHours = {
 export type HomepageOperationalState = {
   isOpen: boolean;
   todayHoursLabel: string;
+  closesAt: string | null;
+  closesAtLabel: string | null;
+  opensAtNext: string | null;
+  opensAtNextLabel: string | null;
+  nextPickupAt: string | null;
   nextPickupLabel: string | null;
 };
 
-async function getCachedHomepageData() {
+export async function getCachedHomepageContent() {
   'use cache';
   cacheLife('hours');
   cacheTag(
@@ -108,15 +114,14 @@ async function getCachedHomepageData() {
   return { settings, categories, featuredProducts };
 }
 
-function getOperationalState(
-  settings: Awaited<ReturnType<typeof getCachedHomepageData>>['settings'],
+export function calculateHomepageOperationalState(
+  settings: Awaited<ReturnType<typeof getCachedHomepageContent>>['settings'],
   now: DateTime,
 ): {
   todayBusinessHours: HomepageBusinessHours[];
   operational: HomepageOperationalState;
 } {
   const localNow = now.setZone(settings.timezone);
-  const currentMinute = localNow.hour * 60 + localNow.minute;
   const todayBusinessHours = settings.businessHours
     .filter((hours) => hours.weekday === localNow.weekday)
     .map(({ weekday, openMinute, closeMinute }) => ({
@@ -124,12 +129,14 @@ function getOperationalState(
       openMinute,
       closeMinute,
     }));
-  const isOpen = todayBusinessHours.some(
-    ({ openMinute, closeMinute }) =>
-      currentMinute >= openMinute && currentMinute < closeMinute,
-  );
+  const businessState = calculateCurrentBusinessState({
+    businessHours: settings.businessHours,
+    timezone: settings.timezone,
+    now,
+  });
 
   let nextPickupLabel: string | null = null;
+  let nextPickupAt: string | null = null;
   for (
     let dayOffset = 0;
     dayOffset <= settings.maximumAdvanceDays;
@@ -148,6 +155,7 @@ function getOperationalState(
       now,
     })[0];
     if (firstSlot) {
+      nextPickupAt = firstSlot.value;
       nextPickupLabel =
         dayOffset === 0
           ? firstSlot.label
@@ -159,18 +167,18 @@ function getOperationalState(
   return {
     todayBusinessHours,
     operational: {
-      isOpen,
+      ...businessState,
       todayHoursLabel: formatBusinessHours(todayBusinessHours),
+      nextPickupAt,
       nextPickupLabel,
     },
   };
 }
 
-export async function getHomepageData(now?: DateTime) {
-  const cached = await getCachedHomepageData();
+export async function getCurrentHomepageOperationalState(
+  settings: Awaited<ReturnType<typeof getCachedHomepageContent>>['settings'],
+  now?: DateTime,
+) {
   await connection();
-  return {
-    ...cached,
-    ...getOperationalState(cached.settings, now ?? DateTime.utc()),
-  };
+  return calculateHomepageOperationalState(settings, now ?? DateTime.utc());
 }

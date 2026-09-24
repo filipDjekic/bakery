@@ -1,21 +1,18 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
+import { buildRootMetadata } from '@/lib/site-metadata';
+import { getPublicChromeContent } from '@/server/queries/public-settings';
+
 import './globals.css';
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.APP_URL ?? 'http://localhost:3000'),
-  applicationName: 'Pekara',
-  title: { default: 'Pekara', template: '%s | Pekara' },
-  description: 'Online poručivanje svežih pekarskih proizvoda.',
-  openGraph: {
-    type: 'website',
-    locale: 'sr_RS',
-    siteName: 'Pekara',
-    title: 'Pekara',
-    description: 'Online poručivanje svežih pekarskih proizvoda.',
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getPublicChromeContent();
+  return buildRootMetadata(
+    settings,
+    new URL(process.env.APP_URL ?? 'http://localhost:3000'),
+  );
+}
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (

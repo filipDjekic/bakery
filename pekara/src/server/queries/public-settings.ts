@@ -25,6 +25,7 @@ export async function getPublicChromeContent() {
     bakeryName: settings.bakeryName,
     address: settings.address,
     phone: settings.phone,
+    currencyCode: settings.currencyCode,
     timezone: settings.timezone,
     businessHours: settings.businessHours.map(
       ({ weekday, openMinute, closeMinute }) => ({

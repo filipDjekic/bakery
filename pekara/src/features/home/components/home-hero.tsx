@@ -58,7 +58,9 @@ export function HomeHero({
                   aria-hidden
                   className={`size-2.5 rounded-full ${operational.isOpen ? 'bg-emerald-600' : 'bg-red-600'}`}
                 />
-                {operational.isOpen ? 'Otvoreno' : 'Zatvoreno'}
+                {operational.isOpen
+                  ? `Otvoreno${operational.closesAtLabel ? ` · do ${operational.closesAtLabel}` : ''}`
+                  : `Zatvoreno${operational.opensAtNextLabel ? ` · otvara se ${operational.opensAtNextLabel}` : ''}`}
               </p>
               <p className="text-muted mt-1 text-sm">
                 Danas {operational.todayHoursLabel}
