@@ -4,10 +4,15 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { Container } from '@/components/layout/container';
-import { AddToCartButton } from '@/features/cart/components/add-to-cart-button';
 import { ProductImagePlaceholder } from '@/features/catalog/components/product-image-placeholder';
+import { ProductDetailCartControl } from '@/features/catalog/components/product-detail-cart-control';
+import { ProductCard } from '@/features/catalog/components/product-card';
+import { productImageAspectRatio } from '@/features/catalog/lib/product-image';
 import { formatRsd } from '@/lib/money';
-import { getPublicProductBySlug } from '@/server/queries/product';
+import {
+  getPublicProductBySlug,
+  getRelatedPublicProducts,
+} from '@/server/queries/product';
 
 type ProductDetailsPageProps = {
   params: Promise<{
@@ -52,6 +57,10 @@ export default async function ProductDetailsPage({
   if (!product) {
     notFound();
   }
+  const relatedProducts = await getRelatedPublicProducts(
+    product.category.id,
+    product.id,
+  );
 
   return (
     <div className="py-10 sm:py-14 lg:py-20">
@@ -79,7 +88,16 @@ export default async function ProductDetailsPage({
         </nav>
 
         <article className="grid items-start gap-10 lg:grid-cols-2 lg:gap-14">
-          <div className="bg-surface-muted border-border relative aspect-square overflow-hidden rounded-2xl border">
+          <div
+            className="bg-surface-muted border-border relative aspect-square overflow-hidden rounded-2xl border"
+            style={{
+              aspectRatio:
+                productImageAspectRatio(
+                  product.imageWidth,
+                  product.imageHeight,
+                ) ?? '1 / 1',
+            }}
+          >
             {product.imageUrl ? (
               <Image
                 src={product.imageUrl}
@@ -118,7 +136,14 @@ export default async function ProductDetailsPage({
               {product.description}
             </p>
 
-            <AddToCartButton
+            <div className="bg-surface-muted border-border mt-8 rounded-xl border p-4">
+              <p className="font-bold">Preuzimanje u pekari</p>
+              <p className="text-muted mt-1 text-sm">
+                Termin biraš tokom poručivanja.
+              </p>
+            </div>
+
+            <ProductDetailCartControl
               item={{
                 productId: product.id,
                 name: product.name,
@@ -126,10 +151,28 @@ export default async function ProductDetailsPage({
                 displayPriceMinor: product.priceMinor,
               }}
               isAvailable={product.isAvailable}
-              className="mt-10 w-full sm:max-w-64"
             />
           </div>
         </article>
+
+        {relatedProducts.length > 0 ? (
+          <section
+            aria-labelledby="related-products-heading"
+            className="mt-16 lg:mt-24"
+          >
+            <h2
+              id="related-products-heading"
+              className="text-3xl font-bold tracking-tight"
+            >
+              Možda će ti se dopasti
+            </h2>
+            <div className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {relatedProducts.map((relatedProduct) => (
+                <ProductCard key={relatedProduct.id} product={relatedProduct} />
+              ))}
+            </div>
+          </section>
+        ) : null}
       </Container>
     </div>
   );

@@ -12,9 +12,23 @@ import {
   type PickupBakerySettings,
 } from '../repositories/bakery-settings.ts';
 import {
+  getAllBusinessHours,
   getBusinessHoursForWeekday,
   type PickupBusinessHours,
 } from '../repositories/business-hours.ts';
+
+export type PickupDateOption = {
+  date: string;
+  label: string;
+  shortDateLabel: string;
+};
+
+export type PickupAvailability = {
+  dates: PickupDateOption[];
+  earliestSlot: (PickupSlot & { date: string; dateLabel: string }) | null;
+  bakeryTimezone: string;
+  orderAcceptingEnabled: boolean;
+};
 
 export type PickupSlot = {
   value: string;
@@ -135,5 +149,49 @@ export async function getPickupSlotsForDate(
   return {
     slots: generatePickupSlots({ date, settings, businessHours, now }),
     bakeryTimezone: settings.timezone,
+  };
+}
+
+export async function getPickupAvailability(
+  now: DateTime = DateTime.utc(),
+): Promise<PickupAvailability> {
+  const settings = await getPickupBakerySettings();
+  const allHours = await getAllBusinessHours(settings.id);
+  const localToday = now.setZone(settings.timezone).startOf('day');
+  const dates: PickupDateOption[] = [];
+  let earliestSlot: PickupAvailability['earliestSlot'] = null;
+
+  for (let offset = 0; offset <= settings.maximumAdvanceDays; offset += 1) {
+    const date = localToday.plus({ days: offset });
+    const dateIso = date.toISODate();
+    if (!dateIso) continue;
+    const slots = generatePickupSlots({
+      date: dateIso,
+      settings,
+      businessHours: allHours.filter((hours) => hours.weekday === date.weekday),
+      now,
+    });
+    if (slots.length === 0) continue;
+    const label =
+      offset === 0
+        ? 'Danas'
+        : offset === 1
+          ? 'Sutra'
+          : date.setLocale('sr-Latn').toFormat('ccc');
+    dates.push({
+      date: dateIso,
+      label,
+      shortDateLabel: date.setLocale('sr-Latn').toFormat('dd. LLL'),
+    });
+    if (!earliestSlot && slots[0]) {
+      earliestSlot = { ...slots[0], date: dateIso, dateLabel: label };
+    }
+  }
+
+  return {
+    dates,
+    earliestSlot,
+    bakeryTimezone: settings.timezone,
+    orderAcceptingEnabled: settings.orderAcceptingEnabled,
   };
 }

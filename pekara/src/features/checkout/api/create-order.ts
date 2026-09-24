@@ -8,18 +8,21 @@ export class CreateOrderApiError extends Error {
   readonly code: CreateOrderErrorResponse['error']['code'];
   readonly requestId?: string;
   readonly retryAfterSeconds?: number;
+  readonly details?: CreateOrderErrorResponse['error']['details'];
 
   constructor(
     code: CreateOrderErrorResponse['error']['code'],
     message: string,
     requestId?: string,
     retryAfterSeconds?: number,
+    details?: CreateOrderErrorResponse['error']['details'],
   ) {
     super(message);
     this.name = 'CreateOrderApiError';
     this.code = code;
     this.requestId = requestId;
     this.retryAfterSeconds = retryAfterSeconds;
+    this.details = details;
   }
 }
 
@@ -71,6 +74,7 @@ export async function createOrderRequest(
         body.error.message,
         body.requestId,
         retryAfter ? Number(retryAfter) : undefined,
+        body.error.details,
       );
     }
 

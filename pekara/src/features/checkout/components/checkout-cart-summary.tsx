@@ -1,21 +1,30 @@
 import { formatRsd } from '@/lib/money';
+import {
+  getCartItemCount,
+  getCartTotalMinor,
+} from '@/features/cart/lib/cart-totals';
 
 import type { CartItem } from '../../cart/types';
 
 type CheckoutCartSummaryProps = {
   items: CartItem[];
+  collapsible?: boolean;
 };
 
-export function CheckoutCartSummary({ items }: CheckoutCartSummaryProps) {
-  const itemCount = items.reduce((total, item) => total + item.quantity, 0);
-  const totalMinor = items.reduce(
-    (total, item) => total + item.displayPriceMinor * item.quantity,
-    0,
-  );
+export function CheckoutCartSummary({
+  items,
+  collapsible = false,
+}: CheckoutCartSummaryProps) {
+  const itemCount = getCartItemCount(items);
+  const totalMinor = getCartTotalMinor(items);
 
-  return (
-    <aside className="border-border bg-surface rounded-xl border p-5 lg:sticky lg:top-6 lg:p-6">
-      <h2 className="text-foreground text-xl font-semibold">Pregled korpe</h2>
+  const content = (
+    <>
+      {!collapsible ? (
+        <h2 className="text-foreground text-xl font-bold">
+          3. Pregled porudžbine
+        </h2>
+      ) : null}
 
       <ul className="mt-5 space-y-4">
         {items.map((item) => (
@@ -56,6 +65,26 @@ export function CheckoutCartSummary({ items }: CheckoutCartSummaryProps) {
       <p className="text-muted mt-4 text-sm leading-6">
         Cena i dostupnost biće ponovo proverene pre kreiranja porudžbine.
       </p>
+    </>
+  );
+
+  if (collapsible) {
+    return (
+      <details className="border-border bg-surface rounded-2xl border shadow-sm">
+        <summary className="focus-visible:ring-primary flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 rounded-2xl px-5 font-bold focus-visible:ring-2 focus-visible:outline-none">
+          <span>3. Pregled porudžbine</span>
+          <span className="text-primary text-sm">
+            {itemCount} artikala · {formatRsd(totalMinor)}
+          </span>
+        </summary>
+        <div className="border-border border-t px-5 pb-5">{content}</div>
+      </details>
+    );
+  }
+
+  return (
+    <aside className="border-border bg-surface rounded-2xl border p-5 shadow-sm lg:sticky lg:top-24 lg:p-6">
+      {content}
     </aside>
   );
 }

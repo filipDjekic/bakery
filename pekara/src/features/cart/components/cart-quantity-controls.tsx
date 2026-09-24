@@ -11,6 +11,7 @@ type CartQuantityControlsProps = {
   productId: string;
   productName: string;
   quantity: number;
+  compact?: boolean;
 };
 
 function resultMessage(result: CartActionResult): string {
@@ -37,6 +38,7 @@ export function CartQuantityControls({
   productId,
   productName,
   quantity,
+  compact = false,
 }: CartQuantityControlsProps) {
   const increment = useCartStore((state) => state.increment);
   const decrement = useCartStore((state) => state.decrement);
@@ -64,14 +66,14 @@ export function CartQuantityControls({
   }
 
   return (
-    <div className="mt-4">
+    <div className={compact ? 'mt-3' : 'mt-4'}>
       <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
           disabled={quantity <= CART_LIMITS.minItemQuantity}
           onClick={() => runQuantityAction(() => decrement(productId))}
           aria-label={`Smanji količinu proizvoda ${productName}`}
-          className="border-border hover:border-primary hover:text-primary focus-visible:ring-primary inline-flex size-10 items-center justify-center rounded-md border text-lg font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-40"
+          className="border-border hover:border-primary hover:text-primary focus-visible:ring-primary inline-flex size-11 items-center justify-center rounded-md border text-lg font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-40"
         >
           <span aria-hidden="true">−</span>
         </button>
@@ -87,7 +89,7 @@ export function CartQuantityControls({
               setQuantity(productId, Number(event.target.value)),
             )
           }
-          className="border-border focus-visible:ring-primary bg-surface-muted h-10 min-w-16 rounded-md border px-2 text-center text-sm font-semibold tabular-nums focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+          className="border-border focus-visible:ring-primary bg-surface-muted h-11 min-w-16 rounded-md border px-2 text-center text-sm font-semibold tabular-nums focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
         >
           {quantityOptions.map((option) => (
             <option key={option} value={option}>
@@ -101,7 +103,7 @@ export function CartQuantityControls({
           disabled={cannotIncrement}
           onClick={() => runQuantityAction(() => increment(productId))}
           aria-label={`Povećaj količinu proizvoda ${productName}`}
-          className="border-border hover:border-primary hover:text-primary focus-visible:ring-primary inline-flex size-10 items-center justify-center rounded-md border text-lg font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-40"
+          className="border-border hover:border-primary hover:text-primary focus-visible:ring-primary inline-flex size-11 items-center justify-center rounded-md border text-lg font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-40"
         >
           <span aria-hidden="true">+</span>
         </button>
@@ -109,7 +111,7 @@ export function CartQuantityControls({
         <button
           type="button"
           onClick={() => removeItem(productId)}
-          className="ml-auto min-h-10 rounded-md px-2 text-sm font-semibold text-red-700 underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:outline-none"
+          className="ml-auto min-h-11 rounded-md px-2 text-sm font-semibold text-red-700 underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-red-700 focus-visible:outline-none"
         >
           Ukloni
           <span className="sr-only"> {productName} iz korpe</span>

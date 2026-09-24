@@ -4,6 +4,8 @@ import { DateTime } from 'luxon';
 import { formatRsd } from '@/lib/money';
 import type { PublicOrderConfirmation } from '@/server/queries/order-confirmation';
 
+import { CopyOrderNumber } from './copy-order-number';
+
 const statusLabels: Record<PublicOrderConfirmation['status'], string> = {
   NEW: 'Primljena',
   ACCEPTED: 'Prihvaćena',
@@ -40,6 +42,7 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
           <p className="text-foreground mt-2 text-3xl font-extrabold tracking-wider break-all sm:text-4xl">
             {order.orderNumber}
           </p>
+          <CopyOrderNumber orderNumber={order.orderNumber} />
         </div>
 
         {order.status === 'CANCELLED' ? (

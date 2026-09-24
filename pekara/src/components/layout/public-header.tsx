@@ -1,7 +1,7 @@
-import { ShoppingBasket, Wheat } from 'lucide-react';
+import { Wheat } from 'lucide-react';
 import Link from 'next/link';
 
-import { CartCount } from '@/features/cart/components/cart-count';
+import { CartTrigger } from '@/features/cart/components/cart-trigger';
 import { getPublicChromeContent } from '@/server/queries/public-settings';
 
 import { Container } from './container';
@@ -30,13 +30,7 @@ export async function PublicHeader() {
           <PublicNav />
 
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-            <Link
-              href="/korpa"
-              className="border-border bg-surface text-foreground hover:border-primary focus-visible:ring-primary inline-flex min-h-11 items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-            >
-              <ShoppingBasket aria-hidden size={19} />
-              <CartCount />
-            </Link>
+            <CartTrigger />
             <MobileNav />
           </div>
         </div>

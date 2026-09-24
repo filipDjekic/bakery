@@ -119,10 +119,25 @@ test('malformed JSON and invalid payloads return stable validation errors', asyn
 });
 
 test('domain conflicts and rate limits use stable public errors', async () => {
+  const details = {
+    items: [
+      {
+        productId: payload.items[0].productId,
+        productName: 'Kroasan',
+        previousPriceMinor: 15000,
+        currentPriceMinor: 17000,
+      },
+    ],
+  };
   const unavailable = createOrdersPostHandler(
     dependencies({
       create: async () => {
-        throw new OrderDomainError('PRODUCT_UNAVAILABLE', 'internal detail');
+        throw new OrderDomainError(
+          'PRICE_CHANGED',
+          'internal detail',
+          undefined,
+          details,
+        );
       },
     }),
   );
@@ -141,7 +156,8 @@ test('domain conflicts and rate limits use stable public errors', async () => {
   const limitedResponse = await limited(request(JSON.stringify(payload)));
 
   assert.equal(unavailableResponse.status, 409);
-  assert.equal(unavailableBody.error.code, 'PRODUCT_UNAVAILABLE');
+  assert.equal(unavailableBody.error.code, 'PRICE_CHANGED');
+  assert.deepEqual(unavailableBody.error.details, details);
   assert.doesNotMatch(unavailableBody.error.message, /internal detail/i);
   assert.equal(limitedResponse.status, 429);
   assert.equal(limitedResponse.headers.get('retry-after'), '17');

@@ -1,103 +1,134 @@
+import { Check, Clock3 } from 'lucide-react';
 import type { FieldError, UseFormRegisterReturn } from 'react-hook-form';
 
-import type { PickupSlot } from '@/server/services/pickup-slots';
+import type {
+  PickupAvailability,
+  PickupSlot,
+} from '@/server/services/pickup-slots';
 
-type PickupSelectorProps = {
+type Props = {
+  availability: PickupAvailability;
   dateRegistration: UseFormRegisterReturn<'pickupDate'>;
   timeRegistration: UseFormRegisterReturn<'pickupAt'>;
   dateError?: FieldError;
   timeError?: FieldError;
   slots: PickupSlot[];
-  bakeryTimezone: string | null;
+  selectedDate: string;
+  selectedTime: string;
   isLoading: boolean;
   loadError: string | null;
-  hasSelectedDate: boolean;
   onDateChange: (value: string) => void;
+  onTimeChange: (value: string) => void;
 };
 
-const inputClassName =
-  'border-border bg-surface text-foreground focus-visible:ring-primary mt-2 min-h-11 w-full rounded-md border px-3 py-2 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none';
-
 export function PickupSelector({
+  availability,
   dateRegistration,
   timeRegistration,
   dateError,
   timeError,
   slots,
-  bakeryTimezone,
+  selectedDate,
+  selectedTime,
   isLoading,
   loadError,
-  hasSelectedDate,
   onDateChange,
-}: PickupSelectorProps) {
+  onTimeChange,
+}: Props) {
   return (
-    <fieldset className="border-border mt-8 border-t pt-7">
-      <legend className="text-foreground text-lg font-semibold">
-        Termin preuzimanja
-      </legend>
+    <fieldset className="border-border bg-surface rounded-2xl border p-5 shadow-sm sm:p-6">
+      <legend className="sr-only">2. Termin preuzimanja</legend>
+      <h2 className="text-xl font-bold">2. Termin preuzimanja</h2>
 
-      <div className="mt-5 grid gap-5 sm:grid-cols-2">
+      <div className="bg-surface-muted border-border mt-5 flex items-start gap-3 rounded-xl border p-4">
+        <Clock3
+          aria-hidden
+          className="text-primary mt-0.5 shrink-0"
+          size={20}
+        />
         <div>
-          <label htmlFor="pickupDate" className="text-sm font-semibold">
-            Datum
-          </label>
-          <input
-            {...dateRegistration}
-            id="pickupDate"
-            type="date"
-            aria-invalid={dateError ? true : undefined}
-            aria-describedby={dateError ? 'pickupDate-error' : undefined}
-            onChange={(event) => {
-              void dateRegistration.onChange(event);
-              onDateChange(event.target.value);
-            }}
-            className={inputClassName}
-          />
-          {dateError ? (
-            <p id="pickupDate-error" className="mt-2 text-sm text-red-700">
-              {dateError.message}
-            </p>
-          ) : null}
-        </div>
-
-        <div>
-          <label htmlFor="pickupAt" className="text-sm font-semibold">
-            Vreme
-          </label>
-          <select
-            {...timeRegistration}
-            id="pickupAt"
-            disabled={!hasSelectedDate || isLoading || slots.length === 0}
-            aria-invalid={timeError ? true : undefined}
-            aria-describedby={timeError ? 'pickupAt-error' : undefined}
-            className={inputClassName}
-          >
-            <option value="">
-              {isLoading ? 'Učitavanje termina…' : 'Izaberite vreme'}
-            </option>
-            {slots.map((slot) => (
-              <option key={slot.value} value={slot.value}>
-                {slot.label}
-              </option>
-            ))}
-          </select>
-          {timeError ? (
-            <p id="pickupAt-error" className="mt-2 text-sm text-red-700">
-              {timeError.message}
-            </p>
-          ) : null}
+          <p className="text-muted text-xs font-bold tracking-wide uppercase">
+            Najranije preuzimanje
+          </p>
+          <p className="mt-1 font-semibold">
+            {availability.earliestSlot
+              ? `${availability.earliestSlot.dateLabel} u ${availability.earliestSlot.label}`
+              : 'Trenutno nema dostupnih termina za preuzimanje.'}
+          </p>
         </div>
       </div>
 
+      <input {...dateRegistration} type="hidden" />
+      <input {...timeRegistration} type="hidden" />
+
+      <p className="mt-6 text-sm font-semibold">Izaberite dan</p>
+      <div className="-mx-1 mt-3 flex gap-2 overflow-x-auto px-1 pb-2">
+        {availability.dates.map((option) => {
+          const selected = option.date === selectedDate;
+          return (
+            <button
+              key={option.date}
+              type="button"
+              aria-pressed={selected}
+              onClick={() => onDateChange(option.date)}
+              className={`focus-visible:ring-primary min-h-14 shrink-0 rounded-xl border px-4 py-2 text-left transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${selected ? 'border-primary bg-primary text-white' : 'border-border bg-surface hover:border-primary'}`}
+            >
+              <span className="flex items-center gap-2 font-bold">
+                {selected ? <Check aria-hidden size={15} /> : null}
+                {option.label}
+              </span>
+              <span
+                className={`block text-xs ${selected ? 'text-orange-50' : 'text-muted'}`}
+              >
+                {option.shortDateLabel}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+      {dateError ? (
+        <p className="mt-2 text-sm text-red-700">{dateError.message}</p>
+      ) : null}
+
+      <p className="mt-5 text-sm font-semibold">Izaberite vreme</p>
+      {isLoading ? (
+        <p role="status" className="text-muted mt-3">
+          Učitavanje termina…
+        </p>
+      ) : null}
+      {!isLoading && slots.length > 0 ? (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {slots.map((slot) => {
+            const selected = selectedTime === slot.value;
+            return (
+              <button
+                key={slot.value}
+                type="button"
+                aria-pressed={selected}
+                onClick={() => onTimeChange(slot.value)}
+                className={`focus-visible:ring-primary inline-flex min-h-11 items-center gap-2 rounded-lg border px-4 font-semibold focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${selected ? 'border-primary bg-primary text-white' : 'border-border bg-surface hover:border-primary'}`}
+              >
+                {selected ? <Check aria-hidden size={15} /> : null}
+                {slot.label}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
       <div aria-live="polite" className="text-muted mt-3 min-h-6 text-sm">
         {loadError ? <p className="text-red-700">{loadError}</p> : null}
-        {!loadError && hasSelectedDate && !isLoading && slots.length === 0 ? (
+        {!loadError && selectedDate && !isLoading && slots.length === 0 ? (
           <p>Nema dostupnih termina za izabrani datum.</p>
         ) : null}
-        {!loadError && bakeryTimezone ? (
-          <p>Termini su prikazani u vremenskoj zoni {bakeryTimezone}.</p>
+        {!availability.orderAcceptingEnabled ? (
+          <p className="text-red-700">
+            Pekara trenutno ne prima nove porudžbine.
+          </p>
         ) : null}
       </div>
+      {timeError ? (
+        <p className="mt-2 text-sm text-red-700">{timeError.message}</p>
+      ) : null}
     </fieldset>
   );
 }

@@ -6,6 +6,30 @@ import { getPublicChromeSettings } from '@/server/queries/public-settings';
 import { Container } from './container';
 import { publicNavigation } from './public-nav';
 
+const weekdayNames = [
+  'Ponedeljak',
+  'Utorak',
+  'Sreda',
+  'Četvrtak',
+  'Petak',
+  'Subota',
+  'Nedelja',
+];
+
+function hoursLabel(
+  intervals: { openMinute: number; closeMinute: number }[],
+): string {
+  if (intervals.length === 0) return 'Zatvoreno';
+  const time = (minute: number) =>
+    `${String(Math.floor(minute / 60)).padStart(2, '0')}:${String(minute % 60).padStart(2, '0')}`;
+  return intervals
+    .map(
+      ({ openMinute, closeMinute }) =>
+        `${time(openMinute)}–${time(closeMinute)}`,
+    )
+    .join(', ');
+}
+
 export async function PublicFooter() {
   const settings = await getPublicChromeSettings();
   const currentYear = new Date().getFullYear();
@@ -42,7 +66,16 @@ export async function PublicFooter() {
                     className="text-primary mt-0.5 shrink-0"
                     size={18}
                   />
-                  <span>{settings.address}</span>
+                  {settings.address.trim() ? (
+                    <a
+                      className="hover:text-primary hover:underline"
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(settings.address)}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {settings.address}
+                    </a>
+                  ) : null}
                 </li>
                 <li className="flex gap-3">
                   <Phone
@@ -73,6 +106,25 @@ export async function PublicFooter() {
                 />
                 {settings.isOpen ? 'Otvoreno' : 'Zatvoreno'}
               </p>
+              <details className="mt-4 text-sm">
+                <summary className="text-primary focus-visible:ring-primary cursor-pointer rounded-sm font-semibold focus-visible:ring-2 focus-visible:outline-none">
+                  Pogledaj radno vreme
+                </summary>
+                <dl className="mt-3 grid gap-1.5">
+                  {weekdayNames.map((day, index) => (
+                    <div key={day} className="flex justify-between gap-4">
+                      <dt>{day}</dt>
+                      <dd className="text-right font-medium">
+                        {hoursLabel(
+                          settings.businessHours.filter(
+                            (hours) => hours.weekday === index + 1,
+                          ),
+                        )}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </details>
             </div>
           ) : null}
 

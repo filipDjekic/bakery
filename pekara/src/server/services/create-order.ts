@@ -8,6 +8,7 @@ import { calculateMoneyTotalMinor } from '../../lib/money.ts';
 import { generateOrderNumber } from '../../lib/order-number.ts';
 import { createCheckoutPayloadHash } from '../../lib/payload-hash.ts';
 import type {
+  OrderConflictDetails,
   OrderConfirmationDto,
   OrderErrorCode,
 } from '../../types/order.ts';
@@ -30,12 +31,19 @@ import { generatePickupSlots } from './pickup-slots.ts';
 export class OrderDomainError extends Error {
   readonly code: OrderErrorCode;
   readonly issues?: ZodIssue[];
+  readonly details?: OrderConflictDetails;
 
-  constructor(code: OrderErrorCode, message: string, issues?: ZodIssue[]) {
+  constructor(
+    code: OrderErrorCode,
+    message: string,
+    issues?: ZodIssue[],
+    details?: OrderConflictDetails,
+  ) {
     super(message);
     this.name = 'OrderDomainError';
     this.code = code;
     this.issues = issues;
+    this.details = details;
   }
 }
 
@@ -153,6 +161,8 @@ export async function createOrder(
     products.map((product) => [product.id, product]),
   );
   const snapshots: OrderItemSnapshot[] = [];
+  const unavailableItems: OrderConflictDetails['items'] = [];
+  const changedPriceItems: OrderConflictDetails['items'] = [];
 
   for (const item of request.items) {
     const product = productsById.get(item.productId);
@@ -163,20 +173,24 @@ export async function createOrder(
       !product.isAvailable ||
       !product.categoryIsActive
     ) {
-      throw new OrderDomainError(
-        'PRODUCT_UNAVAILABLE',
-        'Jedan ili više proizvoda više nisu dostupni.',
-      );
+      unavailableItems.push({
+        productId: item.productId,
+        productName: product?.name ?? null,
+      });
+      continue;
     }
 
     if (
       item.displayPriceMinor !== undefined &&
       item.displayPriceMinor !== product.priceMinor
     ) {
-      throw new OrderDomainError(
-        'PRICE_CHANGED',
-        'Cena jednog ili više proizvoda je promenjena.',
-      );
+      changedPriceItems.push({
+        productId: item.productId,
+        productName: product.name,
+        previousPriceMinor: item.displayPriceMinor,
+        currentPriceMinor: product.priceMinor,
+      });
+      continue;
     }
 
     const subtotalMinor = product.priceMinor * item.quantity;
@@ -187,6 +201,23 @@ export async function createOrder(
       quantity: item.quantity,
       subtotalMinor,
     });
+  }
+
+  if (unavailableItems.length > 0) {
+    throw new OrderDomainError(
+      'PRODUCT_UNAVAILABLE',
+      'Jedan ili više proizvoda više nisu dostupni.',
+      undefined,
+      { items: unavailableItems },
+    );
+  }
+  if (changedPriceItems.length > 0) {
+    throw new OrderDomainError(
+      'PRICE_CHANGED',
+      'Cena jednog ili više proizvoda je promenjena.',
+      undefined,
+      { items: changedPriceItems },
+    );
   }
 
   let totalMinor: number;

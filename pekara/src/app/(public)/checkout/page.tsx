@@ -1,14 +1,20 @@
 import type { Metadata } from 'next';
+import { connection } from 'next/server';
 
 import { Container } from '@/components/layout/container';
 import { CheckoutForm } from '@/features/checkout/components/checkout-form';
+import { getPickupAvailability } from '@/server/services/pickup-slots';
 
 export const metadata: Metadata = {
   title: 'Checkout',
   robots: { index: false, follow: false },
 };
 
-export default function CheckoutPage() {
+export const instant = false;
+
+export default async function CheckoutPage() {
+  await connection();
+  const pickupAvailability = await getPickupAvailability();
   return (
     <div className="py-10 sm:py-14 lg:py-20">
       <Container>
@@ -25,7 +31,7 @@ export default function CheckoutPage() {
         </header>
 
         <div className="mt-10">
-          <CheckoutForm />
+          <CheckoutForm pickupAvailability={pickupAvailability} />
         </div>
       </Container>
     </div>

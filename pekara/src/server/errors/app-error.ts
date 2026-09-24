@@ -1,10 +1,7 @@
 import type { AppErrorCode } from './error-codes.ts';
 import { DEFAULT_ERROR_DEFINITIONS } from './error-codes.ts';
 
-export type SafeErrorDetails = Record<
-  string,
-  string | number | boolean | null | string[]
->;
+export type SafeErrorDetails = Record<string, unknown>;
 
 export class AppError extends Error {
   readonly code: AppErrorCode;

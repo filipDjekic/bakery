@@ -6,6 +6,7 @@ import type { CatalogProduct } from '@/server/queries/catalog';
 
 import { CompactCartControl } from './compact-cart-control';
 import { ProductImagePlaceholder } from './product-image-placeholder';
+import { productImageAspectRatio } from '../lib/product-image';
 
 export function ProductCard({ product }: { product: CatalogProduct }) {
   const productHref = `/proizvodi/${encodeURIComponent(product.slug)}`;
@@ -16,6 +17,11 @@ export function ProductCard({ product }: { product: CatalogProduct }) {
         href={productHref}
         aria-label={`Pogledaj proizvod ${product.name}`}
         className="bg-surface-muted focus-visible:ring-primary relative block aspect-[4/3] overflow-hidden focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset"
+        style={{
+          aspectRatio:
+            productImageAspectRatio(product.imageWidth, product.imageHeight) ??
+            '4 / 3',
+        }}
       >
         {product.imageUrl ? (
           <Image

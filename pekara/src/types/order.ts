@@ -26,6 +26,16 @@ export type PublicErrorResponse = {
   error: {
     code: OrderErrorCode;
     message: string;
+    details?: OrderConflictDetails;
   };
   requestId: string;
 };
+
+export type OrderConflictItem = {
+  productId: string;
+  productName: string | null;
+  previousPriceMinor?: number;
+  currentPriceMinor?: number;
+};
+
+export type OrderConflictDetails = { items: OrderConflictItem[] };

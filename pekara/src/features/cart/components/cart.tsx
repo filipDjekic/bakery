@@ -2,6 +2,7 @@
 
 import { useCartHydration } from '../hooks/use-cart-hydration';
 import { useCartStore } from '../store/cart-store';
+import { getCartItemCount, getCartTotalMinor } from '../lib/cart-totals';
 import { CartEmptyState } from './cart-empty-state';
 import { CartItem } from './cart-item';
 import { CartSummary } from './cart-summary';
@@ -23,11 +24,8 @@ export function Cart() {
     return <CartEmptyState />;
   }
 
-  const itemCount = items.reduce((total, item) => total + item.quantity, 0);
-  const totalMinor = items.reduce(
-    (total, item) => total + item.displayPriceMinor * item.quantity,
-    0,
-  );
+  const itemCount = getCartItemCount(items);
+  const totalMinor = getCartTotalMinor(items);
 
   return (
     <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">

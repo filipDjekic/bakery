@@ -19,6 +19,17 @@ export type PublicProductDetail = CatalogProduct & {
   };
 };
 
+export function selectRelatedProducts(
+  products: CatalogProduct[],
+  currentProductId: string,
+  limit = 4,
+): CatalogProduct[] {
+  return products
+    .filter((product) => product.id !== currentProductId)
+    .sort((left, right) => Number(right.isAvailable) - Number(left.isAvailable))
+    .slice(0, limit);
+}
+
 function isValidProductSlug(slug: string): slug is string & Varchar<140> {
   return (
     slug.length <= PRODUCT_SLUG_MAX_LENGTH && PRODUCT_SLUG_PATTERN.test(slug)
@@ -62,6 +73,41 @@ export async function getPublicProductBySlug(
       slug: product.category.slug,
     },
   };
+}
+
+export async function getRelatedPublicProducts(
+  categoryId: string,
+  currentProductId: string,
+  limit = 4,
+): Promise<CatalogProduct[]> {
+  'use cache';
+  cacheLife('hours');
+  cacheTag(PUBLIC_CACHE_TAGS.catalog, PUBLIC_CACHE_TAGS.categories);
+
+  const category = await db.orm.public.Category.include(
+    'products',
+    (products) =>
+      products
+        .where({ isActive: true })
+        .orderBy((product) => product.sortOrder.asc())
+        .orderBy((product) => product.id.asc()),
+  )
+    .where({ id: categoryId, isActive: true })
+    .first();
+
+  if (!category) return [];
+  const products = category.products.map((product) => ({
+    id: product.id,
+    name: product.name,
+    slug: product.slug,
+    description: product.description,
+    priceMinor: product.priceMinor,
+    imageUrl: product.imageUrl,
+    imageWidth: product.imageWidth,
+    imageHeight: product.imageHeight,
+    isAvailable: product.isAvailable,
+  }));
+  return selectRelatedProducts(products, currentProductId, limit);
 }
 
 export async function getPublicProductSitemapEntries() {

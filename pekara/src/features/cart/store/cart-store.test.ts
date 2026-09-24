@@ -45,6 +45,12 @@ test('adds, updates and removes cart items', () => {
   });
   assert.equal(useCartStore.getState().items[0]?.quantity, 7);
 
+  assert.deepEqual(
+    useCartStore.getState().updateItemPrice('product-1', 17500),
+    { ok: true },
+  );
+  assert.equal(useCartStore.getState().items[0]?.displayPriceMinor, 17500);
+
   assert.deepEqual(useCartStore.getState().removeItem('product-1'), {
     ok: true,
   });
@@ -116,6 +122,14 @@ test('rejects unsafe item prices and operations on missing products', () => {
   assert.deepEqual(useCartStore.getState().removeItem('missing'), {
     ok: false,
     reason: 'ITEM_NOT_FOUND',
+  });
+  assert.deepEqual(useCartStore.getState().updateItemPrice('missing', 100), {
+    ok: false,
+    reason: 'ITEM_NOT_FOUND',
+  });
+  assert.deepEqual(useCartStore.getState().updateItemPrice('product-1', -1), {
+    ok: false,
+    reason: 'INVALID_ITEM',
   });
 });
 

@@ -27,3 +27,24 @@ export async function getBusinessHoursForWeekday(
     closeMinute,
   }));
 }
+
+export async function getAllBusinessHours(
+  bakerySettingsId: string,
+): Promise<PickupBusinessHours[]> {
+  const rows = await db.orm.public.BusinessHours.select(
+    'weekday',
+    'openMinute',
+    'closeMinute',
+  )
+    .where({ bakerySettingsId })
+    .orderBy([
+      (hours) => hours.weekday.asc(),
+      (hours) => hours.openMinute.asc(),
+    ])
+    .all();
+  return rows.map(({ weekday, openMinute, closeMinute }) => ({
+    weekday,
+    openMinute,
+    closeMinute,
+  }));
+}

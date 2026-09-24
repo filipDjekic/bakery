@@ -160,6 +160,24 @@ export const useCartStore = create<CartState>()(
           : failure('ITEM_NOT_FOUND');
       },
 
+      updateItemPrice(productId, displayPriceMinor) {
+        if (!Number.isSafeInteger(displayPriceMinor) || displayPriceMinor < 0) {
+          return failure('INVALID_ITEM');
+        }
+        const { items } = get();
+        if (!items.some((item) => item.productId === productId)) {
+          return failure('ITEM_NOT_FOUND');
+        }
+        set({
+          items: items.map((item) =>
+            item.productId === productId
+              ? { ...item, displayPriceMinor }
+              : item,
+          ),
+        });
+        return SUCCESS;
+      },
+
       clear() {
         set({ items: [] });
         return SUCCESS;

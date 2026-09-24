@@ -26,6 +26,10 @@ export type CartState = {
   setQuantity: (productId: string, quantity: number) => CartActionResult;
   increment: (productId: string) => CartActionResult;
   decrement: (productId: string) => CartActionResult;
+  updateItemPrice: (
+    productId: string,
+    displayPriceMinor: number,
+  ) => CartActionResult;
   clear: () => CartActionResult;
 };
 

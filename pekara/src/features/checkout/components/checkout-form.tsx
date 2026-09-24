@@ -8,7 +8,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useCartHydration } from '@/features/cart/hooks/use-cart-hydration';
 import { useCartStore } from '@/features/cart/store/cart-store';
-import type { PickupSlot } from '@/server/services/pickup-slots';
+import type {
+  PickupAvailability,
+  PickupSlot,
+} from '@/server/services/pickup-slots';
+import type { OrderConflictDetails, OrderErrorCode } from '@/types/order';
 import {
   checkoutFormSchema,
   type CheckoutFormInput,
@@ -21,6 +25,7 @@ import {
   createOrderRequest,
 } from '../api/create-order';
 import { CheckoutCartSummary } from './checkout-cart-summary';
+import { CheckoutConflicts } from './checkout-conflicts';
 import { CheckoutSubmitButton } from './checkout-submit-button';
 import { PickupSelector } from './pickup-selector';
 
@@ -68,19 +73,29 @@ function isPickupSlotsResponse(value: unknown): value is PickupSlotsResponse {
   );
 }
 
-export function CheckoutForm() {
+export function CheckoutForm({
+  pickupAvailability,
+}: {
+  pickupAvailability: PickupAvailability;
+}) {
   const router = useRouter();
   const items = useCartStore((state) => state.items);
   const clearCart = useCartStore((state) => state.clear);
+  const removeItem = useCartStore((state) => state.removeItem);
+  const updateItemPrice = useCartStore((state) => state.updateItemPrice);
   const hasHydrated = useCartHydration();
   const requestController = useRef<AbortController>(null);
   const submitErrorRef = useRef<HTMLParagraphElement>(null);
   const [slots, setSlots] = useState<PickupSlot[]>([]);
   const [selectedDate, setSelectedDate] = useState('');
-  const [bakeryTimezone, setBakeryTimezone] = useState<string | null>(null);
+  const [selectedTime, setSelectedTime] = useState('');
   const [isLoadingSlots, setIsLoadingSlots] = useState(false);
   const [slotLoadError, setSlotLoadError] = useState<string | null>(null);
   const [submitMessage, setSubmitMessage] = useState('');
+  const [conflict, setConflict] = useState<{
+    code: OrderErrorCode;
+    details: OrderConflictDetails;
+  } | null>(null);
   const {
     register,
     handleSubmit,
@@ -114,11 +129,13 @@ export function CheckoutForm() {
   async function loadSlots(date: string) {
     requestController.current?.abort();
     setSelectedDate(date);
+    setSelectedTime('');
+    setValue('pickupDate', date, { shouldValidate: true });
     setValue('pickupAt', '');
     clearErrors('pickupAt');
     setSubmitMessage('');
+    setConflict(null);
     setSlots([]);
-    setBakeryTimezone(null);
     setSlotLoadError(null);
 
     if (!date) {
@@ -146,7 +163,6 @@ export function CheckoutForm() {
       }
 
       setSlots(data.slots);
-      setBakeryTimezone(data.bakeryTimezone);
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') {
         return;
@@ -214,6 +230,15 @@ export function CheckoutForm() {
       clearCart();
       router.push(`/porudzbina/${confirmation.orderId}`);
     } catch (error) {
+      if (
+        error instanceof CreateOrderApiError &&
+        (error.code === 'PRICE_CHANGED' ||
+          error.code === 'PRODUCT_UNAVAILABLE') &&
+        error.details
+      ) {
+        setConflict({ code: error.code, details: error.details });
+      }
+
       const message =
         error instanceof CreateOrderApiError
           ? (orderErrorMessages[error.code] ?? error.message)
@@ -262,113 +287,153 @@ export function CheckoutForm() {
       <form
         noValidate
         onSubmit={handleSubmit(submitOrder)}
-        className="border-border bg-surface rounded-xl border p-5 sm:p-7"
+        className="space-y-6"
       >
-        <h2 className="text-foreground text-xl font-semibold">
-          Kontakt podaci
-        </h2>
+        <section className="border-border bg-surface rounded-2xl border p-5 shadow-sm sm:p-7">
+          <h2 className="text-foreground text-xl font-bold">1. Kontakt</h2>
 
-        <div className="mt-6 grid gap-5 sm:grid-cols-2">
-          <div className="sm:col-span-2">
-            <label htmlFor="customerName" className="text-sm font-semibold">
-              Ime i prezime
-            </label>
-            <input
-              {...register('customerName')}
-              id="customerName"
-              autoComplete="name"
-              aria-invalid={errors.customerName ? true : undefined}
-              aria-describedby={
-                errors.customerName ? 'customerName-error' : undefined
-              }
-              className={inputClassName}
-            />
-            {errors.customerName ? (
-              <p id="customerName-error" className="mt-2 text-sm text-red-700">
-                {errors.customerName.message}
-              </p>
-            ) : null}
-          </div>
+          <div className="mt-6 grid gap-5 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+              <label htmlFor="customerName" className="text-sm font-semibold">
+                Ime i prezime
+              </label>
+              <input
+                {...register('customerName')}
+                id="customerName"
+                autoComplete="name"
+                aria-invalid={errors.customerName ? true : undefined}
+                aria-describedby={
+                  errors.customerName ? 'customerName-error' : undefined
+                }
+                className={inputClassName}
+              />
+              {errors.customerName ? (
+                <p
+                  id="customerName-error"
+                  className="mt-2 text-sm text-red-700"
+                >
+                  {errors.customerName.message}
+                </p>
+              ) : null}
+            </div>
 
-          <div>
-            <label htmlFor="customerPhone" className="text-sm font-semibold">
-              Telefon
-            </label>
-            <input
-              {...register('customerPhone')}
-              id="customerPhone"
-              type="tel"
-              autoComplete="tel"
-              inputMode="tel"
-              placeholder="064 123 4567"
-              aria-invalid={errors.customerPhone ? true : undefined}
-              aria-describedby={
-                errors.customerPhone ? 'customerPhone-error' : undefined
-              }
-              className={inputClassName}
-            />
-            {errors.customerPhone ? (
-              <p id="customerPhone-error" className="mt-2 text-sm text-red-700">
-                {errors.customerPhone.message}
-              </p>
-            ) : null}
-          </div>
+            <div>
+              <label htmlFor="customerPhone" className="text-sm font-semibold">
+                Telefon
+              </label>
+              <input
+                {...register('customerPhone')}
+                id="customerPhone"
+                type="tel"
+                autoComplete="tel"
+                inputMode="tel"
+                placeholder="064 123 4567"
+                aria-invalid={errors.customerPhone ? true : undefined}
+                aria-describedby={
+                  errors.customerPhone ? 'customerPhone-error' : undefined
+                }
+                className={inputClassName}
+              />
+              {errors.customerPhone ? (
+                <p
+                  id="customerPhone-error"
+                  className="mt-2 text-sm text-red-700"
+                >
+                  {errors.customerPhone.message}
+                </p>
+              ) : null}
+            </div>
 
-          <div>
-            <label htmlFor="customerEmail" className="text-sm font-semibold">
-              Email <span className="text-muted font-normal">(opciono)</span>
-            </label>
-            <input
-              {...register('customerEmail')}
-              id="customerEmail"
-              type="email"
-              autoComplete="email"
-              aria-invalid={errors.customerEmail ? true : undefined}
-              aria-describedby={
-                errors.customerEmail ? 'customerEmail-error' : undefined
-              }
-              className={inputClassName}
-            />
-            {errors.customerEmail ? (
-              <p id="customerEmail-error" className="mt-2 text-sm text-red-700">
-                {errors.customerEmail.message}
-              </p>
-            ) : null}
-          </div>
+            <div>
+              <label htmlFor="customerEmail" className="text-sm font-semibold">
+                Email <span className="text-muted font-normal">(opciono)</span>
+              </label>
+              <input
+                {...register('customerEmail')}
+                id="customerEmail"
+                type="email"
+                autoComplete="email"
+                aria-invalid={errors.customerEmail ? true : undefined}
+                aria-describedby={
+                  errors.customerEmail ? 'customerEmail-error' : undefined
+                }
+                className={inputClassName}
+              />
+              {errors.customerEmail ? (
+                <p
+                  id="customerEmail-error"
+                  className="mt-2 text-sm text-red-700"
+                >
+                  {errors.customerEmail.message}
+                </p>
+              ) : null}
+            </div>
 
-          <div className="sm:col-span-2">
-            <label htmlFor="note" className="text-sm font-semibold">
-              Napomena <span className="text-muted font-normal">(opciono)</span>
-            </label>
-            <textarea
-              {...register('note')}
-              id="note"
-              rows={4}
-              maxLength={500}
-              aria-invalid={errors.note ? true : undefined}
-              aria-describedby={errors.note ? 'note-error' : undefined}
-              className={`${inputClassName} resize-y`}
-            />
-            {errors.note ? (
-              <p id="note-error" className="mt-2 text-sm text-red-700">
-                {errors.note.message}
-              </p>
-            ) : null}
+            <div className="sm:col-span-2">
+              <label htmlFor="note" className="text-sm font-semibold">
+                Napomena{' '}
+                <span className="text-muted font-normal">(opciono)</span>
+              </label>
+              <textarea
+                {...register('note')}
+                id="note"
+                rows={4}
+                maxLength={500}
+                aria-invalid={errors.note ? true : undefined}
+                aria-describedby={errors.note ? 'note-error' : undefined}
+                className={`${inputClassName} resize-y`}
+              />
+              {errors.note ? (
+                <p id="note-error" className="mt-2 text-sm text-red-700">
+                  {errors.note.message}
+                </p>
+              ) : null}
+            </div>
           </div>
-        </div>
+        </section>
 
         <PickupSelector
+          availability={pickupAvailability}
           dateRegistration={dateRegistration}
           timeRegistration={timeRegistration}
           dateError={errors.pickupDate}
           timeError={errors.pickupAt}
           slots={slots}
-          bakeryTimezone={bakeryTimezone}
+          selectedDate={selectedDate}
+          selectedTime={selectedTime}
           isLoading={isLoadingSlots}
           loadError={slotLoadError}
-          hasSelectedDate={selectedDate.length > 0}
           onDateChange={(date) => void loadSlots(date)}
+          onTimeChange={(value) => {
+            setSelectedTime(value);
+            setValue('pickupAt', value, { shouldValidate: true });
+            clearErrors('pickupAt');
+          }}
         />
+
+        <div className="lg:hidden">
+          <CheckoutCartSummary items={items} collapsible />
+        </div>
+
+        {conflict ? (
+          <CheckoutConflicts
+            code={conflict.code}
+            details={conflict.details}
+            cartNames={
+              new Map(items.map((item) => [item.productId, item.name]))
+            }
+            onAcceptPrice={(id, price) => {
+              updateItemPrice(id, price);
+              setConflict(null);
+              clearErrors('root');
+            }}
+            onRemove={(id) => {
+              removeItem(id);
+              setConflict(null);
+              clearErrors('root');
+            }}
+          />
+        ) : null}
 
         {errors.root?.message ? (
           <p
@@ -385,12 +450,20 @@ export function CheckoutForm() {
         </p>
 
         <CheckoutSubmitButton
-          disabled={isSubmitting || isLoadingSlots || slots.length === 0}
+          disabled={
+            isSubmitting ||
+            isLoadingSlots ||
+            slots.length === 0 ||
+            !selectedTime ||
+            !pickupAvailability.orderAcceptingEnabled
+          }
           isSubmitting={isSubmitting}
         />
       </form>
 
-      <CheckoutCartSummary items={items} />
+      <div className="hidden lg:block">
+        <CheckoutCartSummary items={items} />
+      </div>
     </div>
   );
 }

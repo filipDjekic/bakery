@@ -14,7 +14,11 @@ import { normalizeAppError } from './safe-action-result.ts';
 
 function knownHttpError(error: unknown): AppError | null {
   if (error instanceof OrderDomainError)
-    return new AppError({ code: error.code as AppErrorCode, cause: error });
+    return new AppError({
+      code: error.code as AppErrorCode,
+      ...(error.details ? { details: error.details } : {}),
+      cause: error,
+    });
   if (error instanceof IdempotencyConflictError)
     return new AppError({ code: 'IDEMPOTENCY_CONFLICT', cause: error });
   if (error instanceof OrderRateLimitExceededError)
