@@ -21,10 +21,7 @@ test('accepts the maximum and rejects overflow or invalid money', () => {
   );
   assert.throws(
     () =>
-      calculateMoneyTotalMinor(
-        [{ unitPriceMinor: 501, quantity: 2 }],
-        1_000,
-      ),
+      calculateMoneyTotalMinor([{ unitPriceMinor: 501, quantity: 2 }], 1_000),
     RangeError,
   );
   assert.throws(

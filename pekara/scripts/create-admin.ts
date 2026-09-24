@@ -71,9 +71,7 @@ async function main() {
     process.env.NODE_ENV === 'production' &&
     process.env.CONFIRM_PRODUCTION_ADMIN_BOOTSTRAP !== 'CREATE_FIRST_ADMIN'
   ) {
-    throw new Error(
-      'Production admin bootstrap was not explicitly confirmed.',
-    );
+    throw new Error('Production admin bootstrap was not explicitly confirmed.');
   }
 
   if (!email || !name || !password) {

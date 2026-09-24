@@ -15,8 +15,6 @@ describe('unit and component test environment', () => {
   test('renders React components with DOM matchers', () => {
     render(<TestControl />);
 
-    expect(
-      screen.getByRole('button', { name: 'Potvrdi' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Potvrdi' })).toBeInTheDocument();
   });
 });

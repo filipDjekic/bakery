@@ -1,7 +1,12 @@
 import { z } from 'zod';
 
 const status = z.enum([
-  'NEW', 'ACCEPTED', 'IN_PREPARATION', 'READY', 'COMPLETED', 'CANCELLED',
+  'NEW',
+  'ACCEPTED',
+  'IN_PREPARATION',
+  'READY',
+  'COMPLETED',
+  'CANCELLED',
 ]);
 
 export const orderStatusChangeSchema = z
@@ -15,5 +20,8 @@ export const orderStatusChangeSchema = z
     (value) =>
       value.targetStatus !== 'CANCELLED' ||
       Boolean(value.cancellationReason?.length),
-    { path: ['cancellationReason'], message: 'Razlog otkazivanja je obavezan.' },
+    {
+      path: ['cancellationReason'],
+      message: 'Razlog otkazivanja je obavezan.',
+    },
   );

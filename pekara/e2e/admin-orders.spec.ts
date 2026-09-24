@@ -1,7 +1,10 @@
 import { E2E_ADMIN } from './fixtures/auth.ts';
 import { expect, test } from './fixtures/db.ts';
 
-test('admin logs in, updates a new order and sees persisted status after reload', async ({ page, seed }) => {
+test('admin logs in, updates a new order and sees persisted status after reload', async ({
+  page,
+  seed,
+}) => {
   await page.goto('/admin/login');
   await page.getByLabel('Email').fill(E2E_ADMIN.email);
   await page.getByLabel('Lozinka').fill(E2E_ADMIN.password);
@@ -15,7 +18,9 @@ test('admin logs in, updates a new order and sees persisted status after reload'
   await expect(page.getByText('Status:')).toContainText('ACCEPTED');
 });
 
-test('invalid login is rejected without opening admin pages', async ({ page }) => {
+test('invalid login is rejected without opening admin pages', async ({
+  page,
+}) => {
   await page.goto('/admin/login');
   await page.getByLabel('Email').fill(E2E_ADMIN.email);
   await page.getByLabel('Lozinka').fill('pogresna-lozinka');

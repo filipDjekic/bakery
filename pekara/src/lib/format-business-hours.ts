@@ -2,9 +2,9 @@ function formatMinuteOfDay(minutes: number): string {
   const hours = Math.floor(minutes / 60);
   const remainingMinutes = minutes % 60;
 
-  return `${hours.toString().padStart(2, "0")}:${remainingMinutes
+  return `${hours.toString().padStart(2, '0')}:${remainingMinutes
     .toString()
-    .padStart(2, "0")}`;
+    .padStart(2, '0')}`;
 }
 
 type BusinessHoursInterval = {
@@ -16,7 +16,7 @@ export function formatBusinessHours(
   intervals: BusinessHoursInterval[],
 ): string {
   if (intervals.length === 0) {
-    return "Danas zatvoreno";
+    return 'Danas zatvoreno';
   }
 
   return intervals
@@ -26,5 +26,5 @@ export function formatBusinessHours(
           interval.closeMinute,
         )}`,
     )
-    .join(", ");
+    .join(', ');
 }

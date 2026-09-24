@@ -5,7 +5,15 @@ import { getIntegrationDatabaseUrl } from './db.ts';
 const command = process.platform === 'win32' ? 'pnpm.cmd' : 'pnpm';
 const result = spawnSync(
   command,
-  ['exec', 'prisma', 'db', 'migrate', '--db', getIntegrationDatabaseUrl(), '--yes'],
+  [
+    'exec',
+    'prisma',
+    'db',
+    'migrate',
+    '--db',
+    getIntegrationDatabaseUrl(),
+    '--yes',
+  ],
   { stdio: 'inherit', env: process.env },
 );
 

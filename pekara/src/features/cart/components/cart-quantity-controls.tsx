@@ -87,7 +87,7 @@ export function CartQuantityControls({
               setQuantity(productId, Number(event.target.value)),
             )
           }
-          className="border-border focus-visible:ring-primary h-10 min-w-16 rounded-md border bg-surface-muted px-2 text-center text-sm font-semibold tabular-nums focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+          className="border-border focus-visible:ring-primary bg-surface-muted h-10 min-w-16 rounded-md border px-2 text-center text-sm font-semibold tabular-nums focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
         >
           {quantityOptions.map((option) => (
             <option key={option} value={option}>

@@ -22,16 +22,17 @@ export async function resetIntegrationDatabase(): Promise<void> {
   const pool = createIntegrationPool();
 
   try {
-    const tables = TEST_TABLES.map((table) => `"public"."${table}"`).join(
-      ', ',
-    );
+    const tables = TEST_TABLES.map((table) => `"public"."${table}"`).join(', ');
     await pool.query(`TRUNCATE TABLE ${tables} RESTART IDENTITY CASCADE`);
   } finally {
     await pool.end();
   }
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(process.argv[1]).href
+) {
   await resetIntegrationDatabase();
   const [{ db }, { seedOrderSettingsFixture }] = await Promise.all([
     import('../../src/prisma/db.ts'),

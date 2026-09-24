@@ -22,6 +22,8 @@ export async function updateOrderStatusAction(
     revalidatePath('/admin/orders');
     return { success: 'Status je sačuvan.' };
   } catch {
-    return { error: 'Status nije promenjen. Osvežite stranicu i pokušajte ponovo.' };
+    return {
+      error: 'Status nije promenjen. Osvežite stranicu i pokušajte ponovo.',
+    };
   }
 }

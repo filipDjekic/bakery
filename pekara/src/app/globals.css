@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --background: #fffaf3;
@@ -12,6 +12,11 @@
 
   --primary: #a94e1b;
   --primary-hover: #873a12;
+  --accent: #f3c987;
+  --success: #297a4a;
+  --warning: #b96b13;
+  --danger: #b42318;
+  --ring: #a94e1b;
 }
 
 @theme inline {
@@ -26,6 +31,11 @@
 
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
+  --color-accent: var(--accent);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-ring: var(--ring);
 }
 
 body {

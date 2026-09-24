@@ -15,9 +15,14 @@ async function expectNoSeriousViolations(page: Page) {
   ).toEqual([]);
 }
 
-test('public catalog, cart and checkout have accessible keyboard boundaries', async ({ page, seed }) => {
+test('public catalog, cart and checkout have accessible keyboard boundaries', async ({
+  page,
+  seed,
+}) => {
   await page.goto('/proizvodi');
-  const addButton = page.getByRole('button', { name: `Dodaj ${seed.availableProductName} u korpu` });
+  const addButton = page.getByRole('button', {
+    name: `Dodaj ${seed.availableProductName} u korpu`,
+  });
   await addButton.focus();
   await page.keyboard.press('Enter');
   await expect(page.getByRole('status')).toContainText('dodat u korpu');
@@ -26,11 +31,16 @@ test('public catalog, cart and checkout have accessible keyboard boundaries', as
   await page.goto('/checkout');
   await expect(page.getByLabel('Ime i prezime')).toBeVisible();
   await expect(page.getByLabel('Telefon')).toBeVisible();
-  await expect(page.getByRole('group', { name: 'Termin preuzimanja' })).toBeVisible();
+  await expect(
+    page.getByRole('group', { name: 'Termin preuzimanja' }),
+  ).toBeVisible();
   await expectNoSeriousViolations(page);
 });
 
-test('admin cancellation dialog traps keyboard focus and is labelled', async ({ page, seed }) => {
+test('admin cancellation dialog traps keyboard focus and is labelled', async ({
+  page,
+  seed,
+}) => {
   await page.goto('/admin/login');
   await page.getByLabel('Email').fill(E2E_ADMIN.email);
   await page.getByLabel('Lozinka').fill(E2E_ADMIN.password);
@@ -48,13 +58,19 @@ test('admin cancellation dialog traps keyboard focus and is labelled', async ({ 
   await expect(trigger).toBeFocused();
 });
 
-test('mobile navigation closes with Escape and restores trigger focus', async ({ page }) => {
+test('mobile navigation closes with Escape and restores trigger focus', async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   const trigger = page.getByRole('button', { name: 'Otvori navigaciju' });
   await trigger.click();
-  await expect(page.getByRole('navigation', { name: 'Mobilna navigacija' })).toBeVisible();
+  await expect(
+    page.getByRole('navigation', { name: 'Mobilna navigacija' }),
+  ).toBeVisible();
   await page.keyboard.press('Escape');
-  await expect(page.getByRole('navigation', { name: 'Mobilna navigacija' })).toBeHidden();
+  await expect(
+    page.getByRole('navigation', { name: 'Mobilna navigacija' }),
+  ).toBeHidden();
   await expect(trigger).toBeFocused();
 });

@@ -1,9 +1,13 @@
-import Link from 'next/link';
 import type { Metadata } from 'next';
 
 import { Container } from '@/components/layout/container';
-import { HomeFeaturedProducts } from '@/features/catalog/components/home-featured-products';
-import { TodaysHours } from '@/features/settings/components/todays-hours';
+import { HomeBenefits } from '@/features/home/components/home-benefits';
+import { HomeCategories } from '@/features/home/components/home-categories';
+import { HomeCtaBanner } from '@/features/home/components/home-cta-banner';
+import { HomeFeaturedProducts } from '@/features/home/components/home-featured-products';
+import { HomeHero } from '@/features/home/components/home-hero';
+import { HomeHowItWorks } from '@/features/home/components/home-how-it-works';
+import { HomeInfoBar } from '@/features/home/components/home-info-bar';
 import { getHomepageData } from '@/server/queries/home';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -13,87 +17,57 @@ export async function generateMetadata(): Promise<Metadata> {
     title: settings.bakeryName,
     description,
     alternates: { canonical: '/' },
-    openGraph: { type: 'website', url: '/', title: settings.bakeryName, description, siteName: settings.bakeryName, locale: 'sr_RS' },
+    openGraph: {
+      type: 'website',
+      url: '/',
+      title: settings.bakeryName,
+      description,
+      siteName: settings.bakeryName,
+      locale: 'sr_RS',
+    },
   };
 }
 
 export default async function HomePage() {
-  const { settings, categories, todayBusinessHours } = await getHomepageData();
+  const { settings, categories, featuredProducts, operational } =
+    await getHomepageData();
+  const heroProduct = featuredProducts.find((product) => product.imageUrl);
 
   return (
     <>
-      <section className="border-b border-border bg-surface">
+      <Container>
+        <HomeHero
+          bakeryName={settings.bakeryName}
+          address={settings.address}
+          operational={operational}
+          heroProduct={heroProduct}
+        />
+        <HomeInfoBar
+          address={settings.address}
+          phone={settings.phone}
+          todayHoursLabel={operational.todayHoursLabel}
+        />
+        <HomeFeaturedProducts products={featuredProducts} />
+      </Container>
+
+      <div className="bg-surface-muted border-border border-y">
         <Container>
-          <div className="py-16 sm:py-20 lg:py-28">
-            <div className="max-w-3xl">
-              <p className="text-sm font-semibold tracking-wider text-zinc-500 uppercase">
-                Dobrodošli
-              </p>
-
-              <h1 className="mt-3 text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-                {settings.bakeryName}
-              </h1>
-
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">
-                Sveže pripremljeni pekarski proizvodi spremni za vaše
-                preuzimanje.
-              </p>
-
-              <div className="mt-8">
-                <Link
-                  href="/proizvodi"
-                  className="inline-flex min-h-11 items-center justify-center rounded-md bg-zinc-950 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 focus-visible:outline-none"
-                >
-                  Pogledaj proizvode
-                </Link>
-              </div>
-            </div>
-          </div>
+          <HomeCategories categories={categories} />
         </Container>
-      </section>
-
-      <section
-        aria-labelledby="bakery-information-heading"
-        className="border-b border-border"
-      >
-        <Container>
-          <div className="py-12 sm:py-16">
-            <h2
-              id="bakery-information-heading"
-              className="text-2xl font-bold tracking-tight text-foreground"
-            >
-              Informacije o pekari
-            </h2>
-
-            <div className="mt-8 grid gap-6 sm:grid-cols-3">
-              <div className="rounded-lg border border-border p-5">
-                <p className="text-sm font-medium text-zinc-500">Adresa</p>
-                <p className="mt-2 font-medium text-foreground">
-                  {settings.address}
-                </p>
-              </div>
-
-              <div className="rounded-lg border border-border p-5">
-                <p className="text-sm font-medium text-zinc-500">Telefon</p>
-                <a
-                  href={`tel:${settings.phone}`}
-                  className="mt-2 inline-block font-medium text-foreground underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:outline-none"
-                >
-                  {settings.phone}
-                </a>
-              </div>
-
-              <div className="rounded-lg border border-border p-5">
-                <p className="text-sm font-medium text-zinc-500">Danas</p>
-                <TodaysHours intervals={todayBusinessHours} />
-              </div>
-            </div>
-          </div>
-        </Container>
-      </section>
+      </div>
 
       <Container>
-        <HomeFeaturedProducts categories={categories} />
+        <HomeHowItWorks />
+      </Container>
+
+      <div className="bg-surface-muted border-border border-y">
+        <Container>
+          <HomeBenefits bakeryName={settings.bakeryName} />
+        </Container>
+      </div>
+
+      <Container className="pt-16 lg:pt-24">
+        <HomeCtaBanner product={heroProduct} />
       </Container>
     </>
   );

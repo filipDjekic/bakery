@@ -25,7 +25,9 @@ export function calculateMoneyTotalMinor(
   maximumTotalMinor = Number.MAX_SAFE_INTEGER,
 ): number {
   if (!Number.isSafeInteger(maximumTotalMinor) || maximumTotalMinor < 0) {
-    throw new TypeError('Maximum money total must be a non-negative safe integer.');
+    throw new TypeError(
+      'Maximum money total must be a non-negative safe integer.',
+    );
   }
 
   let totalMinor = 0;

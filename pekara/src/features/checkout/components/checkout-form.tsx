@@ -371,7 +371,12 @@ export function CheckoutForm() {
         />
 
         {errors.root?.message ? (
-          <p ref={submitErrorRef} role="alert" tabIndex={-1} className="mt-5 text-sm text-red-700 focus:outline-none">
+          <p
+            ref={submitErrorRef}
+            role="alert"
+            tabIndex={-1}
+            className="mt-5 text-sm text-red-700 focus:outline-none"
+          >
             {errors.root.message}
           </p>
         ) : null}

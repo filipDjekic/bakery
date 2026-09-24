@@ -23,7 +23,10 @@ import {
   checkoutRequestSchema,
   type CheckoutRequestInput,
 } from '../../src/validation/checkout.ts';
-import { createCatalogFixture, type CatalogFixture } from '../fixtures/catalog.ts';
+import {
+  createCatalogFixture,
+  type CatalogFixture,
+} from '../fixtures/catalog.ts';
 import {
   INTEGRATION_NOW,
   INTEGRATION_PICKUP_AT,

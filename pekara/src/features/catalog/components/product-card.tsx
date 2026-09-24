@@ -46,7 +46,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </h3>
 
           {!product.isAvailable ? (
-            <span className="shrink-0 rounded-full bg-zinc-200 px-2.5 py-1 text-xs font-semibold text-zinc-800">
+            <span className="bg-surface-muted text-foreground border-border shrink-0 rounded-full border px-2.5 py-1 text-xs font-semibold">
               Rasprodato
             </span>
           ) : null}

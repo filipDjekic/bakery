@@ -22,7 +22,7 @@ export function HomeFeaturedProducts({
 
           <h2
             id="categories-heading"
-            className="mt-2 text-3xl font-bold tracking-tight text-foreground"
+            className="text-foreground mt-2 text-3xl font-bold tracking-tight"
           >
             Naše kategorije
           </h2>
@@ -30,7 +30,7 @@ export function HomeFeaturedProducts({
 
         <Link
           href="/proizvodi"
-          className="hidden text-sm font-semibold text-zinc-700 underline-offset-4 hover:text-foreground hover:underline sm:block"
+          className="hover:text-foreground hidden text-sm font-semibold text-zinc-700 underline-offset-4 hover:underline sm:block"
         >
           Svi proizvodi
         </Link>
@@ -42,26 +42,26 @@ export function HomeFeaturedProducts({
             <Link
               key={category.id}
               href={`/proizvodi?category=${category.name.toLowerCase()}`}
-              className="group rounded-lg border border-border p-6 transition-colors hover:border-zinc-400 hover:bg-surface focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 focus-visible:outline-none"
+              className="group border-border hover:bg-surface rounded-lg border p-6 transition-colors hover:border-zinc-400 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 focus-visible:outline-none"
             >
-              <h3 className="text-lg font-semibold text-foreground">
+              <h3 className="text-foreground text-lg font-semibold">
                 {category.name}
               </h3>
 
               {category.description ? (
-                <p className="mt-2 text-sm leading-6 text-muted">
+                <p className="text-muted mt-2 text-sm leading-6">
                   {category.description}
                 </p>
               ) : null}
 
-              <span className="mt-5 inline-block text-sm font-semibold text-zinc-700 group-hover:text-foreground">
+              <span className="group-hover:text-foreground mt-5 inline-block text-sm font-semibold text-zinc-700">
                 Pogledaj proizvode →
               </span>
             </Link>
           ))}
         </div>
       ) : (
-        <div className="mt-8 rounded-lg border border-border bg-surface p-6">
+        <div className="border-border bg-surface mt-8 rounded-lg border p-6">
           <p className="text-muted">Trenutno nema dostupnih kategorija.</p>
         </div>
       )}
@@ -69,7 +69,7 @@ export function HomeFeaturedProducts({
       <div className="mt-8 sm:hidden">
         <Link
           href="/proizvodi"
-          className="inline-flex min-h-11 items-center justify-center rounded-md border border-zinc-300 px-5 py-2.5 text-sm font-semibold text-foreground"
+          className="text-foreground inline-flex min-h-11 items-center justify-center rounded-md border border-zinc-300 px-5 py-2.5 text-sm font-semibold"
         >
           Svi proizvodi
         </Link>

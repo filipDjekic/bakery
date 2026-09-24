@@ -18,7 +18,7 @@ export function CartCount() {
       Korpa
       <span
         aria-hidden="true"
-        className="ml-2 min-w-6 rounded-full bg-zinc-100 px-2 py-0.5 text-center text-xs tabular-nums"
+        className="bg-surface-muted text-primary ml-2 min-w-6 rounded-full px-2 py-0.5 text-center text-xs font-bold tabular-nums"
       >
         {itemCount}
       </span>

@@ -3,7 +3,10 @@ import { db } from '../../src/prisma/db.ts';
 import { authPrisma } from '../../src/server/auth/prisma.ts';
 import { persistOrder } from '../../src/server/repositories/orders.ts';
 import { createCatalogFixture } from '../../tests/fixtures/catalog.ts';
-import { INTEGRATION_PICKUP_AT, seedOrderSettingsFixture } from '../../tests/fixtures/orders.ts';
+import {
+  INTEGRATION_PICKUP_AT,
+  seedOrderSettingsFixture,
+} from '../../tests/fixtures/orders.ts';
 import { resetIntegrationDatabase } from '../../tests/helpers/reset-db.ts';
 import { E2E_ADMIN } from './auth.ts';
 
@@ -21,20 +24,24 @@ try {
     pickupAt: INTEGRATION_PICKUP_AT,
     currencyCode: 'RSD',
     totalMinor: catalog.available.priceMinor,
-    items: [{
-      productId: catalog.available.id,
-      productName: catalog.available.name,
-      unitPriceMinor: catalog.available.priceMinor,
-      quantity: 1,
-      subtotalMinor: catalog.available.priceMinor,
-    }],
+    items: [
+      {
+        productId: catalog.available.id,
+        productName: catalog.available.name,
+        unitPriceMinor: catalog.available.priceMinor,
+        quantity: 1,
+        subtotalMinor: catalog.available.priceMinor,
+      },
+    ],
   });
-  console.info(`E2E_SEED=${JSON.stringify({
-    availableProductName: catalog.available.name,
-    unavailableProductName: catalog.unavailable.name,
-    orderId: order.orderId,
-    orderNumber: order.orderNumber,
-  })}`);
+  console.info(
+    `E2E_SEED=${JSON.stringify({
+      availableProductName: catalog.available.name,
+      unavailableProductName: catalog.unavailable.name,
+      orderId: order.orderId,
+      orderNumber: order.orderNumber,
+    })}`,
+  );
 } finally {
   await Promise.allSettled([db.runtime().close(), authPrisma.$disconnect()]);
 }

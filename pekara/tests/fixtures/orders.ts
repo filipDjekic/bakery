@@ -11,9 +11,7 @@ function varchar<N extends number>(value: string, maxLength: N): Varchar<N> {
   return value as Varchar<N>;
 }
 
-export const INTEGRATION_NOW = DateTime.fromISO(
-  '2026-09-14T06:00:00.000Z',
-);
+export const INTEGRATION_NOW = DateTime.fromISO('2026-09-14T06:00:00.000Z');
 export const INTEGRATION_PICKUP_AT = '2026-09-14T07:00:00.000Z';
 
 export async function seedOrderSettingsFixture(): Promise<void> {

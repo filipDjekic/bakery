@@ -29,5 +29,8 @@ test('sitemap contains only indexable public routes and active product input', (
       'https://pekara.example/proizvodi/sveza-kifla',
     ],
   );
-  assert.equal(entries.some((entry) => /admin|checkout|porudzbina/.test(entry.url)), false);
+  assert.equal(
+    entries.some((entry) => /admin|checkout|porudzbina/.test(entry.url)),
+    false,
+  );
 });

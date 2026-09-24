@@ -1,25 +1,21 @@
 import Link from 'next/link';
 
-const navigation = [
-  {
-    label: 'Početna',
-    href: '/',
-  },
-  {
-    label: 'Proizvodi',
-    href: '/proizvodi',
-  },
-];
+export const publicNavigation = [
+  { label: 'Početna', href: '/' },
+  { label: 'Proizvodi', href: '/proizvodi' },
+  { label: 'Kako funkcioniše', href: '/#kako-funkcionise' },
+  { label: 'Kontakt', href: '/#kontakt' },
+] as const;
 
 export function PublicNav() {
   return (
-    <nav aria-label="Glavna navigacija" className="hidden md:block">
-      <ul className="flex items-center gap-6">
-        {navigation.map((item) => (
+    <nav aria-label="Glavna navigacija" className="hidden lg:block">
+      <ul className="flex items-center gap-7">
+        {publicNavigation.map((item) => (
           <li key={item.href}>
             <Link
               href={item.href}
-              className="text-sm font-medium text-zinc-700 transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-4 focus-visible:outline-none"
+              className="text-muted hover:text-primary focus-visible:ring-primary rounded-sm text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-4 focus-visible:outline-none"
             >
               {item.label}
             </Link>

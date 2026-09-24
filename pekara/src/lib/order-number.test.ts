@@ -17,7 +17,5 @@ test('rejects invalid instants and timezones', () => {
   assert.throws(() =>
     generateOrderNumber(DateTime.invalid('test'), 'Europe/Belgrade'),
   );
-  assert.throws(() =>
-    generateOrderNumber(DateTime.utc(), 'Not/A-Timezone'),
-  );
+  assert.throws(() => generateOrderNumber(DateTime.utc(), 'Not/A-Timezone'));
 });

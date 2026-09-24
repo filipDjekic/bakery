@@ -1,67 +1,103 @@
+import { Clock3, MapPin, Phone, Wheat } from 'lucide-react';
 import Link from 'next/link';
 
 import { getPublicChromeSettings } from '@/server/queries/public-settings';
 
 import { Container } from './container';
+import { publicNavigation } from './public-nav';
 
 export async function PublicFooter() {
   const settings = await getPublicChromeSettings();
+  const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border bg-surface">
+    <footer id="kontakt" className="border-border bg-surface border-t">
       <Container>
-        <div className="grid gap-8 py-10 sm:grid-cols-2">
+        <div className="grid gap-10 py-12 md:grid-cols-3 lg:py-16">
           <div>
             <Link
               href="/"
-              className="font-semibold text-foreground focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:outline-none"
+              className="focus-visible:ring-primary inline-flex items-center gap-3 rounded-lg font-bold focus-visible:ring-2 focus-visible:outline-none"
             >
+              <span className="bg-primary text-surface inline-flex size-10 items-center justify-center rounded-full">
+                <Wheat aria-hidden size={21} />
+              </span>
               {settings?.bakeryName ?? 'Pekara'}
             </Link>
+            <p className="text-muted mt-4 max-w-sm text-sm leading-6">
+              Sveži pekarski proizvodi koje možete poručiti unapred i preuzeti
+              bez čekanja.
+            </p>
+          </div>
 
-            {settings ? (
-              <div className="mt-3 space-y-1 text-sm text-muted">
-                <p>{settings.address}</p>
-
-                <p>
+          {settings ? (
+            <div>
+              <h2 className="text-sm font-bold tracking-wide uppercase">
+                Kontakt
+              </h2>
+              <ul className="text-muted mt-4 space-y-3 text-sm">
+                <li className="flex gap-3">
+                  <MapPin
+                    aria-hidden
+                    className="text-primary mt-0.5 shrink-0"
+                    size={18}
+                  />
+                  <span>{settings.address}</span>
+                </li>
+                <li className="flex gap-3">
+                  <Phone
+                    aria-hidden
+                    className="text-primary shrink-0"
+                    size={18}
+                  />
                   <a
+                    className="hover:text-primary hover:underline"
                     href={`tel:${settings.phone}`}
-                    className="hover:text-foreground hover:underline"
                   >
                     {settings.phone}
                   </a>
-                </p>
-              </div>
-            ) : null}
-          </div>
+                </li>
+                <li className="flex gap-3">
+                  <Clock3
+                    aria-hidden
+                    className="text-primary shrink-0"
+                    size={18}
+                  />
+                  <span>Danas: {settings.todayHoursLabel}</span>
+                </li>
+              </ul>
+              <p className="mt-4 inline-flex items-center gap-2 text-sm font-semibold">
+                <span
+                  aria-hidden
+                  className={`size-2 rounded-full ${settings.isOpen ? 'bg-emerald-600' : 'bg-red-600'}`}
+                />
+                {settings.isOpen ? 'Otvoreno' : 'Zatvoreno'}
+              </p>
+            </div>
+          ) : null}
 
-          <nav aria-label="Navigacija u podnožju" className="sm:text-right">
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  href="/"
-                  className="text-sm text-muted hover:text-foreground"
-                >
-                  Početna
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="/proizvodi"
-                  className="text-sm text-muted hover:text-foreground"
-                >
-                  Proizvodi
-                </Link>
-              </li>
+          <nav aria-label="Navigacija u podnožju">
+            <h2 className="text-sm font-bold tracking-wide uppercase">
+              Navigacija
+            </h2>
+            <ul className="mt-4 space-y-3">
+              {publicNavigation.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    className="text-muted hover:text-primary focus-visible:ring-primary rounded-sm text-sm font-medium focus-visible:ring-2 focus-visible:outline-none"
+                    href={item.href}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </nav>
         </div>
-
-        <div className="border-t border-border py-5">
-          <p className="text-sm text-zinc-500">
-            © {settings?.currentYear} {settings?.bakeryName ?? 'Pekara'}. Sva
-            prava zadržana.
+        <div className="border-border border-t py-5">
+          <p className="text-muted text-sm">
+            © {currentYear} {settings?.bakeryName ?? 'Pekara'}. Sva prava
+            zadržana.
           </p>
         </div>
       </Container>
