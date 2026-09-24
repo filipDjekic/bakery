@@ -45,7 +45,7 @@ export function MobileNav() {
         aria-controls="mobile-navigation"
         aria-label={isOpen ? 'Zatvori navigaciju' : 'Otvori navigaciju'}
         onClick={() => setIsOpen((current) => !current)}
-        className="inline-flex size-10 items-center justify-center rounded-md border border-zinc-200 text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-zinc-950 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 focus-visible:outline-none"
+        className="inline-flex size-10 items-center justify-center rounded-md border border-border text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-foreground focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 focus-visible:outline-none"
       >
         {isOpen ? (
           <svg
@@ -81,7 +81,7 @@ export function MobileNav() {
       {isOpen && (
         <div
           id="mobile-navigation"
-          className="absolute inset-x-0 top-full z-50 border-b border-zinc-200 bg-white shadow-sm"
+          className="absolute inset-x-0 top-full z-50 border-b border-border bg-surface-muted shadow-sm"
         >
           <Container>
             <nav aria-label="Mobilna navigacija" className="py-4">
@@ -91,7 +91,7 @@ export function MobileNav() {
                     <Link
                       href={item.href}
                       onClick={closeMenu}
-                      className="block rounded-md px-3 py-3 text-base font-medium text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-zinc-950 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:outline-none"
+                      className="block rounded-md px-3 py-3 text-base font-medium text-zinc-700 transition-colors hover:bg-zinc-100 hover:text-foreground focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:outline-none"
                     >
                       {item.label}
                     </Link>

@@ -11,7 +11,7 @@ export function TodaysHours({ intervals }: TodaysHoursProps) {
   return (
     <p
       className={`mt-2 font-medium ${
-        isClosed ? 'text-zinc-600' : 'text-zinc-950'
+        isClosed ? 'text-muted' : 'text-foreground'
       }`}
     >
       {formatBusinessHours(intervals)}

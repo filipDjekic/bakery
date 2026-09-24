@@ -24,7 +24,7 @@ export default function AdminError({
         prikazom.
       </p>
       {error.digest ? (
-        <p className="mt-4 font-mono text-xs text-zinc-600">
+        <p className="mt-4 font-mono text-xs text-muted">
           Referenca greške: {error.digest}
         </p>
       ) : null}

@@ -11,12 +11,12 @@ export async function PublicHeader() {
   const settings = await getPublicChromeSettings();
 
   return (
-    <header className="relative z-40 border-b border-zinc-200 bg-white">
+    <header className="relative z-40 border-b border-border bg-surface-muted">
       <Container>
         <div className="flex h-16 items-center justify-between gap-4">
           <Link
             href="/"
-            className="min-w-0 shrink text-xl font-bold tracking-tight text-zinc-950 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-4 focus-visible:outline-none"
+            className="min-w-0 shrink text-xl font-bold tracking-tight text-foreground focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-4 focus-visible:outline-none"
           >
             <span className="block truncate">
               {settings?.bakeryName ?? 'Pekara'}
@@ -28,7 +28,7 @@ export async function PublicHeader() {
 
             <Link
               href="/korpa"
-              className="rounded-md border border-zinc-200 px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 hover:text-zinc-950 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 focus-visible:outline-none"
+              className="rounded-md border border-border px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-surface hover:text-foreground focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 focus-visible:outline-none"
             >
               <CartCount />
             </Link>

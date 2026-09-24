@@ -22,7 +22,7 @@ export function HomeFeaturedProducts({
 
           <h2
             id="categories-heading"
-            className="mt-2 text-3xl font-bold tracking-tight text-zinc-950"
+            className="mt-2 text-3xl font-bold tracking-tight text-foreground"
           >
             Naše kategorije
           </h2>
@@ -30,7 +30,7 @@ export function HomeFeaturedProducts({
 
         <Link
           href="/proizvodi"
-          className="hidden text-sm font-semibold text-zinc-700 underline-offset-4 hover:text-zinc-950 hover:underline sm:block"
+          className="hidden text-sm font-semibold text-zinc-700 underline-offset-4 hover:text-foreground hover:underline sm:block"
         >
           Svi proizvodi
         </Link>
@@ -42,34 +42,34 @@ export function HomeFeaturedProducts({
             <Link
               key={category.id}
               href={`/proizvodi?category=${category.name.toLowerCase()}`}
-              className="group rounded-lg border border-zinc-200 p-6 transition-colors hover:border-zinc-400 hover:bg-zinc-50 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 focus-visible:outline-none"
+              className="group rounded-lg border border-border p-6 transition-colors hover:border-zinc-400 hover:bg-surface focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-2 focus-visible:outline-none"
             >
-              <h3 className="text-lg font-semibold text-zinc-950">
+              <h3 className="text-lg font-semibold text-foreground">
                 {category.name}
               </h3>
 
               {category.description ? (
-                <p className="mt-2 text-sm leading-6 text-zinc-600">
+                <p className="mt-2 text-sm leading-6 text-muted">
                   {category.description}
                 </p>
               ) : null}
 
-              <span className="mt-5 inline-block text-sm font-semibold text-zinc-700 group-hover:text-zinc-950">
+              <span className="mt-5 inline-block text-sm font-semibold text-zinc-700 group-hover:text-foreground">
                 Pogledaj proizvode →
               </span>
             </Link>
           ))}
         </div>
       ) : (
-        <div className="mt-8 rounded-lg border border-zinc-200 bg-zinc-50 p-6">
-          <p className="text-zinc-600">Trenutno nema dostupnih kategorija.</p>
+        <div className="mt-8 rounded-lg border border-border bg-surface p-6">
+          <p className="text-muted">Trenutno nema dostupnih kategorija.</p>
         </div>
       )}
 
       <div className="mt-8 sm:hidden">
         <Link
           href="/proizvodi"
-          className="inline-flex min-h-11 items-center justify-center rounded-md border border-zinc-300 px-5 py-2.5 text-sm font-semibold text-zinc-950"
+          className="inline-flex min-h-11 items-center justify-center rounded-md border border-zinc-300 px-5 py-2.5 text-sm font-semibold text-foreground"
         >
           Svi proizvodi
         </Link>

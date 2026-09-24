@@ -19,7 +19,7 @@ export function PublicNav() {
           <li key={item.href}>
             <Link
               href={item.href}
-              className="text-sm font-medium text-zinc-700 transition-colors hover:text-zinc-950 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-4 focus-visible:outline-none"
+              className="text-sm font-medium text-zinc-700 transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:ring-offset-4 focus-visible:outline-none"
             >
               {item.label}
             </Link>

@@ -8,25 +8,25 @@ export async function PublicFooter() {
   const settings = await getPublicChromeSettings();
 
   return (
-    <footer className="border-t border-zinc-200 bg-zinc-50">
+    <footer className="border-t border-border bg-surface">
       <Container>
         <div className="grid gap-8 py-10 sm:grid-cols-2">
           <div>
             <Link
               href="/"
-              className="font-semibold text-zinc-950 focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:outline-none"
+              className="font-semibold text-foreground focus-visible:ring-2 focus-visible:ring-zinc-950 focus-visible:outline-none"
             >
               {settings?.bakeryName ?? 'Pekara'}
             </Link>
 
             {settings ? (
-              <div className="mt-3 space-y-1 text-sm text-zinc-600">
+              <div className="mt-3 space-y-1 text-sm text-muted">
                 <p>{settings.address}</p>
 
                 <p>
                   <a
                     href={`tel:${settings.phone}`}
-                    className="hover:text-zinc-950 hover:underline"
+                    className="hover:text-foreground hover:underline"
                   >
                     {settings.phone}
                   </a>
@@ -40,7 +40,7 @@ export async function PublicFooter() {
               <li>
                 <Link
                   href="/"
-                  className="text-sm text-zinc-600 hover:text-zinc-950"
+                  className="text-sm text-muted hover:text-foreground"
                 >
                   Početna
                 </Link>
@@ -49,7 +49,7 @@ export async function PublicFooter() {
               <li>
                 <Link
                   href="/proizvodi"
-                  className="text-sm text-zinc-600 hover:text-zinc-950"
+                  className="text-sm text-muted hover:text-foreground"
                 >
                   Proizvodi
                 </Link>
@@ -58,7 +58,7 @@ export async function PublicFooter() {
           </nav>
         </div>
 
-        <div className="border-t border-zinc-200 py-5">
+        <div className="border-t border-border py-5">
           <p className="text-sm text-zinc-500">
             © {settings?.currentYear} {settings?.bakeryName ?? 'Pekara'}. Sva
             prava zadržana.

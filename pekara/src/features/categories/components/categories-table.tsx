@@ -34,7 +34,7 @@ export function CategoriesTable({
             <tr
               key={category.id}
               className={
-                !category.isActive ? 'bg-zinc-50 text-zinc-600' : undefined
+                !category.isActive ? 'bg-surface text-muted' : undefined
               }
             >
               <td className="px-4 py-3 tabular-nums">{category.sortOrder}</td>

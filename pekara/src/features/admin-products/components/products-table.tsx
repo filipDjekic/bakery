@@ -33,7 +33,7 @@ export function ProductsTable({ products }: { products: AdminProductRow[] }) {
             <tr
               key={product.id}
               className={
-                !product.isActive ? 'bg-zinc-50 text-zinc-600' : undefined
+                !product.isActive ? 'bg-surface text-muted' : undefined
               }
             >
               <td className="px-4 py-3">
