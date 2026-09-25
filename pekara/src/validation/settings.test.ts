@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'vitest';
 import {
   bakeryProfileSchema,
+  notificationSettingsSchema,
   orderSettingsSchema,
   workingHoursSchema,
 } from './settings.ts';
@@ -13,7 +14,6 @@ test('validates profile and operational limits', () => {
       bakeryName: ' Pekara ',
       phone: ' 011 ',
       address: ' Adresa ',
-      notificationEmail: '',
       expectedUpdatedAt: timestamp,
     }).success,
     true,
@@ -34,6 +34,23 @@ test('validates profile and operational limits', () => {
       minimumPreparationMinutes: 30,
       maximumAdvanceDays: 31,
       pickupSlotMinutes: 25,
+      expectedUpdatedAt: timestamp,
+    }).success,
+    false,
+  );
+});
+
+test('validates the optional notification recipient', () => {
+  assert.equal(
+    notificationSettingsSchema.safeParse({
+      notificationEmail: 'orders@example.com',
+      expectedUpdatedAt: timestamp,
+    }).success,
+    true,
+  );
+  assert.equal(
+    notificationSettingsSchema.safeParse({
+      notificationEmail: 'not-an-email',
       expectedUpdatedAt: timestamp,
     }).success,
     false,

@@ -4,6 +4,10 @@ export const bakeryProfileSchema = z.object({
   bakeryName: z.string().trim().min(1, 'Naziv je obavezan.').max(120),
   phone: z.string().trim().min(3, 'Telefon je obavezan.').max(30),
   address: z.string().trim().min(1, 'Adresa je obavezna.').max(250),
+  expectedUpdatedAt: z.string().datetime({ offset: true }),
+});
+
+export const notificationSettingsSchema = z.object({
   notificationEmail: z
     .string()
     .trim()
@@ -67,5 +71,8 @@ export const workingHoursSchema = z
   });
 
 export type BakeryProfileInput = z.input<typeof bakeryProfileSchema>;
+export type NotificationSettingsInput = z.input<
+  typeof notificationSettingsSchema
+>;
 export type OrderSettingsInput = z.input<typeof orderSettingsSchema>;
 export type WorkingHoursInput = z.input<typeof workingHoursSchema>;

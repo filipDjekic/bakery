@@ -9,6 +9,7 @@ import { getBusinessHoursForWeekday } from '../../src/server/repositories/busine
 import {
   SettingsDomainError,
   updateBakeryProfile,
+  updateNotificationSettings,
   updateOrderSettings,
 } from '../../src/server/services/settings.ts';
 import { updateWorkingHours } from '../../src/server/services/update-working-hours.ts';
@@ -60,7 +61,6 @@ test('updates profile and public homepage reads database values', async () => {
       bakeryName: 'Test pekara 9.1',
       phone: '+381111111',
       address: 'Test adresa 91',
-      notificationEmail: 'test91@example.com',
       expectedUpdatedAt: current.updatedAt,
     },
     authorize,
@@ -75,7 +75,6 @@ test('updates profile and public homepage reads database values', async () => {
           bakeryName: 'Stale',
           phone: '+381111111',
           address: 'Stale',
-          notificationEmail: '',
           expectedUpdatedAt: current.updatedAt,
         },
         authorize,
@@ -83,6 +82,19 @@ test('updates profile and public homepage reads database values', async () => {
     (error: unknown) =>
       error instanceof SettingsDomainError && error.code === 'CONFLICT',
   );
+});
+
+test('updates the notification recipient independently', async () => {
+  const current = await getAdminSettings(authorize);
+  await updateNotificationSettings(
+    {
+      notificationEmail: 'test91@example.com',
+      expectedUpdatedAt: current.updatedAt,
+    },
+    authorize,
+  );
+  const stored = await getAdminSettings(authorize);
+  assert.equal(stored.notificationEmail, 'test91@example.com');
 });
 
 test('emergency disable and pickup parameters are stored authoritatively', async () => {

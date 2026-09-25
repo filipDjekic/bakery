@@ -1,13 +1,14 @@
 'use client';
 
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+
 import { cardVariants } from '@/components/ui/card';
 import { Input, Select } from '@/components/ui/input';
-import { updateOrderSettingsAction } from '../actions/update-order-settings';
+
 import { initialSettingsActionState } from '../actions/settings-action-state';
-import { SettingsFeedback } from './settings-feedback';
+import { updateOrderSettingsAction } from '../actions/update-order-settings';
+import { SettingsFormActions } from './settings-form-actions';
 
 type Props = {
   settings: {
@@ -18,19 +19,30 @@ type Props = {
     updatedAt: string;
   };
 };
+
 export function OrderSettingsForm({ settings }: Props) {
   const router = useRouter();
+  const [dirty, setDirty] = useState(false);
   const [state, action, pending] = useActionState(
     updateOrderSettingsAction,
     initialSettingsActionState,
   );
+
   useEffect(() => {
-    if (state.status === 'success') router.refresh();
+    if (state.status === 'success') {
+      router.refresh();
+    }
   }, [router, state.status]);
+
   return (
     <form
+      id="orders"
       action={action}
-      className={cardVariants({ className: 'space-y-5 rounded-xl p-6' })}
+      onSubmit={() => setDirty(false)}
+      onChange={() => setDirty(true)}
+      className={cardVariants({
+        className: 'scroll-mt-24 space-y-5 rounded-xl p-6',
+      })}
     >
       <input
         type="hidden"
@@ -38,9 +50,9 @@ export function OrderSettingsForm({ settings }: Props) {
         value={state.updatedAt ?? settings.updatedAt}
       />
       <div>
-        <h2 className="text-xl font-bold">Poručivanje i preuzimanje</h2>
+        <h2 className="text-xl font-bold">Porudžbine</h2>
         <p className="text-muted mt-1 text-sm">
-          Promene važe za nove i ponovo potvrđene termine.
+          Podešavanja prihvatanja porudžbina i termina preuzimanja.
         </p>
       </div>
       <label className="flex items-center gap-2 font-semibold">
@@ -48,7 +60,7 @@ export function OrderSettingsForm({ settings }: Props) {
           type="checkbox"
           name="orderAcceptingEnabled"
           defaultChecked={settings.orderAcceptingEnabled}
-        />{' '}
+        />
         Primanje porudžbina je uključeno
       </label>
       <div className="grid gap-5 sm:grid-cols-3">
@@ -88,10 +100,12 @@ export function OrderSettingsForm({ settings }: Props) {
           </Select>
         </label>
       </div>
-      <SettingsFeedback state={state} />
-      <Button disabled={pending}>
-        {pending ? 'Čuvanje…' : 'Sačuvaj pravila'}
-      </Button>
+      <SettingsFormActions
+        state={state}
+        pending={pending}
+        dirty={dirty || state.status === 'error'}
+        idleLabel="Sačuvaj pravila"
+      />
     </form>
   );
 }

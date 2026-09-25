@@ -1,43 +1,59 @@
 'use client';
 
-import { useActionState, useEffect } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+
 import { cardVariants } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { updateBakeryProfileAction } from '../actions/update-bakery-profile';
+
 import { initialSettingsActionState } from '../actions/settings-action-state';
-import { SettingsFeedback } from './settings-feedback';
+import { updateBakeryProfileAction } from '../actions/update-bakery-profile';
+import { SettingsFormActions } from './settings-form-actions';
 
 type Props = {
   settings: {
     bakeryName: string;
     phone: string;
     address: string;
-    notificationEmail: string | null;
     updatedAt: string;
   };
 };
+
 export function BakeryProfileForm({ settings }: Props) {
   const router = useRouter();
+  const [dirty, setDirty] = useState(false);
   const [state, action, pending] = useActionState(
     updateBakeryProfileAction,
     initialSettingsActionState,
   );
+
   useEffect(() => {
-    if (state.status === 'success') router.refresh();
+    if (state.status === 'success') {
+      router.refresh();
+    }
   }, [router, state.status]);
+
   return (
     <form
+      id="profile"
       action={action}
-      className={cardVariants({ className: 'space-y-5 rounded-xl p-6' })}
+      onSubmit={() => setDirty(false)}
+      onChange={() => setDirty(true)}
+      className={cardVariants({
+        className: 'scroll-mt-24 space-y-5 rounded-xl p-6',
+      })}
     >
       <input
         type="hidden"
         name="expectedUpdatedAt"
         value={state.updatedAt ?? settings.updatedAt}
       />
-      <h2 className="text-xl font-bold">Profil pekare</h2>
+      <div>
+        <h2 className="text-xl font-bold">Profil pekare</h2>
+        <p className="text-muted mt-1 text-sm">
+          Osnovni podaci koji se prikazuju kupcima.
+        </p>
+      </div>
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="space-y-2">
           <span className="font-semibold">Naziv</span>
@@ -67,19 +83,12 @@ export function BakeryProfileForm({ settings }: Props) {
           defaultValue={settings.address}
         />
       </label>
-      <label className="block space-y-2">
-        <span className="font-semibold">Email za obaveštenja</span>
-        <Input
-          type="email"
-          maxLength={254}
-          name="notificationEmail"
-          defaultValue={settings.notificationEmail ?? ''}
-        />
-      </label>
-      <SettingsFeedback state={state} />
-      <Button disabled={pending}>
-        {pending ? 'Čuvanje…' : 'Sačuvaj profil'}
-      </Button>
+      <SettingsFormActions
+        state={state}
+        pending={pending}
+        dirty={dirty || state.status === 'error'}
+        idleLabel="Sačuvaj profil"
+      />
     </form>
   );
 }

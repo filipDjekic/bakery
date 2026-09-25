@@ -6,8 +6,10 @@ import type { ZodIssue } from 'zod';
 import { db } from '../../prisma/db.ts';
 import {
   bakeryProfileSchema,
+  notificationSettingsSchema,
   orderSettingsSchema,
   type BakeryProfileInput,
+  type NotificationSettingsInput,
   type OrderSettingsInput,
 } from '../../validation/settings.ts';
 import { requireAdmin } from '../auth/authorization.ts';
@@ -69,6 +71,34 @@ export async function updateBakeryProfile(
       bakeryName: varchar(parsed.data.bakeryName, 120),
       phone: varchar(parsed.data.phone, 30),
       address: varchar(parsed.data.address, 250),
+    });
+  if (!updated)
+    throw new SettingsDomainError(
+      'CONFLICT',
+      'Podešavanja su promenjena. Osvežite stranicu.',
+    );
+  return updated;
+}
+
+export async function updateNotificationSettings(
+  input: NotificationSettingsInput,
+  authorize: () => Promise<unknown> = requireAdmin,
+) {
+  await authorize();
+  const parsed = notificationSettingsSchema.safeParse(input);
+  if (!parsed.success)
+    throw new SettingsDomainError(
+      'VALIDATION_ERROR',
+      'Podešavanja obaveštenja nisu validna.',
+      parsed.error.issues,
+    );
+  await ensureCurrent(parsed.data.expectedUpdatedAt);
+  const updated = await db.orm.public.BakerySettings.where({
+    id: DEFAULT_BAKERY_SETTINGS_ID,
+    updatedAt: parsed.data.expectedUpdatedAt,
+  })
+    .select('updatedAt')
+    .update({
       notificationEmail: parsed.data.notificationEmail
         ? varchar(parsed.data.notificationEmail, 254)
         : null,

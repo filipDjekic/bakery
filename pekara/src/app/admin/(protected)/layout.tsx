@@ -35,7 +35,7 @@ export default async function ProtectedAdminLayout({
 
   return (
     <div className="bg-surface-muted flex min-h-screen">
-      <AdminSidebar />
+      <AdminSidebar role={user.role} />
       <div className="min-w-0 flex-1">
         <AdminHeader user={user} />
         <main className="p-4 sm:p-6 lg:p-8">{children}</main>

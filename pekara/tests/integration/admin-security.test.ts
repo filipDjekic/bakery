@@ -13,6 +13,7 @@ import { createProduct } from '../../src/server/services/create-product.ts';
 import { createCategory } from '../../src/server/services/categories.ts';
 import {
   updateBakeryProfile,
+  updateNotificationSettings,
   updateOrderSettings,
 } from '../../src/server/services/settings.ts';
 import { updateWorkingHours } from '../../src/server/services/update-working-hours.ts';
@@ -69,9 +70,16 @@ const mutationBoundaries: Array<{
           bakeryName: '',
           phone: '',
           address: '',
-          notificationEmail: '',
           expectedUpdatedAt: '',
         },
+        authorize,
+      ),
+  },
+  {
+    name: 'update notification settings',
+    invoke: (authorize) =>
+      updateNotificationSettings(
+        { notificationEmail: 'invalid', expectedUpdatedAt: '' },
         authorize,
       ),
   },
