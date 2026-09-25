@@ -18,6 +18,7 @@ export type AdminDashboardData = {
     READY: number;
     todayCompleted: number;
   };
+  todayRevenueMinor: number;
   recentNewOrders: Array<{
     id: string;
     orderNumber: string;
@@ -78,7 +79,9 @@ export async function getAdminDashboard({
     db.orm.public.Order.where({ status: 'COMPLETED' })
       .where((order) => order.updatedAt.gte(todayStart))
       .where((order) => order.updatedAt.lt(tomorrowStart))
-      .aggregate((aggregate) => ({ count: aggregate.count() })),
+      .aggregate((aggregate) => ({ 
+        count: aggregate.count(), 
+        revenueMinor: aggregate.sum('totalMinor') })),
     db.orm.public.Order.select(
       'id',
       'orderNumber',
@@ -102,6 +105,7 @@ export async function getAdminDashboard({
       READY: readyCount.count,
       todayCompleted: completed.count,
     },
+    todayRevenueMinor: completed.revenueMinor ?? 0,
     recentNewOrders: recent.map((order) => ({
       ...order,
       pickupAt: new Date(order.pickupAt).toISOString(),

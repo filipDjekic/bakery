@@ -5,6 +5,7 @@ import { ManualRefreshButton } from '@/features/admin-orders/components/manual-r
 import { OrderPolling } from '@/features/admin-orders/components/order-polling';
 import { OrderStatusCards } from '@/features/admin-orders/components/order-status-cards';
 import { RecentNewOrders } from '@/features/admin-orders/components/recent-new-orders';
+import { RevenueCard } from '@/features/admin-orders/components/revenue-card'; 
 import { getAdminDashboard } from '@/server/queries/admin-dashboard';
 
 export const instant = false;
@@ -36,6 +37,7 @@ export default async function AdminHomePage() {
         </div>
       </div>
       <OrderStatusCards counts={dashboard.counts} />
+      <RevenueCard revenueMinor={dashboard.todayRevenueMinor} />
       <RecentNewOrders
         orders={dashboard.recentNewOrders}
         timezone={dashboard.timezone}
