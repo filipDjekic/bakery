@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+import { buttonVariants } from '@/components/ui/button';
+import { EmptyState } from '@/components/ui/empty-state';
 import type { AdminCategoryRow } from '../../../server/queries/admin-categories';
 
 export function CategoriesTable({
@@ -9,9 +11,15 @@ export function CategoriesTable({
 }) {
   if (categories.length === 0)
     return (
-      <div className="border-border bg-surface text-muted rounded-xl border px-6 py-14 text-center">
-        Nema kategorija.
-      </div>
+      <EmptyState
+        title="Još nema kategorija"
+        description="Napravite prvu kategoriju pre dodavanja proizvoda."
+        action={
+          <Link href="/admin/categories/new" className={buttonVariants()}>
+            Dodaj prvu kategoriju
+          </Link>
+        }
+      />
     );
   return (
     <div className="border-border bg-surface overflow-x-auto rounded-xl border">

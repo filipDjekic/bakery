@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { buttonVariants } from '@/components/ui/button';
+import { EmptyState } from '@/components/ui/empty-state';
 import { formatRsd } from '../../../lib/money';
 import type { AdminProductRow } from '../../../server/queries/admin-products';
 import { ProductToggles } from './product-toggles';
@@ -8,9 +10,15 @@ import { ProductToggles } from './product-toggles';
 export function ProductsTable({ products }: { products: AdminProductRow[] }) {
   if (products.length === 0)
     return (
-      <div className="border-border bg-surface text-muted rounded-xl border px-6 py-14 text-center">
-        Nema proizvoda.
-      </div>
+      <EmptyState
+        title="Još nema proizvoda"
+        description="Dodajte prvi proizvod kako bi se pojavio u katalogu."
+        action={
+          <Link href="/admin/products/new" className={buttonVariants()}>
+            Dodaj prvi proizvod
+          </Link>
+        }
+      />
     );
   return (
     <div className="border-border bg-surface overflow-x-auto rounded-xl border">

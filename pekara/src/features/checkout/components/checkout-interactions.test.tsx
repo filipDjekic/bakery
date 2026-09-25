@@ -65,7 +65,8 @@ describe('pickup selection', () => {
     expect(onTimeChange).toHaveBeenCalledWith('2026-09-24T09:00:00.000Z');
   });
 
-  it('announces loading, failures and a date without slots', () => {
+  it('announces loading, exposes retry and handles a date without slots', async () => {
+    const user = userEvent.setup();
     const baseProps = {
       availability,
       dateRegistration: registration,
@@ -89,6 +90,8 @@ describe('pickup selection', () => {
       />,
     );
     expect(screen.getByText('Termini nisu dostupni.')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Pokušaj ponovo' }));
+    expect(baseProps.onDateChange).toHaveBeenCalledWith('2026-09-24');
 
     rerender(
       <PickupSelector {...baseProps} isLoading={false} loadError={null} />,

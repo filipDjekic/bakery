@@ -1,6 +1,8 @@
 import { DateTime } from 'luxon';
 import Link from 'next/link';
 
+import { buttonVariants } from '@/components/ui/button';
+import { EmptyState } from '@/components/ui/empty-state';
 import { formatRsd } from '@/lib/money';
 import type { ActiveAdminOrdersResult } from '@/server/queries/admin-orders';
 
@@ -14,18 +16,18 @@ export function ActiveOrderQueue({
 }: ActiveAdminOrdersResult & { nowIso: string }) {
   if (orders.length === 0) {
     return (
-      <div className="border-border bg-surface rounded-xl border px-6 py-14 text-center">
-        <h2 className="text-xl font-bold">Nema aktivnih porudžbina.</h2>
-        <p className="text-muted mt-2">
-          Trenutno nema porudžbina koje čekaju obradu ili preuzimanje.
-        </p>
-        <Link
-          href="/admin/orders?view=all"
-          className="text-primary focus-visible:ring-primary mt-5 inline-flex min-h-11 items-center rounded-md px-3 font-bold underline focus-visible:ring-2 focus-visible:outline-none"
-        >
-          Pogledaj sve porudžbine
-        </Link>
-      </div>
+      <EmptyState
+        title="Nema aktivnih porudžbina."
+        description="Trenutno nema porudžbina koje čekaju obradu ili preuzimanje."
+        action={
+          <Link
+            href="/admin/orders?view=all"
+            className={buttonVariants({ variant: 'outline' })}
+          >
+            Pogledaj sve porudžbine
+          </Link>
+        }
+      />
     );
   }
   const now = DateTime.fromISO(nowIso, { zone: 'utc' });

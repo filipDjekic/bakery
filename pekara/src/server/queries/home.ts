@@ -64,6 +64,18 @@ export async function getCachedHomepageContent() {
       .first(),
     db.orm.public.Category.include('products', (products) =>
       products
+        .select(
+          'id',
+          'name',
+          'slug',
+          'description',
+          'priceMinor',
+          'imageUrl',
+          'imageWidth',
+          'imageHeight',
+          'isAvailable',
+          'sortOrder',
+        )
         .where({ isActive: true })
         .orderBy((product) => product.sortOrder.asc())
         .orderBy((product) => product.name.asc())

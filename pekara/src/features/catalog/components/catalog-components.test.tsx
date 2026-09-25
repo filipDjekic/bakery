@@ -8,7 +8,10 @@ import { CART_LIMITS } from '@/config/limits';
 import { useCartStore } from '@/features/cart/store/cart-store';
 import type { CatalogProduct } from '@/server/queries/catalog';
 
-import { CatalogBrowser } from './catalog-browser';
+import {
+  CatalogBrowser,
+  filterAndSortCatalogProducts,
+} from './catalog-browser';
 import { CategoryFilter } from './category-filter';
 import { CompactCartControl } from './compact-cart-control';
 
@@ -104,22 +107,64 @@ describe('compact catalog interactions', () => {
     expect(link).toHaveAttribute('aria-current', 'page');
   });
 
-  it('searches name and description and provides an empty-state reset', async () => {
-    const user = userEvent.setup();
-    render(<CatalogBrowser products={[product]} categoryFilter={null} />);
+  it('renders URL-driven search state and an actionable empty state', () => {
+    render(
+      <CatalogBrowser
+        products={[product]}
+        categoryFilter={null}
+        query="pizza"
+        sort="default"
+        selectedCategorySlug={null}
+      />,
+    );
 
-    await user.type(
-      screen.getByRole('searchbox', { name: 'Pretraži proizvode' }),
-      'pizza',
-    );
     expect(
-      screen.getByText('Nema proizvoda koji odgovaraju pretrazi.'),
+      screen.getByText('Nema proizvoda koji odgovaraju pretrazi „pizza“.'),
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Obriši pretragu i sortiranje' }),
+    ).toHaveAttribute('href', '/proizvodi');
+  });
+
+  it('filters and sorts catalog products on the server', () => {
+    const second = {
+      ...product,
+      id: 'product-2',
+      name: 'Burek',
+      description: 'Sa sirom',
+      priceMinor: 25000,
+    };
+
+    expect(
+      filterAndSortCatalogProducts([product, second], 'sir', 'default').map(
+        ({ id }) => id,
+      ),
+    ).toEqual(['product-2']);
+    expect(
+      filterAndSortCatalogProducts([product, second], '', 'price-desc').map(
+        ({ id }) => id,
+      ),
+    ).toEqual(['product-2', 'product-1']);
+  });
+
+  it('keeps the product card cart control interactive', async () => {
+    const user = userEvent.setup();
+    render(
+      <CatalogBrowser
+        products={[product]}
+        categoryFilter={null}
+        query=""
+        sort="default"
+        selectedCategorySlug={null}
+      />,
+    );
     await user.click(
-      screen.getByText('Obriši pretragu', { selector: 'button' }),
+      screen.getByRole('button', { name: `Dodaj ${item.name} u korpu` }),
     );
     expect(
-      screen.getByRole('heading', { name: product.name }),
-    ).toBeInTheDocument();
+      useCartStore
+        .getState()
+        .items.find(({ productId }) => productId === item.productId)?.quantity,
+    ).toBe(1);
   });
 });

@@ -1,6 +1,7 @@
 import { Check, Clock3 } from 'lucide-react';
 import type { FieldError, UseFormRegisterReturn } from 'react-hook-form';
 
+import { Button } from '@/components/ui/button';
 import { cardVariants } from '@/components/ui/card';
 import { focusRingClassName } from '@/components/ui/focus';
 import { cn } from '@/lib/cn';
@@ -131,7 +132,22 @@ export function PickupSelector({
         </div>
       ) : null}
       <div aria-live="polite" className="text-muted mt-3 min-h-6 text-sm">
-        {loadError ? <p className="text-red-700">{loadError}</p> : null}
+        {loadError ? (
+          <div className="rounded-lg bg-red-50 p-3 text-red-800">
+            <p>{loadError}</p>
+            {selectedDate ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="mt-3"
+                onClick={() => onDateChange(selectedDate)}
+              >
+                Pokušaj ponovo
+              </Button>
+            ) : null}
+          </div>
+        ) : null}
         {!loadError && selectedDate && !isLoading && slots.length === 0 ? (
           <p>Nema dostupnih termina za izabrani datum.</p>
         ) : null}

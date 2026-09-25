@@ -1,40 +1,52 @@
-'use client';
+import type { ReactNode } from 'react';
 
-import { Search, X } from 'lucide-react';
-import { type ReactNode, useMemo, useState } from 'react';
+import { Search } from 'lucide-react';
+import Link from 'next/link';
 
+import { buttonVariants } from '@/components/ui/button';
+import { Input, Select } from '@/components/ui/input';
 import type { CatalogProduct } from '@/server/queries/catalog';
 
 import { CatalogGrid } from './catalog-grid';
 
-type SortOption = 'default' | 'price-asc' | 'price-desc' | 'name';
+export type CatalogSort = 'default' | 'price-asc' | 'price-desc' | 'name';
+
+export function filterAndSortCatalogProducts(
+  products: CatalogProduct[],
+  query: string,
+  sort: CatalogSort,
+): CatalogProduct[] {
+  const normalizedQuery = query.trim().toLocaleLowerCase('sr-Latn');
+  const filtered = normalizedQuery
+    ? products.filter((product) =>
+        `${product.name} ${product.description}`
+          .toLocaleLowerCase('sr-Latn')
+          .includes(normalizedQuery),
+      )
+    : products;
+
+  if (sort === 'default') return filtered;
+  return [...filtered].sort((left, right) => {
+    if (sort === 'price-asc') return left.priceMinor - right.priceMinor;
+    if (sort === 'price-desc') return right.priceMinor - left.priceMinor;
+    return left.name.localeCompare(right.name, 'sr-Latn');
+  });
+}
 
 export function CatalogBrowser({
   products,
   categoryFilter,
+  query,
+  sort,
+  selectedCategorySlug,
 }: {
   products: CatalogProduct[];
   categoryFilter: ReactNode;
+  query: string;
+  sort: CatalogSort;
+  selectedCategorySlug: string | null;
 }) {
-  const [query, setQuery] = useState('');
-  const [sort, setSort] = useState<SortOption>('default');
-  const visibleProducts = useMemo(() => {
-    const normalizedQuery = query.trim().toLocaleLowerCase('sr-Latn');
-    const filtered = normalizedQuery
-      ? products.filter((product) =>
-          `${product.name} ${product.description}`
-            .toLocaleLowerCase('sr-Latn')
-            .includes(normalizedQuery),
-        )
-      : products;
-
-    if (sort === 'default') return filtered;
-    return [...filtered].sort((left, right) => {
-      if (sort === 'price-asc') return left.priceMinor - right.priceMinor;
-      if (sort === 'price-desc') return right.priceMinor - left.priceMinor;
-      return left.name.localeCompare(right.name, 'sr-Latn');
-    });
-  }, [products, query, sort]);
+  const visibleProducts = filterAndSortCatalogProducts(products, query, sort);
 
   return (
     <>
@@ -51,7 +63,10 @@ export function CatalogBrowser({
             mnogo toga.
           </p>
         </div>
-        <div className="w-full sm:max-w-md">
+        <form action="/proizvodi" className="w-full sm:max-w-md">
+          {selectedCategorySlug ? (
+            <input type="hidden" name="category" value={selectedCategorySlug} />
+          ) : null}
           <label htmlFor="catalog-search" className="sr-only">
             Pretraži proizvode
           </label>
@@ -61,52 +76,59 @@ export function CatalogBrowser({
               className="text-muted absolute top-1/2 left-3 -translate-y-1/2"
               size={19}
             />
-            <input
+            <Input
               id="catalog-search"
+              name="q"
               type="search"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              defaultValue={query}
               placeholder="Pretraži proizvode..."
-              className="border-border bg-surface focus-visible:ring-primary min-h-12 w-full rounded-xl border py-3 pr-11 pl-10 shadow-sm focus-visible:ring-2 focus-visible:outline-none"
+              className="min-h-12 pr-24 pl-10 shadow-sm"
             />
-            {query ? (
-              <button
-                type="button"
-                onClick={() => setQuery('')}
-                aria-label="Obriši pretragu"
-                className="text-muted hover:text-foreground focus-visible:ring-primary absolute top-1/2 right-2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-lg focus-visible:ring-2 focus-visible:outline-none"
-              >
-                <X aria-hidden size={17} />
-              </button>
-            ) : null}
+            <button
+              type="submit"
+              className="text-primary focus-visible:ring-ring absolute top-1/2 right-2 min-h-9 -translate-y-1/2 rounded-lg px-3 text-sm font-semibold focus-visible:ring-2 focus-visible:outline-none"
+            >
+              Pretraži
+            </button>
           </div>
-        </div>
+        </form>
       </header>
 
       <div className="border-border mt-8 border-y py-4">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="min-w-0">{categoryFilter}</div>
-          <div className="flex shrink-0 items-center justify-between gap-4 lg:justify-end">
+          <div className="flex shrink-0 flex-wrap items-center justify-between gap-4 lg:justify-end">
             <p className="text-muted text-sm">
               Prikazano {visibleProducts.length}{' '}
               {visibleProducts.length === 1 ? 'proizvod' : 'proizvoda'}
             </p>
-            <div>
+            <form action="/proizvodi" className="flex items-center gap-2">
+              {selectedCategorySlug ? (
+                <input
+                  type="hidden"
+                  name="category"
+                  value={selectedCategorySlug}
+                />
+              ) : null}
+              {query ? <input type="hidden" name="q" value={query} /> : null}
               <label htmlFor="catalog-sort" className="sr-only">
                 Sortiranje proizvoda
               </label>
-              <select
+              <Select
                 id="catalog-sort"
-                value={sort}
-                onChange={(event) => setSort(event.target.value as SortOption)}
-                className="border-border bg-surface focus-visible:ring-primary min-h-11 rounded-lg border px-3 text-sm font-semibold focus-visible:ring-2 focus-visible:outline-none"
+                name="sort"
+                defaultValue={sort}
+                className="min-h-11 w-auto text-sm font-semibold"
               >
                 <option value="default">Preporučeni</option>
                 <option value="price-asc">Cena rastuće</option>
                 <option value="price-desc">Cena opadajuće</option>
                 <option value="name">Naziv</option>
-              </select>
-            </div>
+              </Select>
+              <button type="submit" className={buttonVariants({ size: 'sm' })}>
+                Primeni
+              </button>
+            </form>
           </div>
         </div>
       </div>
@@ -117,15 +139,22 @@ export function CatalogBrowser({
         ) : (
           <div className="border-border bg-surface rounded-2xl border px-6 py-12 text-center shadow-sm">
             <h2 className="text-xl font-bold">
-              Nema proizvoda koji odgovaraju pretrazi.
+              Nema proizvoda koji odgovaraju pretrazi
+              {query ? ` „${query}“` : ''}.
             </h2>
-            <button
-              type="button"
-              onClick={() => setQuery('')}
-              className="text-primary focus-visible:ring-primary mt-4 min-h-11 rounded-lg px-4 font-semibold hover:underline focus-visible:ring-2 focus-visible:outline-none"
+            <Link
+              href={
+                selectedCategorySlug
+                  ? `/proizvodi?category=${encodeURIComponent(selectedCategorySlug)}`
+                  : '/proizvodi'
+              }
+              className={buttonVariants({
+                variant: 'outline',
+                className: 'mt-4',
+              })}
             >
-              Obriši pretragu
-            </button>
+              Obriši pretragu i sortiranje
+            </Link>
           </div>
         )}
       </div>

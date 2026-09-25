@@ -45,7 +45,9 @@ export async function getAdminProducts(
   authorize: AdminAuthorizer = requireAdmin,
 ): Promise<AdminProductRow[]> {
   await authorize();
-  const rows = await db.orm.public.Product.include('category')
+  const rows = await db.orm.public.Product.include('category', (category) =>
+    category.select('name', 'isActive'),
+  )
     .orderBy((product) => product.updatedAt.desc())
     .orderBy((product) => product.id.asc())
     .all();

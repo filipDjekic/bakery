@@ -2,23 +2,36 @@ import { CreditCard, PackageCheck, ShoppingBasket, Wheat } from 'lucide-react';
 
 import { Container } from '@/components/layout/container';
 import { CatalogBrowser } from '@/features/catalog/components/catalog-browser';
+import type { CatalogSort } from '@/features/catalog/components/catalog-browser';
 import { CatalogEmptyState } from '@/features/catalog/components/catalog-empty-state';
 import { CategoryFilter } from '@/features/catalog/components/category-filter';
 import { getPublicCatalog } from '@/server/queries/catalog';
 
 type ProductsPageProps = {
-  searchParams: Promise<{ category?: string | string[] }>;
+  searchParams: Promise<{
+    category?: string | string[];
+    q?: string | string[];
+    sort?: string | string[];
+  }>;
 };
 
 export default async function ProductsPage({
   searchParams,
 }: ProductsPageProps) {
-  const categoryParam = (await searchParams).category;
+  const params = await searchParams;
+  const categoryParam = params.category;
   const requestedCategorySlug =
     typeof categoryParam === 'string' ? categoryParam : undefined;
   const { categories, filterCategories, selectedCategorySlug } =
     await getPublicCatalog(requestedCategorySlug);
   const products = categories.flatMap((category) => category.products);
+  const query = typeof params.q === 'string' ? params.q.slice(0, 120) : '';
+  const requestedSort = typeof params.sort === 'string' ? params.sort : '';
+  const sort: CatalogSort = ['price-asc', 'price-desc', 'name'].includes(
+    requestedSort,
+  )
+    ? (requestedSort as CatalogSort)
+    : 'default';
 
   return (
     <div className="py-10 sm:py-12 lg:py-16">
@@ -26,6 +39,9 @@ export default async function ProductsPage({
         {products.length || filterCategories.length ? (
           <CatalogBrowser
             products={products}
+            query={query}
+            sort={sort}
+            selectedCategorySlug={selectedCategorySlug}
             categoryFilter={
               <CategoryFilter
                 categories={filterCategories}

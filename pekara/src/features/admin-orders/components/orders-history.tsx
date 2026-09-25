@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+import { buttonVariants } from '@/components/ui/button';
+import { EmptyState } from '@/components/ui/empty-state';
 import type { AdminOrdersResult } from '@/server/queries/admin-orders';
 
 import { OrderMobileCards } from './order-mobile-cards';
@@ -14,15 +16,18 @@ export function OrdersHistory({
 }) {
   if (result.orders.length === 0) {
     return (
-      <div className="border-border bg-surface rounded-xl border px-6 py-14 text-center">
-        <p className="text-muted">Nema porudžbina za izabrane filtere.</p>
-        <Link
-          href="/admin/orders?view=all"
-          className="text-primary focus-visible:ring-primary mt-4 inline-flex min-h-11 items-center rounded-md px-3 font-bold underline focus-visible:ring-2 focus-visible:outline-none"
-        >
-          Obriši filtere
-        </Link>
-      </div>
+      <EmptyState
+        title="Nema porudžbina za izabrane filtere"
+        description="Promenite period ili status, ili obrišite sve filtere."
+        action={
+          <Link
+            href="/admin/orders?view=all"
+            className={buttonVariants({ variant: 'outline' })}
+          >
+            Obriši filtere
+          </Link>
+        }
+      />
     );
   }
   return (

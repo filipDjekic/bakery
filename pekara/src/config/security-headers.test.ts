@@ -15,6 +15,7 @@ test('production CSP restricts executable content and permits required image and
   assert.equal(scriptSource, "script-src 'self' 'unsafe-inline'");
   assert.equal(scriptSource?.includes('unsafe-eval'), false);
   assert.equal(scriptSource?.includes('https:'), false);
+  assert.match(csp, /script-src-attr 'none'/);
   assert.match(csp, /frame-ancestors 'none'/);
   assert.match(csp, /object-src 'none'/);
   assert.match(csp, /https:\/\/\*\.public\.blob\.vercel-storage\.com/);
@@ -29,6 +30,7 @@ test('development-only directives do not leak into production', () => {
   assert.match(development, /connect-src[^;]+ ws: wss:/);
   assert.equal(production.includes("'unsafe-eval'"), false);
   assert.equal(production.includes(' ws:'), false);
+  assert.match(development, /script-src-attr 'none'/);
 });
 
 test('all requested browser security headers are configured globally', () => {

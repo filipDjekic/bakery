@@ -7,6 +7,7 @@ export function createContentSecurityPolicy(
   const directives = [
     "default-src 'self'",
     `script-src 'self' 'unsafe-inline'${environment === 'development' ? " 'unsafe-eval'" : ''}`,
+    "script-src-attr 'none'",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https://*.public.blob.vercel-storage.com",
     "font-src 'self' data:",

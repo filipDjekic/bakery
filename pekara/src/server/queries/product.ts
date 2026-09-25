@@ -47,7 +47,9 @@ export async function getPublicProductBySlug(
     return null;
   }
 
-  const product = await db.orm.public.Product.include('category')
+  const product = await db.orm.public.Product.include('category', (category) =>
+    category.select('id', 'name', 'slug', 'isActive'),
+  )
     .where({ slug, isActive: true })
     .first();
 
@@ -88,6 +90,18 @@ export async function getRelatedPublicProducts(
     'products',
     (products) =>
       products
+        .select(
+          'id',
+          'name',
+          'slug',
+          'description',
+          'priceMinor',
+          'imageUrl',
+          'imageWidth',
+          'imageHeight',
+          'isAvailable',
+          'sortOrder',
+        )
         .where({ isActive: true })
         .orderBy((product) => product.sortOrder.asc())
         .orderBy((product) => product.id.asc()),
@@ -115,7 +129,9 @@ export async function getPublicProductSitemapEntries() {
   cacheLife('hours');
   cacheTag(PUBLIC_CACHE_TAGS.catalog, PUBLIC_CACHE_TAGS.categories);
 
-  const products = await db.orm.public.Product.include('category')
+  const products = await db.orm.public.Product.include('category', (category) =>
+    category.select('isActive'),
+  )
     .where({ isActive: true })
     .orderBy((product) => product.slug.asc())
     .all();
