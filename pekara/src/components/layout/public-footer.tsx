@@ -1,6 +1,8 @@
 import { Clock3, MapPin, Phone, Wheat } from 'lucide-react';
 import Link from 'next/link';
 
+import { focusRingInsetClassName } from '@/components/ui/focus';
+import { cn } from '@/lib/cn';
 import { getPublicChromeSettings } from '@/server/queries/public-settings';
 
 import { Container } from './container';
@@ -41,7 +43,10 @@ export async function PublicFooter() {
           <div>
             <Link
               href="/"
-              className="focus-visible:ring-primary inline-flex items-center gap-3 rounded-lg font-bold focus-visible:ring-2 focus-visible:outline-none"
+              className={cn(
+                'inline-flex items-center gap-3 rounded-lg font-bold',
+                focusRingInsetClassName,
+              )}
             >
               <span className="bg-primary text-surface inline-flex size-10 items-center justify-center rounded-full">
                 <Wheat aria-hidden size={21} />
@@ -107,7 +112,12 @@ export async function PublicFooter() {
                 {settings.isOpen ? 'Otvoreno' : 'Zatvoreno'}
               </p>
               <details className="mt-4 text-sm">
-                <summary className="text-primary focus-visible:ring-primary cursor-pointer rounded-sm font-semibold focus-visible:ring-2 focus-visible:outline-none">
+                <summary
+                  className={cn(
+                    'text-primary cursor-pointer rounded-sm font-semibold',
+                    focusRingInsetClassName,
+                  )}
+                >
                   Pogledaj radno vreme
                 </summary>
                 <dl className="mt-3 grid gap-1.5">
@@ -136,7 +146,10 @@ export async function PublicFooter() {
               {publicNavigation.map((item) => (
                 <li key={item.href}>
                   <Link
-                    className="text-muted hover:text-primary focus-visible:ring-primary rounded-sm text-sm font-medium focus-visible:ring-2 focus-visible:outline-none"
+                    className={cn(
+                      'text-muted hover:text-primary rounded-sm text-sm font-medium',
+                      focusRingInsetClassName,
+                    )}
                     href={item.href}
                   >
                     {item.label}

@@ -2,6 +2,9 @@
 
 import { useActionState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { cardVariants } from '@/components/ui/card';
+import { Input, Select } from '@/components/ui/input';
 import { updateOrderSettingsAction } from '../actions/update-order-settings';
 import { initialSettingsActionState } from '../actions/settings-action-state';
 import { SettingsFeedback } from './settings-feedback';
@@ -27,7 +30,7 @@ export function OrderSettingsForm({ settings }: Props) {
   return (
     <form
       action={action}
-      className="border-border bg-surface space-y-5 rounded-xl border p-6"
+      className={cardVariants({ className: 'space-y-5 rounded-xl p-6' })}
     >
       <input
         type="hidden"
@@ -51,50 +54,44 @@ export function OrderSettingsForm({ settings }: Props) {
       <div className="grid gap-5 sm:grid-cols-3">
         <label className="space-y-2">
           <span className="font-semibold">Priprema (min)</span>
-          <input
+          <Input
             required
             type="number"
             min={0}
             max={240}
             name="minimumPreparationMinutes"
             defaultValue={settings.minimumPreparationMinutes}
-            className="border-border w-full rounded-md border px-3 py-2"
           />
         </label>
         <label className="space-y-2">
           <span className="font-semibold">Dana unapred</span>
-          <input
+          <Input
             required
             type="number"
             min={0}
             max={30}
             name="maximumAdvanceDays"
             defaultValue={settings.maximumAdvanceDays}
-            className="border-border w-full rounded-md border px-3 py-2"
           />
         </label>
         <label className="space-y-2">
           <span className="font-semibold">Korak termina</span>
-          <select
+          <Select
             name="pickupSlotMinutes"
             defaultValue={settings.pickupSlotMinutes}
-            className="border-border w-full rounded-md border px-3 py-2"
           >
             {[5, 10, 15, 20, 30, 60].map((value) => (
               <option key={value} value={value}>
                 {value} min
               </option>
             ))}
-          </select>
+          </Select>
         </label>
       </div>
       <SettingsFeedback state={state} />
-      <button
-        disabled={pending}
-        className="bg-primary rounded-md px-5 py-2 font-semibold text-white disabled:opacity-60"
-      >
+      <Button disabled={pending}>
         {pending ? 'Čuvanje…' : 'Sačuvaj pravila'}
-      </button>
+      </Button>
     </form>
   );
 }

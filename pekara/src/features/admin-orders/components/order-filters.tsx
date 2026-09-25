@@ -1,5 +1,8 @@
 import Link from 'next/link';
 
+import { Button, buttonVariants } from '@/components/ui/button';
+import { cardVariants } from '@/components/ui/card';
+import { Input, Select } from '@/components/ui/input';
 import type { AdminOrdersResult } from '@/server/queries/admin-orders';
 
 type OrderFiltersProps = {
@@ -10,18 +13,21 @@ export function OrderFilters({ filters }: OrderFiltersProps) {
   return (
     <form
       method="get"
-      className="border-border bg-surface grid gap-4 rounded-xl border p-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto_auto] lg:items-end"
+      className={cardVariants({
+        className:
+          'grid gap-4 rounded-xl p-4 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_auto_auto] lg:items-end',
+      })}
     >
       <input type="hidden" name="view" value="all" />
       <div>
         <label htmlFor="status" className="text-sm font-medium">
           Status
         </label>
-        <select
+        <Select
           id="status"
           name="status"
           defaultValue={filters.status ?? ''}
-          className="border-border bg-surface mt-2 min-h-10 w-full rounded-md border px-3"
+          className="mt-2 min-h-10"
         >
           <option value="">Svi statusi</option>
           <option value="NEW">Nove</option>
@@ -30,41 +36,38 @@ export function OrderFilters({ filters }: OrderFiltersProps) {
           <option value="READY">Spremne</option>
           <option value="COMPLETED">Završene</option>
           <option value="CANCELLED">Otkazane</option>
-        </select>
+        </Select>
       </div>
       <div>
         <label htmlFor="from" className="text-sm font-medium">
           Od datuma
         </label>
-        <input
+        <Input
           id="from"
           name="from"
           type="date"
           defaultValue={filters.from ?? ''}
-          className="border-border bg-surface mt-2 min-h-10 w-full rounded-md border px-3"
+          className="mt-2 min-h-10"
         />
       </div>
       <div>
         <label htmlFor="to" className="text-sm font-medium">
           Do datuma
         </label>
-        <input
+        <Input
           id="to"
           name="to"
           type="date"
           defaultValue={filters.to ?? ''}
-          className="border-border bg-surface mt-2 min-h-10 w-full rounded-md border px-3"
+          className="mt-2 min-h-10"
         />
       </div>
-      <button
-        type="submit"
-        className="bg-primary hover:bg-primary-hover min-h-10 rounded-md px-4 py-2 font-semibold text-white"
-      >
+      <Button type="submit" size="sm">
         Primeni
-      </button>
+      </Button>
       <Link
         href="/admin/orders?view=all"
-        className="border-border hover:bg-surface-muted inline-flex min-h-10 items-center justify-center rounded-md border px-4 py-2 font-semibold"
+        className={buttonVariants({ variant: 'outline', size: 'sm' })}
       >
         Resetuj
       </Link>

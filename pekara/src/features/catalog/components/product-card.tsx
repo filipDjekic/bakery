@@ -1,6 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { cardVariants } from '@/components/ui/card';
+import { focusRingInsetClassName } from '@/components/ui/focus';
+import { cn } from '@/lib/cn';
 import { formatRsd } from '@/lib/money';
 import type { CatalogProduct } from '@/server/queries/catalog';
 
@@ -12,11 +15,20 @@ export function ProductCard({ product }: { product: CatalogProduct }) {
   const productHref = `/proizvodi/${encodeURIComponent(product.slug)}`;
 
   return (
-    <article className="border-border bg-surface group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border shadow-sm transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-md">
+    <article
+      className={cardVariants({
+        variant: 'interactive',
+        className:
+          'group flex h-full min-w-0 flex-col overflow-hidden transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-md',
+      })}
+    >
       <Link
         href={productHref}
         aria-label={`Pogledaj proizvod ${product.name}`}
-        className="bg-surface-muted focus-visible:ring-primary relative block aspect-[4/3] overflow-hidden focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset"
+        className={cn(
+          'bg-surface-muted relative block aspect-[4/3] overflow-hidden focus-visible:ring-inset',
+          focusRingInsetClassName,
+        )}
         style={{
           aspectRatio:
             productImageAspectRatio(product.imageWidth, product.imageHeight) ??
@@ -45,7 +57,10 @@ export function ProductCard({ product }: { product: CatalogProduct }) {
         <h2 className="text-foreground line-clamp-2 text-lg leading-6 font-bold">
           <Link
             href={productHref}
-            className="hover:text-primary focus-visible:ring-primary rounded-sm focus-visible:ring-2 focus-visible:outline-none"
+            className={cn(
+              'hover:text-primary rounded-sm',
+              focusRingInsetClassName,
+            )}
           >
             {product.name}
           </Link>

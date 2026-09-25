@@ -1,7 +1,9 @@
 import { Wheat } from 'lucide-react';
 import Link from 'next/link';
 
+import { focusRingClassName } from '@/components/ui/focus';
 import { CartTrigger } from '@/features/cart/components/cart-trigger';
+import { cn } from '@/lib/cn';
 import { getPublicChromeContent } from '@/server/queries/public-settings';
 
 import { Container } from './container';
@@ -17,7 +19,10 @@ export async function PublicHeader() {
         <div className="flex h-18 items-center justify-between gap-4">
           <Link
             href="/"
-            className="focus-visible:ring-primary flex min-w-0 items-center gap-3 rounded-lg focus-visible:ring-2 focus-visible:ring-offset-4 focus-visible:outline-none"
+            className={cn(
+              'flex min-w-0 items-center gap-3 rounded-lg focus-visible:ring-offset-4',
+              focusRingClassName,
+            )}
           >
             <span className="bg-primary text-surface inline-flex size-10 shrink-0 items-center justify-center rounded-full">
               <Wheat aria-hidden size={21} />

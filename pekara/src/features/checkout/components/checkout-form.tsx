@@ -6,6 +6,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import { buttonVariants } from '@/components/ui/button';
+import { cardVariants } from '@/components/ui/card';
+import { Input, Textarea } from '@/components/ui/input';
+import { SectionDescription, SectionTitle } from '@/components/ui/typography';
 import { useCartHydration } from '@/features/cart/hooks/use-cart-hydration';
 import { useCartStore } from '@/features/cart/store/cart-store';
 import type {
@@ -34,8 +38,6 @@ type PickupSlotsResponse = {
   bakeryTimezone: string;
 };
 
-const inputClassName =
-  'border-border bg-surface text-foreground focus-visible:ring-primary mt-2 min-h-11 w-full rounded-md border px-3 py-2 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none';
 const IDEMPOTENCY_SESSION_KEY = 'bakery:checkout-idempotency';
 
 const orderErrorMessages: Partial<Record<CreateOrderApiError['code'], string>> =
@@ -262,16 +264,19 @@ export function CheckoutForm({
 
   if (items.length === 0) {
     return (
-      <div className="border-border bg-surface-muted rounded-xl border px-6 py-12 text-center sm:px-10">
-        <h2 className="text-foreground text-xl font-semibold">
-          Korpa je prazna
-        </h2>
-        <p className="text-muted mx-auto mt-3 max-w-lg leading-7">
+      <div
+        className={cardVariants({
+          variant: 'muted',
+          className: 'px-6 py-12 text-center sm:px-10',
+        })}
+      >
+        <SectionTitle className="text-xl">Korpa je prazna</SectionTitle>
+        <SectionDescription className="mx-auto mt-3 max-w-lg">
           Dodajte bar jedan proizvod pre nego što nastavite sa poručivanjem.
-        </p>
+        </SectionDescription>
         <Link
           href="/proizvodi"
-          className="bg-primary hover:bg-primary-hover focus-visible:ring-primary mt-6 inline-flex min-h-11 items-center justify-center rounded-md px-5 py-2.5 text-sm font-semibold text-white focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+          className={buttonVariants({ className: 'mt-6' })}
         >
           Pogledaj proizvode
         </Link>
@@ -289,7 +294,7 @@ export function CheckoutForm({
         onSubmit={handleSubmit(submitOrder)}
         className="space-y-6"
       >
-        <section className="border-border bg-surface rounded-2xl border p-5 shadow-sm sm:p-7">
+        <section className={cardVariants({ className: 'p-5 sm:p-7' })}>
           <h2 className="text-foreground text-xl font-bold">1. Kontakt</h2>
 
           <div className="mt-6 grid gap-5 sm:grid-cols-2">
@@ -297,7 +302,7 @@ export function CheckoutForm({
               <label htmlFor="customerName" className="text-sm font-semibold">
                 Ime i prezime
               </label>
-              <input
+              <Input
                 {...register('customerName')}
                 id="customerName"
                 autoComplete="name"
@@ -305,7 +310,7 @@ export function CheckoutForm({
                 aria-describedby={
                   errors.customerName ? 'customerName-error' : undefined
                 }
-                className={inputClassName}
+                className="mt-2"
               />
               {errors.customerName ? (
                 <p
@@ -321,7 +326,7 @@ export function CheckoutForm({
               <label htmlFor="customerPhone" className="text-sm font-semibold">
                 Telefon
               </label>
-              <input
+              <Input
                 {...register('customerPhone')}
                 id="customerPhone"
                 type="tel"
@@ -332,7 +337,7 @@ export function CheckoutForm({
                 aria-describedby={
                   errors.customerPhone ? 'customerPhone-error' : undefined
                 }
-                className={inputClassName}
+                className="mt-2"
               />
               {errors.customerPhone ? (
                 <p
@@ -348,7 +353,7 @@ export function CheckoutForm({
               <label htmlFor="customerEmail" className="text-sm font-semibold">
                 Email <span className="text-muted font-normal">(opciono)</span>
               </label>
-              <input
+              <Input
                 {...register('customerEmail')}
                 id="customerEmail"
                 type="email"
@@ -357,7 +362,7 @@ export function CheckoutForm({
                 aria-describedby={
                   errors.customerEmail ? 'customerEmail-error' : undefined
                 }
-                className={inputClassName}
+                className="mt-2"
               />
               {errors.customerEmail ? (
                 <p
@@ -374,14 +379,14 @@ export function CheckoutForm({
                 Napomena{' '}
                 <span className="text-muted font-normal">(opciono)</span>
               </label>
-              <textarea
+              <Textarea
                 {...register('note')}
                 id="note"
                 rows={4}
                 maxLength={500}
                 aria-invalid={errors.note ? true : undefined}
                 aria-describedby={errors.note ? 'note-error' : undefined}
-                className={`${inputClassName} resize-y`}
+                className="mt-2"
               />
               {errors.note ? (
                 <p id="note-error" className="mt-2 text-sm text-red-700">

@@ -3,6 +3,8 @@
 import { useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
 
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { authClient } from '@/server/auth/auth-client';
 
 export function LoginForm() {
@@ -46,14 +48,14 @@ export function LoginForm() {
         <label htmlFor="email" className="text-foreground text-sm font-medium">
           Email
         </label>
-        <input
+        <Input
           id="email"
           name="email"
           type="email"
           autoComplete="username"
           required
           disabled={isPending}
-          className="border-border bg-surface text-foreground focus-visible:ring-primary mt-2 min-h-11 w-full rounded-md border px-3 py-2 focus-visible:ring-2 focus-visible:outline-none disabled:opacity-60"
+          className="mt-2"
         />
       </div>
 
@@ -64,14 +66,14 @@ export function LoginForm() {
         >
           Lozinka
         </label>
-        <input
+        <Input
           id="password"
           name="password"
           type="password"
           autoComplete="current-password"
           required
           disabled={isPending}
-          className="border-border bg-surface text-foreground focus-visible:ring-primary mt-2 min-h-11 w-full rounded-md border px-3 py-2 focus-visible:ring-2 focus-visible:outline-none disabled:opacity-60"
+          className="mt-2"
         />
       </div>
 
@@ -84,13 +86,9 @@ export function LoginForm() {
         </p>
       ) : null}
 
-      <button
-        type="submit"
-        disabled={isPending}
-        className="bg-primary hover:bg-primary-hover focus-visible:ring-primary min-h-11 w-full rounded-md px-4 py-2 font-semibold text-white focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60"
-      >
+      <Button type="submit" disabled={isPending} className="w-full">
         {isPending ? 'Prijavljivanje…' : 'Prijavi se'}
-      </button>
+      </Button>
     </form>
   );
 }

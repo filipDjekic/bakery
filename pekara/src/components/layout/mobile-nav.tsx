@@ -4,6 +4,10 @@ import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+import { focusRingInsetClassName } from '@/components/ui/focus';
+import { cn } from '@/lib/cn';
+
 import { publicNavigation } from './public-nav';
 
 export function MobileNav() {
@@ -24,17 +28,18 @@ export function MobileNav() {
 
   return (
     <div className="lg:hidden">
-      <button
+      <Button
         ref={triggerRef}
         type="button"
         aria-expanded={isOpen}
         aria-controls="mobile-navigation"
         aria-label={isOpen ? 'Zatvori navigaciju' : 'Otvori navigaciju'}
         onClick={() => setIsOpen((current) => !current)}
-        className="border-border text-foreground hover:bg-surface-muted focus-visible:ring-primary inline-flex size-11 items-center justify-center rounded-lg border transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+        variant="outline"
+        size="icon"
       >
         {isOpen ? <X aria-hidden size={21} /> : <Menu aria-hidden size={21} />}
-      </button>
+      </Button>
 
       {isOpen ? (
         <div
@@ -51,7 +56,10 @@ export function MobileNav() {
                   <Link
                     href={item.href}
                     onClick={() => setIsOpen(false)}
-                    className="text-foreground hover:bg-surface-muted focus-visible:ring-primary block min-h-11 rounded-lg px-3 py-3 font-semibold transition-colors focus-visible:ring-2 focus-visible:outline-none"
+                    className={cn(
+                      'text-foreground hover:bg-surface-muted block min-h-11 rounded-lg px-3 py-3 font-semibold transition-colors',
+                      focusRingInsetClassName,
+                    )}
                   >
                     {item.label}
                   </Link>

@@ -1,5 +1,8 @@
 import Link from 'next/link';
 
+import { focusRingClassName } from '@/components/ui/focus';
+import { cn } from '@/lib/cn';
+
 export const publicNavigation = [
   { label: 'Početna', href: '/' },
   { label: 'Proizvodi', href: '/proizvodi' },
@@ -15,7 +18,10 @@ export function PublicNav() {
           <li key={item.href}>
             <Link
               href={item.href}
-              className="text-muted hover:text-primary focus-visible:ring-primary rounded-sm text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-4 focus-visible:outline-none"
+              className={cn(
+                'text-muted hover:text-primary rounded-sm text-sm font-semibold transition-colors focus-visible:ring-offset-4',
+                focusRingClassName,
+              )}
             >
               {item.label}
             </Link>

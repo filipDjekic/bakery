@@ -2,6 +2,9 @@
 
 import { useActionState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { cardVariants } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { updateBakeryProfileAction } from '../actions/update-bakery-profile';
 import { initialSettingsActionState } from '../actions/settings-action-state';
 import { SettingsFeedback } from './settings-feedback';
@@ -27,7 +30,7 @@ export function BakeryProfileForm({ settings }: Props) {
   return (
     <form
       action={action}
-      className="border-border bg-surface space-y-5 rounded-xl border p-6"
+      className={cardVariants({ className: 'space-y-5 rounded-xl p-6' })}
     >
       <input
         type="hidden"
@@ -38,52 +41,45 @@ export function BakeryProfileForm({ settings }: Props) {
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="space-y-2">
           <span className="font-semibold">Naziv</span>
-          <input
+          <Input
             required
             maxLength={120}
             name="bakeryName"
             defaultValue={settings.bakeryName}
-            className="border-border w-full rounded-md border px-3 py-2"
           />
         </label>
         <label className="space-y-2">
           <span className="font-semibold">Telefon</span>
-          <input
+          <Input
             required
             maxLength={30}
             name="phone"
             defaultValue={settings.phone}
-            className="border-border w-full rounded-md border px-3 py-2"
           />
         </label>
       </div>
       <label className="block space-y-2">
         <span className="font-semibold">Adresa</span>
-        <input
+        <Input
           required
           maxLength={250}
           name="address"
           defaultValue={settings.address}
-          className="border-border w-full rounded-md border px-3 py-2"
         />
       </label>
       <label className="block space-y-2">
         <span className="font-semibold">Email za obaveštenja</span>
-        <input
+        <Input
           type="email"
           maxLength={254}
           name="notificationEmail"
           defaultValue={settings.notificationEmail ?? ''}
-          className="border-border w-full rounded-md border px-3 py-2"
         />
       </label>
       <SettingsFeedback state={state} />
-      <button
-        disabled={pending}
-        className="bg-primary rounded-md px-5 py-2 font-semibold text-white disabled:opacity-60"
-      >
+      <Button disabled={pending}>
         {pending ? 'Čuvanje…' : 'Sačuvaj profil'}
-      </button>
+      </Button>
     </form>
   );
 }

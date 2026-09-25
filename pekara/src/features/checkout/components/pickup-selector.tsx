@@ -1,6 +1,9 @@
 import { Check, Clock3 } from 'lucide-react';
 import type { FieldError, UseFormRegisterReturn } from 'react-hook-form';
 
+import { cardVariants } from '@/components/ui/card';
+import { focusRingClassName } from '@/components/ui/focus';
+import { cn } from '@/lib/cn';
 import type {
   PickupAvailability,
   PickupSlot,
@@ -36,7 +39,7 @@ export function PickupSelector({
   onTimeChange,
 }: Props) {
   return (
-    <fieldset className="border-border bg-surface rounded-2xl border p-5 shadow-sm sm:p-6">
+    <fieldset className={cardVariants({ className: 'p-5 sm:p-6' })}>
       <legend className="sr-only">2. Termin preuzimanja</legend>
       <h2 className="text-xl font-bold">2. Termin preuzimanja</h2>
 
@@ -71,7 +74,13 @@ export function PickupSelector({
               type="button"
               aria-pressed={selected}
               onClick={() => onDateChange(option.date)}
-              className={`focus-visible:ring-primary min-h-14 shrink-0 rounded-xl border px-4 py-2 text-left transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${selected ? 'border-primary bg-primary text-white' : 'border-border bg-surface hover:border-primary'}`}
+              className={cn(
+                'min-h-14 shrink-0 rounded-xl border px-4 py-2 text-left transition-colors',
+                focusRingClassName,
+                selected
+                  ? 'border-primary bg-primary text-white'
+                  : 'border-border bg-surface hover:border-primary',
+              )}
             >
               <span className="flex items-center gap-2 font-bold">
                 {selected ? <Check aria-hidden size={15} /> : null}
@@ -106,7 +115,13 @@ export function PickupSelector({
                 type="button"
                 aria-pressed={selected}
                 onClick={() => onTimeChange(slot.value)}
-                className={`focus-visible:ring-primary inline-flex min-h-11 items-center gap-2 rounded-lg border px-4 font-semibold focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none ${selected ? 'border-primary bg-primary text-white' : 'border-border bg-surface hover:border-primary'}`}
+                className={cn(
+                  'inline-flex min-h-11 items-center gap-2 rounded-lg border px-4 font-semibold',
+                  focusRingClassName,
+                  selected
+                    ? 'border-primary bg-primary text-white'
+                    : 'border-border bg-surface hover:border-primary',
+                )}
               >
                 {selected ? <Check aria-hidden size={15} /> : null}
                 {slot.label}

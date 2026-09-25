@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { buttonVariants } from '@/components/ui/button';
 import { ProductsTable } from '@/features/admin-products/components/products-table';
 import { getAdminProducts } from '@/server/queries/admin-products';
 
@@ -16,10 +17,7 @@ export default async function AdminProductsPage() {
             Aktivni, neaktivni i rasprodati proizvodi na jednom mestu.
           </p>
         </div>
-        <Link
-          href="/admin/products/new"
-          className="bg-primary hover:bg-primary-hover rounded-md px-4 py-2 font-semibold text-white"
-        >
+        <Link href="/admin/products/new" className={buttonVariants()}>
           Novi proizvod
         </Link>
       </div>

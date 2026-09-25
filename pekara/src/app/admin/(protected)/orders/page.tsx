@@ -2,6 +2,7 @@ import { DateTime } from 'luxon';
 import Link from 'next/link';
 import { connection } from 'next/server';
 
+import { buttonVariants } from '@/components/ui/button';
 import { ActiveOrderQueue } from '@/features/admin-orders/components/active-order-queue';
 import { OrderFilters } from '@/features/admin-orders/components/order-filters';
 import { OrdersHistory } from '@/features/admin-orders/components/orders-history';
@@ -20,7 +21,7 @@ function first(value: string | string[] | undefined): string | undefined {
 }
 
 function tabClass(active: boolean): string {
-  return `focus-visible:ring-primary inline-flex min-h-11 items-center rounded-lg px-4 font-bold focus-visible:ring-2 focus-visible:outline-none ${active ? 'bg-primary text-white' : 'border-border bg-surface border'}`;
+  return buttonVariants({ variant: active ? 'primary' : 'outline' });
 }
 
 export const instant = false;
