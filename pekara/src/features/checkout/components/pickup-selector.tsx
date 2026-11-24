@@ -40,7 +40,7 @@ export function PickupSelector({
   onTimeChange,
 }: Props) {
   return (
-    <fieldset className={cardVariants({ className: 'p-5 sm:p-6' })}>
+    <fieldset className={cardVariants({ className: 'min-w-0 p-5 sm:p-6' })}>
       <legend className="sr-only">2. Termin preuzimanja</legend>
       <h2 className="text-xl font-bold">2. Termin preuzimanja</h2>
 

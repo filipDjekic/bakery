@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { createOrdersPostHandler } from '../../src/app/api/orders/route.ts';
+import { createOrdersPostHandler } from '../../src/server/http/orders.ts';
 import { createCheckoutPayloadHash } from '../../src/lib/payload-hash.ts';
 import { OrderRateLimitExceededError } from '../../src/server/rate-limit/order-rate-limit.ts';
 import { OrderDomainError } from '../../src/server/services/create-order.ts';
@@ -179,4 +179,82 @@ test('unexpected failures do not expose internals', async () => {
   assert.equal(response.status, 500);
   assert.equal(body.error.code, 'INTERNAL_ERROR');
   assert.doesNotMatch(JSON.stringify(body), /database password|private stack/i);
+});
+
+test('oversized actual bodies and wrong media types never reach lookup or creation', async () => {
+  let calls = 0;
+  const handler = createOrdersPostHandler(
+    dependencies({
+      findExisting: async () => {
+        calls++;
+        return null;
+      },
+      create: async () => {
+        calls++;
+        return confirmation;
+      },
+    }),
+  );
+  for (const [body, media, status, code] of [
+    [
+      '"' + 'ž'.repeat(20000) + '"',
+      'application/json',
+      413,
+      'PAYLOAD_TOO_LARGE',
+    ],
+    ['{}', 'text/plain', 415, 'UNSUPPORTED_MEDIA_TYPE'],
+  ] as const) {
+    const response = await handler(
+      new Request('http://localhost/api/orders', {
+        method: 'POST',
+        headers: { 'content-type': media, 'content-length': '1' },
+        body,
+      }),
+    );
+    assert.equal(response.status, status);
+    const result = await response.json();
+    assert.equal(result.error.code, code);
+    assert.equal(response.headers.get('x-request-id'), result.requestId);
+  }
+  assert.equal(calls, 0);
+});
+
+test('ingress limiting occurs before parsing and idempotency lookup, including retries', async () => {
+  let lookups = 0;
+  const handler = createOrdersPostHandler(
+    dependencies({
+      enforceIngressRateLimit: async () => {
+        throw new OrderRateLimitExceededError(12);
+      },
+      findExisting: async () => {
+        lookups++;
+        return null;
+      },
+    }),
+  );
+  const response = await handler(request('{malformed'));
+  assert.equal(response.status, 429);
+  assert.equal(response.headers.get('retry-after'), '12');
+  assert.equal(lookups, 0);
+  let ingress = 0;
+  let creates = 0;
+  const existing = createOrdersPostHandler(
+    dependencies({
+      enforceIngressRateLimit: async () => {
+        ingress++;
+      },
+      findExisting: async () => ({
+        payloadHash: createCheckoutPayloadHash(
+          checkoutRequestSchema.parse(payload),
+        ),
+        value: confirmation,
+      }),
+      enforceRateLimit: async () => {
+        creates++;
+      },
+    }),
+  );
+  assert.equal((await existing(request(JSON.stringify(payload)))).status, 200);
+  assert.equal(ingress, 1);
+  assert.equal(creates, 0);
 });

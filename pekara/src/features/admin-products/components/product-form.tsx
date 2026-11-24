@@ -1,6 +1,10 @@
 'use client';
+import { usePreservedFormAction } from '@/lib/use-preserved-form-action';
 
-import { useActionState, useEffect } from 'react';
+import Image from 'next/image';
+import { Input, Select, Textarea } from '@/components/ui/input';
+import { formatRsdInput } from '@/lib/price-input';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import type {
@@ -18,8 +22,15 @@ type ProductFormProps = {
 
 export function ProductForm({ categories, product }: ProductFormProps) {
   const router = useRouter();
+  const [preview, setPreview] = useState<string | null>(null);
+  useEffect(
+    () => () => {
+      if (preview) URL.revokeObjectURL(preview);
+    },
+    [preview],
+  );
   const action = product ? updateProductAction : createProductAction;
-  const [state, formAction, pending] = useActionState(
+  const [state, formAction, pending] = usePreservedFormAction(
     action,
     initialProductActionState,
   );
@@ -27,35 +38,52 @@ export function ProductForm({ categories, product }: ProductFormProps) {
     if (state.status === 'success' && state.message?.startsWith('/'))
       router.push(state.message);
   }, [router, state]);
+  const error = (field: string) =>
+    state.fieldErrors?.[field === 'priceRsd' ? 'priceMinor' : field];
+  const feedback = (field: string) =>
+    error(field) ? (
+      <span id={`${field}-error`} className="block text-sm text-red-800">
+        {error(field)}
+      </span>
+    ) : null;
   const activeCategories = categories.filter(
     (category) => category.isActive || category.id === product?.categoryId,
   );
   return (
-    <form
-      action={formAction}
-      className="border-border bg-surface max-w-3xl space-y-6 rounded-xl border p-6"
-    >
+    <form onSubmit={formAction}>
       {product ? <input type="hidden" name="id" value={product.id} /> : null}
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="space-y-2">
-          <span className="font-semibold">Naziv</span>
-          <input
+          <span id="name-label" className="font-semibold">
+            Naziv
+          </span>
+          <Input
             required
             maxLength={120}
+            id="name"
+            aria-labelledby="name-label"
+            aria-invalid={Boolean(error('name'))}
+            aria-describedby={error('name') ? 'name-error' : undefined}
             name="name"
             defaultValue={product?.name}
-            className="border-border w-full rounded-md border px-3 py-2"
           />
+          {feedback('name')}
         </label>
         <label className="space-y-2">
-          <span className="font-semibold">Slug</span>
-          <input
+          <span id="slug-label" className="font-semibold">
+            Slug
+          </span>
+          <Input
             required
             maxLength={140}
+            id="slug"
+            aria-labelledby="slug-label"
+            aria-invalid={Boolean(error('slug'))}
+            aria-describedby={error('slug') ? 'slug-error' : undefined}
             name="slug"
             defaultValue={product?.slug}
-            className="border-border w-full rounded-md border px-3 py-2"
           />
+          {feedback('slug')}
         </label>
       </div>
       {product ? (
@@ -64,36 +92,57 @@ export function ProductForm({ categories, product }: ProductFormProps) {
         </label>
       ) : null}
       <label className="block space-y-2">
-        <span className="font-semibold">Opis</span>
-        <textarea
+        <span id="description-label" className="font-semibold">
+          Opis
+        </span>
+        <Textarea
           required
           maxLength={1000}
           rows={5}
+          id="description"
+          aria-labelledby="description-label"
+          aria-invalid={Boolean(error('description'))}
+          aria-describedby={
+            error('description') ? 'description-error' : undefined
+          }
           name="description"
           defaultValue={product?.description}
-          className="border-border w-full rounded-md border px-3 py-2"
         />
+        {feedback('description')}
       </label>
       <div className="grid gap-5 sm:grid-cols-3">
         <label className="space-y-2">
-          <span className="font-semibold">Cena (para)</span>
-          <input
+          <span id="priceRsd-label" className="font-semibold">
+            Cena (RSD)
+          </span>
+          <Input
             required
             min={0}
-            step={1}
-            type="number"
-            name="priceMinor"
-            defaultValue={product?.priceMinor ?? 0}
-            className="border-border w-full rounded-md border px-3 py-2"
+            inputMode="decimal"
+            id="priceRsd"
+            aria-labelledby="priceRsd-label"
+            aria-invalid={Boolean(error('priceRsd'))}
+            aria-describedby={error('priceRsd') ? 'priceRsd-error' : undefined}
+            name="priceRsd"
+            placeholder="150,00"
+            defaultValue={formatRsdInput(product?.priceMinor ?? 0)}
           />
+          {feedback('priceRsd')}
         </label>
         <label className="space-y-2">
-          <span className="font-semibold">Kategorija</span>
-          <select
+          <span id="categoryId-label" className="font-semibold">
+            Kategorija
+          </span>
+          <Select
             required
+            id="categoryId"
+            aria-labelledby="categoryId-label"
+            aria-invalid={Boolean(error('categoryId'))}
+            aria-describedby={
+              error('categoryId') ? 'categoryId-error' : undefined
+            }
             name="categoryId"
             defaultValue={product?.categoryId ?? ''}
-            className="border-border w-full rounded-md border px-3 py-2"
           >
             <option value="" disabled>
               Izaberite
@@ -104,37 +153,104 @@ export function ProductForm({ categories, product }: ProductFormProps) {
                 {category.isActive ? '' : ' (neaktivna)'}
               </option>
             ))}
-          </select>
+          </Select>
+          {feedback('categoryId')}
         </label>
         <label className="space-y-2">
-          <span className="font-semibold">Redosled</span>
-          <input
+          <span id="sortOrder-label" className="font-semibold">
+            Redosled
+          </span>
+          <Input
             required
             step={1}
             type="number"
+            id="sortOrder"
+            aria-labelledby="sortOrder-label"
+            aria-invalid={Boolean(error('sortOrder'))}
+            aria-describedby={
+              error('sortOrder') ? 'sortOrder-error' : undefined
+            }
             name="sortOrder"
             defaultValue={product?.sortOrder ?? 0}
-            className="border-border w-full rounded-md border px-3 py-2"
           />
+          {feedback('sortOrder')}
+        </label>
+      </div>
+      <div className="grid gap-5 sm:grid-cols-2">
+        <label className="space-y-2">
+          <span id="unitLabel-label" className="font-semibold">
+            Jedinica prodaje (opciono)
+          </span>
+          <Input
+            id="unitLabel"
+            aria-labelledby="unitLabel-label"
+            aria-invalid={Boolean(error('unitLabel'))}
+            aria-describedby={
+              error('unitLabel') ? 'unitLabel-error' : undefined
+            }
+            name="unitLabel"
+            maxLength={40}
+            placeholder="npr. komad ili 100 g"
+            defaultValue={product?.unitLabel ?? ''}
+          />
+          {feedback('unitLabel')}
+        </label>
+        <label className="space-y-2">
+          <span id="allergenInfo-label" className="font-semibold">
+            Podaci o alergenima (opciono)
+          </span>
+          <Textarea
+            id="allergenInfo"
+            aria-labelledby="allergenInfo-label"
+            aria-invalid={Boolean(error('allergenInfo'))}
+            aria-describedby={
+              error('allergenInfo') ? 'allergenInfo-error' : undefined
+            }
+            name="allergenInfo"
+            maxLength={500}
+            defaultValue={product?.allergenInfo ?? ''}
+          />
+          {feedback('allergenInfo')}
+          <span className="text-muted text-xs">
+            Unesite samo proverene podatke o proizvodu.
+          </span>
         </label>
       </div>
       <label className="block space-y-2">
-        <span className="font-semibold">
+        <span id="image-label" className="font-semibold">
           Slika {product ? '(ostavite prazno da ostane postojeća)' : ''}
         </span>
-        <input
+        <Input
+          onChange={(event) => {
+            const file = event.target.files?.[0];
+            setPreview(file ? URL.createObjectURL(file) : null);
+          }}
           type="file"
+          id="image"
+          aria-labelledby="image-label"
+          aria-invalid={Boolean(error('image'))}
+          aria-describedby={error('image') ? 'image-error' : undefined}
           name="image"
           accept="image/jpeg,image/png,image/webp"
-          className="border-border block w-full rounded-md border px-3 py-2"
         />
+        {feedback('image')}
         <span className="text-muted block text-xs">
           JPEG, PNG ili WebP, najviše 3 MB.
         </span>
       </label>
+      {preview || product?.imageUrl ? (
+        <Image
+          unoptimized
+          src={preview ?? product?.imageUrl ?? ''}
+          width={320}
+          height={240}
+          alt="Pregled slike proizvoda"
+          className="aspect-[4/3] rounded-xl object-cover"
+        />
+      ) : null}
       <div className="flex flex-wrap gap-6">
         <label className="flex items-center gap-2">
-          <input
+          <Input
             type="checkbox"
             name="isActive"
             defaultChecked={product?.isActive ?? true}
@@ -142,7 +258,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
           Aktivan
         </label>
         <label className="flex items-center gap-2">
-          <input
+          <Input
             type="checkbox"
             name="isAvailable"
             defaultChecked={product?.isAvailable ?? true}

@@ -10,7 +10,7 @@ import { cn } from '@/lib/cn';
 import { focusRingInsetClassName } from './focus';
 
 export const controlClassName = cn(
-  'border-border bg-surface text-foreground placeholder:text-muted min-h-11 w-full rounded-lg border px-3 py-2 transition-colors focus-visible:border-ring disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-danger aria-invalid:ring-danger',
+  'border-control bg-surface text-foreground placeholder:text-muted min-h-11 w-full rounded-lg border px-3 py-2 transition-colors focus-visible:border-ring disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-danger aria-invalid:ring-danger',
   focusRingInsetClassName,
 );
 
@@ -19,7 +19,16 @@ export const Input = forwardRef<
   InputHTMLAttributes<HTMLInputElement>
 >(function Input({ className, ...props }, ref) {
   return (
-    <input ref={ref} className={cn(controlClassName, className)} {...props} />
+    <input
+      ref={ref}
+      className={cn(
+        props.type === 'checkbox'
+          ? 'border-control accent-primary focus-visible:ring-ring size-4 shrink-0 rounded focus-visible:ring-2'
+          : controlClassName,
+        className,
+      )}
+      {...props}
+    />
   );
 });
 

@@ -172,6 +172,15 @@ export default async function ProductDetailsPage({
               </p>
             </div>
 
+            <div className="text-muted my-5 space-y-2 text-sm">
+              <p>Plaćanje prilikom preuzimanja u pekari.</p>
+              {product.unitLabel ? (
+                <p>Jedinica prodaje: {product.unitLabel}</p>
+              ) : null}
+              {product.allergenInfo ? (
+                <p>Alergeni: {product.allergenInfo}</p>
+              ) : null}
+            </div>
             <ProductDetailCartControl
               item={{
                 productId: product.id,

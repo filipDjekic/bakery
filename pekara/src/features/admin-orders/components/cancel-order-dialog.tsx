@@ -1,9 +1,11 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, type FormEvent } from 'react';
 
 type Props = {
-  action: (formData: FormData) => void;
+  action: (event: FormEvent<HTMLFormElement>) => void;
+  error?: string;
+  onRefresh: () => void;
   currentStatus: string;
   orderId: string;
   pending: boolean;
@@ -11,6 +13,8 @@ type Props = {
 
 export function CancelOrderDialog({
   action,
+  error,
+  onRefresh,
   currentStatus,
   orderId,
   pending,
@@ -33,7 +37,7 @@ export function CancelOrderDialog({
         aria-describedby="cancel-order-description"
         className="m-auto w-[min(32rem,calc(100%-2rem))] rounded-xl p-0 shadow-xl backdrop:bg-black/50"
       >
-        <form action={action} className="p-6">
+        <form onSubmit={action} className="p-6">
           <input type="hidden" name="orderId" value={orderId} />
           <input type="hidden" name="currentStatus" value={currentStatus} />
           <input type="hidden" name="targetStatus" value="CANCELLED" />
@@ -56,7 +60,7 @@ export function CancelOrderDialog({
             id="cancellationReason"
             name="cancellationReason"
             aria-describedby="cancellationReason-description"
-            className="border-border focus-visible:ring-primary mt-2 block min-h-28 w-full rounded-lg border p-3 focus-visible:ring-2 focus-visible:outline-none"
+            className="border-control focus-visible:ring-primary mt-2 block min-h-28 w-full rounded-lg border p-3 focus-visible:ring-2 focus-visible:outline-none"
           />
           <p
             id="cancellationReason-description"
@@ -64,6 +68,21 @@ export function CancelOrderDialog({
           >
             Najviše 300 karaktera.
           </p>
+          {error ? (
+            <div role="alert" className="mt-3 text-sm text-red-800">
+              <p>{error}</p>
+              <button
+                type="button"
+                className="min-h-11 font-bold underline"
+                onClick={() => {
+                  dialogRef.current?.close();
+                  onRefresh();
+                }}
+              >
+                Učitaj aktuelni status
+              </button>
+            </div>
+          ) : null}
           <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
             <button
               type="button"

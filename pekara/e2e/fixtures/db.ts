@@ -3,6 +3,11 @@ import { spawnSync } from 'node:child_process';
 import { test as base } from '@playwright/test';
 
 type E2ESeed = {
+  productId: string;
+  productSlug: string;
+  productPriceMinor: number;
+  categoryId: string;
+  inactiveProductId: string;
   availableProductName: string;
   unavailableProductName: string;
   orderId: string;
@@ -18,7 +23,11 @@ function seedDatabase(): E2ESeed {
       '--experimental-strip-types',
       'e2e/fixtures/seed.ts',
     ],
-    { cwd: process.cwd(), encoding: 'utf8', env: process.env },
+    {
+      cwd: process.cwd(),
+      encoding: 'utf8',
+      env: { ...process.env, NODE_ENV: 'test', E2E_APPEND_FIXTURE: 'true' },
+    },
   );
   if (result.status !== 0) {
     throw new Error(`E2E seed failed: ${result.stderr || result.stdout}`);

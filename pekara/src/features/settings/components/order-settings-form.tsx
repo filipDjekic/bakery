@@ -1,6 +1,7 @@
 'use client';
+import { usePreservedFormAction } from '@/lib/use-preserved-form-action';
 
-import { useActionState, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { cardVariants } from '@/components/ui/card';
@@ -23,7 +24,7 @@ type Props = {
 export function OrderSettingsForm({ settings }: Props) {
   const router = useRouter();
   const [dirty, setDirty] = useState(false);
-  const [state, action, pending] = useActionState(
+  const [state, action, pending] = usePreservedFormAction(
     updateOrderSettingsAction,
     initialSettingsActionState,
   );
@@ -37,8 +38,10 @@ export function OrderSettingsForm({ settings }: Props) {
   return (
     <form
       id="orders"
-      action={action}
-      onSubmit={() => setDirty(false)}
+      onSubmit={(event) => {
+        action(event);
+        setDirty(false);
+      }}
       onChange={() => setDirty(true)}
       className={cardVariants({
         className: 'scroll-mt-24 space-y-5 rounded-xl p-6',
@@ -65,30 +68,76 @@ export function OrderSettingsForm({ settings }: Props) {
       </label>
       <div className="grid gap-5 sm:grid-cols-3">
         <label className="space-y-2">
-          <span className="font-semibold">Priprema (min)</span>
+          <span id="minimumPreparationMinutes-label" className="font-semibold">
+            Priprema (min)
+          </span>
           <Input
             required
             type="number"
             min={0}
             max={240}
+            id="minimumPreparationMinutes"
+            aria-labelledby="minimumPreparationMinutes-label"
+            aria-invalid={Boolean(state.fieldErrors?.minimumPreparationMinutes)}
+            aria-describedby={
+              state.fieldErrors?.minimumPreparationMinutes
+                ? 'minimumPreparationMinutes-error'
+                : undefined
+            }
             name="minimumPreparationMinutes"
             defaultValue={settings.minimumPreparationMinutes}
           />
+          {state.fieldErrors?.minimumPreparationMinutes ? (
+            <span
+              id="minimumPreparationMinutes-error"
+              className="block text-sm text-red-800"
+            >
+              {state.fieldErrors.minimumPreparationMinutes}
+            </span>
+          ) : null}
         </label>
         <label className="space-y-2">
-          <span className="font-semibold">Dana unapred</span>
+          <span id="maximumAdvanceDays-label" className="font-semibold">
+            Dana unapred
+          </span>
           <Input
             required
             type="number"
             min={0}
             max={30}
+            id="maximumAdvanceDays"
+            aria-labelledby="maximumAdvanceDays-label"
+            aria-invalid={Boolean(state.fieldErrors?.maximumAdvanceDays)}
+            aria-describedby={
+              state.fieldErrors?.maximumAdvanceDays
+                ? 'maximumAdvanceDays-error'
+                : undefined
+            }
             name="maximumAdvanceDays"
             defaultValue={settings.maximumAdvanceDays}
           />
+          {state.fieldErrors?.maximumAdvanceDays ? (
+            <span
+              id="maximumAdvanceDays-error"
+              className="block text-sm text-red-800"
+            >
+              {state.fieldErrors.maximumAdvanceDays}
+            </span>
+          ) : null}
         </label>
         <label className="space-y-2">
-          <span className="font-semibold">Korak termina</span>
+          <span id="pickupSlotMinutes-label" className="font-semibold">
+            Korak termina
+          </span>
           <Select
+            id="pickupSlotMinutes"
+            aria-labelledby="pickupSlotMinutes-label"
+            aria-invalid={Boolean(state.fieldErrors?.pickupSlotMinutes)}
+            aria-describedby={
+              state.fieldErrors?.pickupSlotMinutes
+                ? 'pickupSlotMinutes-error'
+                : undefined
+            }
             name="pickupSlotMinutes"
             defaultValue={settings.pickupSlotMinutes}
           >
@@ -98,6 +147,14 @@ export function OrderSettingsForm({ settings }: Props) {
               </option>
             ))}
           </Select>
+          {state.fieldErrors?.pickupSlotMinutes ? (
+            <span
+              id="pickupSlotMinutes-error"
+              className="block text-sm text-red-800"
+            >
+              {state.fieldErrors.pickupSlotMinutes}
+            </span>
+          ) : null}
         </label>
       </div>
       <SettingsFormActions

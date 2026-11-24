@@ -6,6 +6,15 @@ import { EmailConfigurationError, type EmailService } from './email-service.ts';
 
 type ResendEmailClient = Pick<Resend['emails'], 'send'>;
 
+class BoundedResend extends Resend {
+  override fetchRequest<T>(path: string, options: object = {}) {
+    return super.fetchRequest<T>(path, {
+      ...options,
+      signal: AbortSignal.timeout(5_000),
+    });
+  }
+}
+
 type ResendEmailOptions = {
   apiKey?: string;
   from?: string;
@@ -30,17 +39,20 @@ export function createResendEmailService(
     options.from ?? process.env.EMAIL_FROM,
     'EMAIL_FROM',
   );
-  const client = options.client ?? new Resend(apiKey).emails;
+  const client = options.client ?? new BoundedResend(apiKey).emails;
 
   return {
     async send(message) {
-      const { data, error } = await client.send({
+      const payload = {
         from,
         to: [message.to],
         subject: message.subject,
         react: message.react,
         ...(message.replyTo ? { replyTo: message.replyTo } : {}),
-      });
+      };
+      const { data, error } = message.idempotencyKey
+        ? await client.send(payload, { idempotencyKey: message.idempotencyKey })
+        : await client.send(payload);
 
       if (error || !data?.id) {
         throw new Error('Transactional email provider rejected the request.');

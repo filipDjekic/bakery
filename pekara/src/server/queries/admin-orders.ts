@@ -19,8 +19,8 @@ const filterSchema = z
       .number()
       .int()
       .positive()
-      .max(ADMIN_ORDERS_MAX_PAGE)
-      .catch(1),
+      .catch(1)
+      .transform((value) => Math.min(value, ADMIN_ORDERS_MAX_PAGE)),
     status: z
       .enum([
         'NEW',
@@ -90,6 +90,9 @@ export type AdminOrdersResult = {
 export type ActiveAdminOrdersResult = {
   orders: AdminOrdersResult['orders'];
   timezone: string;
+  page?: number;
+  totalItems?: number;
+  totalPages?: number;
 };
 
 type StaffAuthorizer = () => Promise<unknown>;
@@ -192,9 +195,21 @@ export async function getAdminOrders(
 
 export async function getActiveAdminOrders(
   authorize: StaffAuthorizer = requireStaff,
+  requestedPage = 1,
 ): Promise<ActiveAdminOrdersResult> {
   await authorize();
   const settings = await getPickupBakerySettings();
+  const count = await db.orm.public.Order.where((order) =>
+    order.status.in([...ACTIVE_ORDER_STATUSES]),
+  ).aggregate((a) => ({ count: a.count() }));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(count.count / ACTIVE_ADMIN_ORDERS_LIMIT),
+  );
+  const page = Math.min(
+    totalPages,
+    Math.max(1, Number.isSafeInteger(requestedPage) ? requestedPage : 1),
+  );
   const rows = await db.orm.public.Order.select(
     'id',
     'orderNumber',
@@ -211,6 +226,7 @@ export async function getActiveAdminOrders(
       (order) => order.createdAt.asc(),
       (order) => order.id.asc(),
     ])
+    .offset((page - 1) * ACTIVE_ADMIN_ORDERS_LIMIT)
     .limit(ACTIVE_ADMIN_ORDERS_LIMIT)
     .all();
 
@@ -221,5 +237,8 @@ export async function getActiveAdminOrders(
       createdAt: new Date(order.createdAt).toISOString(),
     })),
     timezone: settings.timezone,
+    page,
+    totalItems: count.count,
+    totalPages,
   };
 }

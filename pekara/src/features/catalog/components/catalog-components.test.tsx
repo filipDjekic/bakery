@@ -168,3 +168,21 @@ describe('compact catalog interactions', () => {
     ).toBe(1);
   });
 });
+
+it('preserves search and sorting across categories and preserves sorting in search forms', () => {
+  render(
+    <CategoryFilter
+      categories={[{ id: 'c', name: 'Hleb', slug: 'hleb' }]}
+      selectedCategorySlug={null}
+      query="raž"
+      sort="price-desc"
+    />,
+  );
+  const url = new URL(
+    screen.getByRole('link', { name: 'Hleb' }).getAttribute('href')!,
+    'http://local.test',
+  );
+  expect(url.searchParams.get('q')).toBe('raž');
+  expect(url.searchParams.get('sort')).toBe('price-desc');
+  expect(url.searchParams.get('category')).toBe('hleb');
+});

@@ -16,13 +16,21 @@ export async function updateWorkingHoursAction(
     const raw = JSON.parse(
       String(formData.get('intervals') ?? '[]'),
     ) as unknown;
-    await updateWorkingHours(raw, async () => undefined);
+    const updated = await updateWorkingHours(
+      raw,
+      String(formData.get('expectedUpdatedAt') ?? ''),
+      async () => undefined,
+    );
     updateTag(PUBLIC_CACHE_TAGS.settings);
     revalidatePath('/');
     revalidatePath('/checkout');
     revalidatePath('/api/pickup-slots');
     revalidatePath('/admin/settings');
-    return { status: 'success', message: 'Radno vreme je sačuvano.' };
+    return {
+      status: 'success',
+      message: 'Radno vreme je sačuvano.',
+      updatedAt: new Date(updated.updatedAt).toISOString(),
+    };
   } catch (error) {
     return settingsActionError(error);
   }

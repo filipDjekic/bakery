@@ -34,3 +34,5 @@ Target objectives must be approved by the owner:
 Run this drill before launch and quarterly. If the latest snapshot violates the
 approved RPO, stop launch/release and add an independent `pg_dump` process or
 upgrade the plan before proceeding.
+
+Before the integrity migration, restore a recent backup into a separate non-production DB and run the compatibility scan, exact migration and schema verify there. Record backup timestamp, observed restore time and data loss window; do not mark a successful local empty-DB replay as a successful production restore.

@@ -14,6 +14,7 @@ describe('scrubSentryEvent', () => {
         ip_address: '203.0.113.10',
       },
       request: {
+        url: 'https://bakery.example/checkout?email=customer@example.test#private',
         cookies: { session: 'secret' },
         data: { customerPhone: '+381641234567' },
         query_string: 'email=customer@example.test',
@@ -28,6 +29,7 @@ describe('scrubSentryEvent', () => {
 
     const scrubbed = scrubSentryEvent(event);
     expect(scrubbed.user).toEqual({ id: 'staff-1' });
+    expect(scrubbed.request?.url).toBe('https://bakery.example/checkout');
     expect(scrubbed.request?.cookies).toBeUndefined();
     expect(scrubbed.request?.data).toBeUndefined();
     expect(scrubbed.request?.query_string).toBeUndefined();

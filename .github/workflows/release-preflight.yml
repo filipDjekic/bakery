@@ -1,0 +1,38 @@
+name: Release configuration preflight
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    environment: production
+    defaults:
+      run:
+        working-directory: pekara
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      APP_URL: ${{ vars.APP_URL }}
+      BETTER_AUTH_URL: ${{ vars.BETTER_AUTH_URL }}
+      BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+      RATE_LIMIT_HMAC_SECRET: ${{ secrets.RATE_LIMIT_HMAC_SECRET }}
+      VERCEL: ${{ vars.VERCEL }}
+      TRUSTED_PROXY_MODE: ${{ vars.TRUSTED_PROXY_MODE }}
+      TRUSTED_PROXY_HOPS: ${{ vars.TRUSTED_PROXY_HOPS }}
+      EMAIL_ENABLED: ${{ vars.EMAIL_ENABLED || 'false' }}
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      EMAIL_FROM: ${{ vars.EMAIL_FROM }}
+      BLOB_ENABLED: ${{ vars.BLOB_ENABLED || 'false' }}
+      BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+      SENTRY_ENABLED: ${{ vars.SENTRY_ENABLED || 'false' }}
+      SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/setup@v3
+        with:
+          version: 12.4.1
+          runtime: node@24
+          working-directory: pekara
+          install: false
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm env:check:production

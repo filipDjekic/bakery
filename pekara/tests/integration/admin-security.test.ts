@@ -102,6 +102,7 @@ const mutationBoundaries: Array<{
     invoke: (authorize) =>
       updateWorkingHours(
         [{ weekday: 1, openMinute: 600, closeMinute: 500 }],
+        new Date().toISOString(),
         authorize,
       ),
   },

@@ -24,3 +24,5 @@ rejects missing or whitespace-padded values.
 
 Record deployment URL, product ID, object path, operator, and timestamp without
 recording the token.
+
+Image uploads are disabled unless BLOB_ENABLED=true; enabling requires a server-only store token. Existing image URLs remain readable while uploads are disabled. Verify upload/delete/replacement in a separate Preview store before release.

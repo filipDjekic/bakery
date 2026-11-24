@@ -22,6 +22,8 @@ model Product {
   slug          VarChar(140)               @unique
   description   VarChar(1000)
   priceMinor    Int
+  unitLabel     VarChar(40)?
+  allergenInfo  VarChar(500)?
 
   imageUrl      String?
   imagePathname String?
@@ -39,6 +41,9 @@ model Product {
   orderItems    OrderItem[]
 
   @@index([categoryId, isActive, isAvailable, sortOrder])
+  @@check(expression: "\"priceMinor\" >= 0", name: "product_price_nonnegative")
+  @@check(expression: "(\"imageWidth\" IS NULL OR \"imageWidth\" > 0) AND (\"imageHeight\" IS NULL OR \"imageHeight\" > 0)", name: "product_image_dimensions")
+
 }
 
 enum OrderStatus {
@@ -77,10 +82,13 @@ model Order {
 
   items              OrderItem[]
   statusHistory      OrderStatusHistory[]
+  notifications      OrderNotificationDelivery[]
 
   @@index([status, createdAt])
   @@index([createdAt])
   @@index([pickupAt])
+  @@check(expression: "\"subtotalMinor\" >= 0 AND \"totalMinor\" >= 0", name: "order_totals_nonnegative")
+
 }
 
 model OrderItem {
@@ -100,6 +108,9 @@ model OrderItem {
   product        Product?                   @relation(fields:[productId], references:[id], onDelete: SetNull)
 
   @@index([orderId])
+  @@check(expression: "\"unitPriceMinor\" >= 0 AND \"quantity\" > 0 AND \"subtotalMinor\" >= 0", name: "order_item_values")
+  @@check(expression: "\"subtotalMinor\"::bigint = \"unitPriceMinor\"::bigint * \"quantity\"::bigint", name: "order_item_subtotal")
+
 }
 
 model OrderStatusHistory {
@@ -140,6 +151,8 @@ model BakerySettings {
   updatedAt                 temporal.updatedAtString()
 
   businessHours             BusinessHours[]
+  @@check(expression: "\"minimumPreparationMinutes\" BETWEEN 0 AND 240 AND \"maximumAdvanceDays\" BETWEEN 0 AND 30 AND \"pickupSlotMinutes\" IN (5, 10, 15, 20, 30, 60)", name: "bakery_configuration_limits")
+
 }
 
 model BusinessHours {
@@ -156,6 +169,8 @@ model BusinessHours {
   bakerySettings   BakerySettings             @relation(fields:[bakerySettingsId], references:[id], onDelete: Cascade)
 
   @@index([bakerySettingsId, weekday, openMinute])
+  @@check(expression: "\"weekday\" BETWEEN 1 AND 7 AND \"openMinute\" >= 0 AND \"closeMinute\" <= 1440 AND \"openMinute\" < \"closeMinute\"", name: "business_hours_range")
+
 }
 
 model ActionRateLimitBucket {
@@ -171,6 +186,8 @@ model ActionRateLimitBucket {
 
   @@unique([keyHash, action, windowStart, windowSeconds])
   @@index([expiresAt])
+  @@check(expression: "\"count\" >= 0 AND \"windowSeconds\" > 0", name: "rate_bucket_values")
+
 }
 
 enum UserRole {
@@ -246,4 +263,31 @@ model RateLimit {
   key         String @unique
   count       Int
   lastRequest BigInt
+}
+
+enum NotificationStatus {
+  @@type("pg/text@1")
+  PENDING
+  SENDING
+  SENT
+  FAILED
+  SKIPPED
+}
+
+model OrderNotificationDelivery {
+  id Uuid @id @default(uuid())
+  orderId Uuid
+  recipientType VarChar(16)
+  status NotificationStatus @default(PENDING)
+  attempts Int @default(0)
+  lastErrorCode VarChar(80)?
+  leaseUntil TimestamptzString?
+  deliveredAt TimestamptzString?
+  createdAt temporal.createdAtString()
+  updatedAt temporal.updatedAtString()
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  @@unique([orderId, recipientType])
+  @@index([status, updatedAt])
+  @@check(expression: "attempts >= 0 AND attempts <= 5", name: "notification_attempts")
+  @@check(expression: "\"recipientType\" IN ('customer', 'bakery')", name: "notification_recipient")
 }

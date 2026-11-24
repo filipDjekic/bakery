@@ -1,3 +1,7 @@
+import type { ReactNode } from 'react';
+import Link from 'next/link';
+import { safeOrderReturn } from '@/features/admin-orders/lib/order-return';
+import { RetryNotificationButton } from '@/features/admin-orders/components/retry-notification-button';
 import { DateTime } from 'luxon';
 import { notFound } from 'next/navigation';
 
@@ -23,8 +27,10 @@ function localTime(value: Date | string, timezone: string): string {
 
 export default async function AdminOrderPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ returnTo?: string }>;
 }) {
   const { id } = await params;
   const order = await getAdminOrder(id);
@@ -34,7 +40,12 @@ export default async function AdminOrderPage({
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
-      <div>Nazad</div>
+      <Link
+        href={safeOrderReturn((await searchParams).returnTo)}
+        className="text-primary inline-flex min-h-11 items-center font-semibold underline"
+      >
+        Nazad na porudžbine
+      </Link>
 
       <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
@@ -54,7 +65,17 @@ export default async function AdminOrderPage({
         className="border-border bg-border grid gap-px overflow-hidden rounded-xl border shadow-sm sm:grid-cols-2 lg:grid-cols-4"
       >
         <SummaryItem label="Kupac" value={order.customerName} />
-        <SummaryItem label="Telefon" value={order.customerPhone} />
+        <SummaryItem
+          label="Telefon"
+          value={
+            <a
+              className="text-primary underline"
+              href={`tel:${order.customerPhone}`}
+            >
+              {order.customerPhone}
+            </a>
+          }
+        />
         <SummaryItem
           label="Preuzimanje"
           value={localTime(order.pickupAt, settings.timezone)}
@@ -119,6 +140,70 @@ export default async function AdminOrderPage({
         </section>
       ) : null}
 
+      <section className="border-border bg-surface rounded-xl border p-5">
+        <h2 className="text-xl font-bold">Istorija statusa</h2>
+        {order.cancellationReason ? (
+          <p className="mt-3 text-red-800">
+            Razlog otkazivanja: {order.cancellationReason}
+          </p>
+        ) : null}
+        <ol className="mt-4 space-y-3">
+          {order.statusHistory.map((entry) => (
+            <li key={entry.id} className="border-border border-l-2 pl-4">
+              <OrderStatusBadge status={entry.toStatus} />
+              <p className="text-muted mt-1 text-sm">
+                {localTime(entry.createdAt, settings.timezone)} ·{' '}
+                {entry.actorName}
+              </p>
+              {entry.reason ? <p className="mt-1">{entry.reason}</p> : null}
+            </li>
+          ))}
+        </ol>
+      </section>
+      <section className="border-border bg-surface rounded-xl border p-5">
+        <h2 className="text-xl font-bold">Email obaveštenja</h2>
+        {order.notifications.length ? (
+          <ul className="mt-3 space-y-2">
+            {order.notifications.map((entry) => (
+              <li key={entry.id}>
+                {entry.recipientType === 'customer' ? 'Kupac' : 'Pekara'} ·{' '}
+                {
+                  {
+                    PENDING: 'Na čekanju',
+                    SENDING: 'Slanje u toku',
+                    SENT: 'Poslato',
+                    FAILED: 'Slanje nije uspelo',
+                    SKIPPED: 'Slanje je isključeno',
+                  }[entry.status]
+                }{' '}
+                · pokušaji {entry.attempts}/5
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-muted mt-3">Nema evidentiranih obaveštenja.</p>
+        )}
+        {order.notifications.some(
+          (entry) =>
+            ['PENDING', 'FAILED', 'SENDING'].includes(entry.status) &&
+            entry.attempts < 5,
+        ) ? (
+          <RetryNotificationButton orderId={order.id} />
+        ) : null}
+      </section>
+      <p className="text-muted text-sm">
+        {
+          {
+            NEW: 'Pregledajte porudžbinu i prihvatite je ili navedite razlog otkazivanja.',
+            ACCEPTED: 'Kada započnete pripremu, promenite status.',
+            IN_PREPARATION:
+              'Označite porudžbinu kao spremnu kada završite pripremu.',
+            READY: 'Po preuzimanju označite porudžbinu kao završenu.',
+            COMPLETED: 'Porudžbina je završena; status se više ne menja.',
+            CANCELLED: 'Porudžbina je otkazana; status se više ne menja.',
+          }[order.status]
+        }
+      </p>
       <OrderStatusActions id={order.id} status={order.status} />
     </div>
   );
@@ -130,7 +215,7 @@ function SummaryItem({
   strong = false,
 }: {
   label: string;
-  value: string;
+  value: ReactNode;
   strong?: boolean;
 }) {
   return (

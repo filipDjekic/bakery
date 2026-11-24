@@ -15,6 +15,39 @@ const statusLabels: Record<PublicOrderConfirmation['status'], string> = {
   CANCELLED: 'Otkazana',
 };
 
+const statusMessages: Record<
+  PublicOrderConfirmation['status'],
+  { title: string; description: string }
+> = {
+  NEW: {
+    title: 'Hvala na porudžbini',
+    description: 'Pekara će pregledati porudžbinu. Sačuvajte njen broj.',
+  },
+  ACCEPTED: {
+    title: 'Porudžbina je prihvaćena',
+    description:
+      'Pekara je prihvatila porudžbinu za izabrani termin. Sačuvajte njen broj.',
+  },
+  IN_PREPARATION: {
+    title: 'Vaša porudžbina se priprema',
+    description:
+      'Priprema je u toku. Sačuvajte broj porudžbine za preuzimanje.',
+  },
+  READY: {
+    title: 'Vaša porudžbina je spremna',
+    description:
+      'Porudžbina je spremna za preuzimanje. Pokažite njen broj u pekari.',
+  },
+  COMPLETED: {
+    title: 'Hvala na poseti',
+    description: 'Porudžbina je preuzeta.',
+  },
+  CANCELLED: {
+    title: 'Porudžbina je otkazana',
+    description: 'Preuzimanje nije predviđeno za otkazanu porudžbinu.',
+  },
+};
+
 type OrderConfirmationProps = {
   order: PublicOrderConfirmation;
 };
@@ -28,13 +61,13 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
     <article className="mx-auto max-w-3xl">
       <div className="border-border bg-surface rounded-2xl border p-6 text-center sm:p-10">
         <p className="text-primary text-sm font-semibold tracking-wider uppercase">
-          Porudžbina je primljena
+          {statusLabels[order.status]}
         </p>
         <h1 className="text-foreground mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
-          Hvala na porudžbini
+          {statusMessages[order.status].title}
         </h1>
         <p className="text-muted mt-4 leading-7">
-          Sačuvajte broj porudžbine i pokažite ga prilikom preuzimanja.
+          {statusMessages[order.status].description}
         </p>
 
         <div className="bg-surface-muted border-border mt-7 rounded-xl border px-4 py-6">
@@ -56,6 +89,10 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
         <h2 className="text-foreground text-xl font-semibold">
           Detalji preuzimanja
         </h2>
+        <p className="text-muted mt-3 text-sm">
+          Plaćanje je prilikom preuzimanja u pekari. Status možete ponovo
+          proveriti osvežavanjem stranice.
+        </p>
         <dl className="mt-5 grid gap-5 sm:grid-cols-2">
           <div>
             <dt className="text-muted text-sm">Termin</dt>

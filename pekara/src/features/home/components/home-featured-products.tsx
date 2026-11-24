@@ -1,4 +1,3 @@
-import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 import { ProductCard } from '@/features/catalog/components/product-card';
@@ -14,23 +13,23 @@ export function HomeFeaturedProducts({
       <div className="flex items-end justify-between gap-6">
         <div>
           <p className="text-primary text-xs font-bold tracking-[0.18em] uppercase">
-            Sveže iz peći
+            Iz naše ponude
           </p>
           <h2
             id="featured-heading"
             className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl"
           >
-            Najpopularnije danas
+            Izdvojeno iz ponude
           </h2>
           <p className="text-muted mt-3 max-w-2xl">
-            Otkrijte naše najtraženije proizvode koje kupci najviše vole.
+            Pogledajte izbor proizvoda i odaberite termin preuzimanja.
           </p>
         </div>
         <Link
           href="/proizvodi"
           className="text-primary focus-visible:ring-primary hidden items-center gap-2 rounded-sm font-semibold hover:underline focus-visible:ring-2 focus-visible:outline-none sm:flex"
         >
-          Pogledaj sve proizvode <ArrowRight aria-hidden size={18} />
+          Pogledaj sve proizvode
         </Link>
       </div>
       {products.length ? (
@@ -48,7 +47,7 @@ export function HomeFeaturedProducts({
         href="/proizvodi"
         className="border-border bg-surface focus-visible:ring-primary mt-6 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-5 font-semibold sm:hidden"
       >
-        Pogledaj sve proizvode <ArrowRight aria-hidden size={18} />
+        Pogledaj sve proizvode
       </Link>
     </section>
   );

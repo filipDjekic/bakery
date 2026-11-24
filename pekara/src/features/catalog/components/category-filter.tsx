@@ -5,6 +5,8 @@ import type { CatalogCategoryFilterOption } from '@/server/queries/catalog';
 type CategoryFilterProps = {
   categories: CatalogCategoryFilterOption[];
   selectedCategorySlug: string | null;
+  query?: string;
+  sort?: string;
 };
 
 function filterLinkClass(isSelected: boolean): string {
@@ -20,7 +22,16 @@ function filterLinkClass(isSelected: boolean): string {
 export function CategoryFilter({
   categories,
   selectedCategorySlug,
+  query = '',
+  sort = 'default',
 }: CategoryFilterProps) {
+  const href = (category?: string) => {
+    const params = new URLSearchParams();
+    if (category) params.set('category', category);
+    if (query) params.set('q', query);
+    if (sort !== 'default') params.set('sort', sort);
+    return `/proizvodi${params.size ? '?' + params : ''}`;
+  };
   if (categories.length === 0) {
     return null;
   }
@@ -30,7 +41,7 @@ export function CategoryFilter({
       <ul className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
         <li>
           <Link
-            href="/proizvodi"
+            href={href()}
             aria-current={selectedCategorySlug === null ? 'page' : undefined}
             className={filterLinkClass(selectedCategorySlug === null)}
           >
@@ -44,7 +55,7 @@ export function CategoryFilter({
           return (
             <li key={category.id}>
               <Link
-                href={`/proizvodi?category=${encodeURIComponent(category.slug)}`}
+                href={href(category.slug)}
                 aria-current={isSelected ? 'page' : undefined}
                 className={filterLinkClass(isSelected)}
               >

@@ -82,3 +82,6 @@ Thumbs.db
 .claude/
 .cursor/
 .devin/
+
+# Local Playwright browser binaries
+/.cache/ms-playwright/

@@ -41,3 +41,13 @@ leading/trailing whitespace.
    values automatically.
 
 Do not expose server secrets with `NEXT_PUBLIC_` prefixes.
+
+## Core, optional and release gates
+
+Core production requires PostgreSQL DATABASE_URL, canonical HTTPS APP_URL, same-origin BETTER_AUTH_URL if set, independent32+character BETTER_AUTH_SECRET and RATE_LIMIT_HMAC_SECRET, and an explicit trusted ingress policy. Optional features default off: EMAIL_ENABLED, BLOB_ENABLED and SENTRY_ENABLED. Enabled features require their credentials; client monitoring separately uses NEXT_PUBLIC_SENTRY_ENABLED=true plus browser DSN. Empty optional host variables are treated as absent; outer whitespace remains invalid. Never prefix server keys with NEXT_PUBLIC_.
+
+Use the manual Release configuration preflight workflow with the production GitHub environment, or `pnpm env:check:production` in the release owner environment. PR CI uses isolated test credentials only and must not require live secrets. Runtime startup also validates production core/optional configuration. The production-build phase delegates configuration validation to release preflight; a narrowly guarded loopback *_test harness may exercise a production build over HTTP. Do not set test reset/local proxy flags on a public deployment.
+
+Vercel supplies VERCEL=1 and overwrites x-forwarded-for at ingress. The app accepts a single normalized address there; verify deployed spoofed/missing/IPv6 behavior before release. Self-hosted deployments must set TRUSTED_PROXY_MODE=proxy and TRUSTED_PROXY_HOPS=1..5, select the client from the trusted right side of the chain, and firewall direct origin access. Every trusted proxy must append/overwrite headers consistently. Missing/invalid trusted IP information fails closed. Local dev ignores injected headers. See the official Vercel request-header contract: https://vercel.com/docs/headers/request-headers . Only HMAC fingerprints are persisted/logged, not raw IP.
+
+Release sequence: green CI and reviewed diff → configuration preflight → verified backup/restore rehearsal → read-only data compatibility → reviewed migration apply by owner → app deploy → schema verify and production smoke. No part of local remediation provisions paid services, deploys or applies production changes.

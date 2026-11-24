@@ -9,7 +9,6 @@ import type { CatalogProduct } from '@/server/queries/catalog';
 
 import { CompactCartControl } from './compact-cart-control';
 import { ProductImagePlaceholder } from './product-image-placeholder';
-import { productImageAspectRatio } from '../lib/product-image';
 
 export function ProductCard({ product }: { product: CatalogProduct }) {
   const productHref = `/proizvodi/${encodeURIComponent(product.slug)}`;
@@ -29,11 +28,6 @@ export function ProductCard({ product }: { product: CatalogProduct }) {
           'bg-surface-muted relative block aspect-[4/3] overflow-hidden focus-visible:ring-inset',
           focusRingInsetClassName,
         )}
-        style={{
-          aspectRatio:
-            productImageAspectRatio(product.imageWidth, product.imageHeight) ??
-            '4 / 3',
-        }}
       >
         {product.imageUrl ? (
           <Image
@@ -72,6 +66,11 @@ export function ProductCard({ product }: { product: CatalogProduct }) {
         <div className="mt-auto flex items-end justify-between gap-3 pt-5">
           <p className="text-primary text-lg font-bold tabular-nums">
             {formatRsd(product.priceMinor)}
+            {product.unitLabel ? (
+              <span className="text-muted block text-xs font-normal">
+                / {product.unitLabel}
+              </span>
+            ) : null}
           </p>
           <CompactCartControl
             item={{

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useId, useRef, useState, useTransition } from 'react';
 
 import { setProductActive } from '../actions/set-product-active';
 import { setProductAvailable } from '../actions/set-product-available';
@@ -16,6 +16,8 @@ export function ProductToggles({
   isActive,
   isAvailable,
 }: ProductTogglesProps) {
+  const dialogLabel = useId();
+  const confirm = useRef<HTMLDialogElement>(null);
   const [active, setActive] = useState(isActive);
   const [available, setAvailable] = useState(isAvailable);
   const [error, setError] = useState<string | null>(null);
@@ -31,10 +33,8 @@ export function ProductToggles({
           await setProductAvailable(id, value);
           setAvailable(value);
         }
-      } catch (cause) {
-        setError(
-          cause instanceof Error ? cause.message : 'Promena nije sačuvana.',
-        );
+      } catch {
+        setError('Promena nije sačuvana. Osvežite podatke i pokušajte ponovo.');
       }
     });
   }
@@ -45,7 +45,10 @@ export function ProductToggles({
           type="checkbox"
           checked={active}
           disabled={pending}
-          onChange={(event) => change('active', event.target.checked)}
+          onChange={(event) => {
+            if (!event.target.checked) confirm.current?.showModal();
+            else change('active', true);
+          }}
         />{' '}
         Aktivan
       </label>
@@ -58,6 +61,37 @@ export function ProductToggles({
         />{' '}
         Dostupan
       </label>
+      <dialog
+        ref={confirm}
+        aria-labelledby={`deactivate-${dialogLabel}`}
+        className="m-auto max-w-sm rounded-xl p-6 shadow-xl backdrop:bg-black/45"
+      >
+        <h2 id={`deactivate-${dialogLabel}`} className="text-lg font-bold">
+          Sakrij proizvod iz ponude?
+        </h2>
+        <p className="text-muted mt-3">
+          Kupci više neće moći da poruče ovaj proizvod.
+        </p>
+        <div className="mt-5 flex gap-3">
+          <button
+            type="button"
+            className="border-control min-h-11 rounded-lg border px-4"
+            onClick={() => confirm.current?.close()}
+          >
+            Odustani
+          </button>
+          <button
+            type="button"
+            className="bg-primary min-h-11 rounded-lg px-4 font-bold text-white"
+            onClick={() => {
+              confirm.current?.close();
+              change('active', false);
+            }}
+          >
+            Deaktiviraj
+          </button>
+        </div>
+      </dialog>
       {error ? (
         <span role="alert" className="text-xs text-red-700">
           {error}

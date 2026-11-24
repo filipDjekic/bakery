@@ -2,10 +2,12 @@
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { AdminMobileNav } from './admin-mobile-nav';
 import { AdminSidebar } from './admin-sidebar';
+
+vi.mock('next/navigation', () => ({ usePathname: () => '/admin/orders' }));
 
 const adminOnlyLabels = ['Proizvodi', 'Kategorije', 'Podešavanja'];
 
@@ -16,6 +18,10 @@ describe('role-aware admin navigation components', () => {
     expect(
       screen.getByRole('link', { name: 'Porudžbine' }),
     ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Porudžbine' })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
     for (const label of adminOnlyLabels) {
       expect(
         screen.queryByRole('link', { name: label }),

@@ -128,6 +128,7 @@ test('transactionally replaces hours for closed days and split shifts', async ()
       { weekday: 1, openMinute: 780, closeMinute: 1020 },
       { weekday: 2, openMinute: 420, closeMinute: 900 },
     ],
+    (await getAdminSettings(authorize)).updatedAt,
     authorize,
   );
   assert.deepEqual(await getBusinessHoursForWeekday('default', 1), [
@@ -137,12 +138,13 @@ test('transactionally replaces hours for closed days and split shifts', async ()
   assert.deepEqual(await getBusinessHoursForWeekday('default', 7), []);
   const before = await getBusinessHoursForWeekday('default', 1);
   await assert.rejects(
-    () =>
+    async () =>
       updateWorkingHours(
         [
           { weekday: 1, openMinute: 360, closeMinute: 800 },
           { weekday: 1, openMinute: 700, closeMinute: 900 },
         ],
+        (await getAdminSettings(authorize)).updatedAt,
         authorize,
       ),
     (error: unknown) =>

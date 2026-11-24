@@ -1,11 +1,10 @@
 import Link from 'next/link';
 import { connection } from 'next/server';
 
-import { ManualRefreshButton } from '@/features/admin-orders/components/manual-refresh-button';
 import { OrderPolling } from '@/features/admin-orders/components/order-polling';
 import { OrderStatusCards } from '@/features/admin-orders/components/order-status-cards';
 import { RecentNewOrders } from '@/features/admin-orders/components/recent-new-orders';
-import { RevenueCard } from '@/features/admin-orders/components/revenue-card'; 
+import { RevenueCard } from '@/features/admin-orders/components/revenue-card';
 import { getAdminDashboard } from '@/server/queries/admin-dashboard';
 
 export const instant = false;
@@ -16,7 +15,10 @@ export default async function AdminHomePage() {
 
   return (
     <div className="space-y-6">
-      <OrderPolling />
+      <OrderPolling
+        refreshedAt={new Date().toISOString()}
+        timezone={dashboard.timezone}
+      />
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-foreground text-2xl font-bold">
@@ -33,7 +35,6 @@ export default async function AdminHomePage() {
           >
             Sve porudžbine
           </Link>
-          <ManualRefreshButton />
         </div>
       </div>
       <OrderStatusCards counts={dashboard.counts} />

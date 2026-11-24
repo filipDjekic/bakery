@@ -1,4 +1,13 @@
+import { existsSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { defineConfig, devices } from '@playwright/test';
+
+if (
+  !process.env.CI &&
+  !process.env.PLAYWRIGHT_BROWSERS_PATH &&
+  existsSync('.cache/ms-playwright')
+)
+  process.env.PLAYWRIGHT_BROWSERS_PATH = resolve('.cache/ms-playwright');
 
 export default defineConfig({
   testDir: '.',
@@ -14,9 +23,10 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: process.env.CI ? 'pnpm start' : 'pnpm run e2e:server',
+    command: 'node --experimental-strip-types scripts/start-e2e-server.mjs',
     url: 'http://127.0.0.1:3000',
-    reuseExistingServer: false,
+    reuseExistingServer: process.env.E2E_EXTERNAL_SERVER === 'true',
+    gracefulShutdown: { signal: 'SIGTERM', timeout: 1000 },
     timeout: 120_000,
   },
 });

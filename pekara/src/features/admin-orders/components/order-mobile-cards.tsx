@@ -17,9 +17,11 @@ export function OrderMobileCards({
   orders,
   timezone,
   nowIso,
+  returnTo = '/admin/orders?view=all',
 }: {
   orders: AdminOrdersResult['orders'];
   timezone: string;
+  returnTo?: string;
   nowIso: string;
 }) {
   const now = DateTime.fromISO(nowIso, { zone: 'utc' });
@@ -71,7 +73,7 @@ export function OrderMobileCards({
               </div>
             </dl>
             <Link
-              href={`/admin/orders/${order.id}`}
+              href={`/admin/orders/${order.id}?returnTo=${encodeURIComponent(returnTo)}`}
               className="border-border hover:bg-surface-muted focus-visible:ring-primary mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-lg border px-4 font-bold focus-visible:ring-2 focus-visible:outline-none"
             >
               Otvori porudžbinu{' '}

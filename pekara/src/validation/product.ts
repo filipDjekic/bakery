@@ -36,8 +36,20 @@ export const productMutationSchema = z.object({
         .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug nije validan.'),
     ),
   description: plainText,
+  unitLabel: z
+    .string()
+    .trim()
+    .max(40)
+    .refine((v) => !/[<>]/.test(v), 'Unesite običan tekst.')
+    .optional(),
+  allergenInfo: z
+    .string()
+    .trim()
+    .max(500)
+    .refine((v) => !/[<>]/.test(v), 'Unesite običan tekst.')
+    .optional(),
   priceMinor: z.coerce
-    .number()
+    .number({ error: 'Unesite ispravnu cenu u RSD sa najviše dve decimale.' })
     .int('Cena mora biti ceo broj para.')
     .min(0, 'Cena ne može biti negativna.')
     .max(PRODUCT_LIMITS.maximumPriceMinor, 'Cena je previsoka.'),

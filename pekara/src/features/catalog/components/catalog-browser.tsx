@@ -53,17 +53,17 @@ export function CatalogBrowser({
       <header className="grid gap-7 lg:grid-cols-[1fr_minmax(20rem,28rem)] lg:items-end">
         <div>
           <p className="text-primary text-xs font-bold tracking-[0.18em] uppercase">
-            Uvek sveže, uvek ukusno
+            Poručivanje za preuzimanje
           </p>
           <h1 className="text-foreground mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
             Proizvodi
           </h1>
           <p className="text-muted mt-4 max-w-2xl text-lg leading-8">
-            Otkrijte našu ponudu svežih peciva, hleba, bureka, kolača i još
-            mnogo toga.
+            Izaberite proizvode i termin za preuzimanje u pekari.
           </p>
         </div>
         <form action="/proizvodi" className="w-full sm:max-w-md">
+          <input type="hidden" name="sort" value={sort} />
           {selectedCategorySlug ? (
             <input type="hidden" name="category" value={selectedCategorySlug} />
           ) : null}

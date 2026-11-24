@@ -36,7 +36,7 @@ export function ProductDetailCartControl({
     const result = addItem(item, quantity);
     setFeedback(
       result.ok
-        ? `${quantity} kom. proizvoda ${item.name} je dodato u korpu.`
+        ? `${quantity} jedinica proizvoda ${item.name} je dodato u korpu.`
         : 'Izabranu količinu trenutno nije moguće dodati.',
     );
   }

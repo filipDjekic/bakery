@@ -10,6 +10,8 @@ export type CatalogProduct = {
   name: string;
   slug: string;
   description: string;
+  unitLabel?: string | null;
+  allergenInfo?: string | null;
   priceMinor: number;
   imageUrl: string | null;
   imageWidth: number | null;
@@ -50,6 +52,8 @@ async function getCachedPublicCatalog(): Promise<CatalogCategory[]> {
           'name',
           'slug',
           'description',
+          'unitLabel',
+          'allergenInfo',
           'priceMinor',
           'imageUrl',
           'imageWidth',
@@ -77,6 +81,8 @@ async function getCachedPublicCatalog(): Promise<CatalogCategory[]> {
       name: product.name,
       slug: product.slug,
       description: product.description,
+      unitLabel: product.unitLabel,
+      allergenInfo: product.allergenInfo,
       priceMinor: product.priceMinor,
       imageUrl: product.imageUrl,
       imageWidth: product.imageWidth,

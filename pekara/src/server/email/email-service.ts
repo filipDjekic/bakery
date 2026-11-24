@@ -7,6 +7,7 @@ export type TransactionalEmail = {
   subject: string;
   react: ReactElement;
   replyTo?: string;
+  idempotencyKey?: string;
 };
 
 export type EmailDelivery = {

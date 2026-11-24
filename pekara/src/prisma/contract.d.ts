@@ -33,9 +33,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'032270339dc0ddba45229dcb42caa092e494028d620952cc5ad4ec882b8ee0c9'>;
+  StorageHashBase<'4f67248e1dcb99d56a8be933c0ef5d8498a6308a317f3f6fc8dfd301b1076792'>;
 export type ExecutionHash =
-  ExecutionHashBase<'f33b78e7c9f96190e23663d2148cc4aa065bb4b6edf2f91936f1cff0a27350e9'>;
+  ExecutionHashBase<'e4be86e61b2bcc9642b805e0317f350ffa37d0b687b3f8e9a0151c1b4efe0e79'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -327,6 +327,18 @@ export type FieldOutputTypes = {
       readonly subtotalMinor: CodecTypes['pg/int4@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
+    readonly OrderNotificationDelivery: {
+      readonly id: CodecTypes['pg/uuid@1']['output'];
+      readonly orderId: CodecTypes['pg/uuid@1']['output'];
+      readonly recipientType: Varchar<16>;
+      readonly status: 'PENDING' | 'SENDING' | 'SENT' | 'FAILED' | 'SKIPPED';
+      readonly attempts: CodecTypes['pg/int4@1']['output'];
+      readonly lastErrorCode: Varchar<80> | null;
+      readonly leaseUntil: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly deliveredAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
     readonly OrderStatusHistory: {
       readonly id: CodecTypes['pg/uuid@1']['output'];
       readonly orderId: CodecTypes['pg/uuid@1']['output'];
@@ -345,6 +357,8 @@ export type FieldOutputTypes = {
       readonly slug: Varchar<140>;
       readonly description: Varchar<1000>;
       readonly priceMinor: CodecTypes['pg/int4@1']['output'];
+      readonly unitLabel: Varchar<40> | null;
+      readonly allergenInfo: Varchar<500> | null;
       readonly imageUrl: CodecTypes['pg/text@1']['output'] | null;
       readonly imagePathname: CodecTypes['pg/text@1']['output'] | null;
       readonly imageWidth: CodecTypes['pg/int4@1']['output'] | null;
@@ -480,6 +494,18 @@ export type FieldInputTypes = {
       readonly subtotalMinor: CodecTypes['pg/int4@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
+    readonly OrderNotificationDelivery: {
+      readonly id: CodecTypes['pg/uuid@1']['input'];
+      readonly orderId: CodecTypes['pg/uuid@1']['input'];
+      readonly recipientType: CodecTypes['sql/varchar@1']['input'];
+      readonly status: 'PENDING' | 'SENDING' | 'SENT' | 'FAILED' | 'SKIPPED';
+      readonly attempts: CodecTypes['pg/int4@1']['input'];
+      readonly lastErrorCode: CodecTypes['sql/varchar@1']['input'] | null;
+      readonly leaseUntil: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly deliveredAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
     readonly OrderStatusHistory: {
       readonly id: CodecTypes['pg/uuid@1']['input'];
       readonly orderId: CodecTypes['pg/uuid@1']['input'];
@@ -498,6 +524,8 @@ export type FieldInputTypes = {
       readonly slug: CodecTypes['sql/varchar@1']['input'];
       readonly description: CodecTypes['sql/varchar@1']['input'];
       readonly priceMinor: CodecTypes['pg/int4@1']['input'];
+      readonly unitLabel: CodecTypes['sql/varchar@1']['input'] | null;
+      readonly allergenInfo: CodecTypes['sql/varchar@1']['input'] | null;
       readonly imageUrl: CodecTypes['pg/text@1']['input'] | null;
       readonly imagePathname: CodecTypes['pg/text@1']['input'] | null;
       readonly imageWidth: CodecTypes['pg/int4@1']['input'] | null;
@@ -633,6 +661,18 @@ export type StorageColumnTypes = {
       readonly subtotalMinor: CodecTypes['pg/int4@1']['output'];
       readonly unitPriceMinor: CodecTypes['pg/int4@1']['output'];
     };
+    readonly orderNotificationDelivery: {
+      readonly attempts: CodecTypes['pg/int4@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly deliveredAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly id: CodecTypes['pg/uuid@1']['output'];
+      readonly lastErrorCode: Varchar<80> | null;
+      readonly leaseUntil: CodecTypes['pg/timestamptz-string@1']['output'] | null;
+      readonly orderId: CodecTypes['pg/uuid@1']['output'];
+      readonly recipientType: Varchar<16>;
+      readonly status: 'PENDING' | 'SENDING' | 'SENT' | 'FAILED' | 'SKIPPED';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+    };
     readonly orderStatusHistory: {
       readonly changedByUserId: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -645,6 +685,7 @@ export type StorageColumnTypes = {
         'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'COMPLETED' | 'CANCELLED';
     };
     readonly product: {
+      readonly allergenInfo: Varchar<500> | null;
       readonly categoryId: CodecTypes['pg/uuid@1']['output'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly description: Varchar<1000>;
@@ -659,6 +700,7 @@ export type StorageColumnTypes = {
       readonly priceMinor: CodecTypes['pg/int4@1']['output'];
       readonly slug: Varchar<140>;
       readonly sortOrder: CodecTypes['pg/int4@1']['output'];
+      readonly unitLabel: Varchar<40> | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
     };
     readonly rateLimit: {
@@ -786,6 +828,18 @@ export type StorageColumnInputTypes = {
       readonly subtotalMinor: CodecTypes['pg/int4@1']['input'];
       readonly unitPriceMinor: CodecTypes['pg/int4@1']['input'];
     };
+    readonly orderNotificationDelivery: {
+      readonly attempts: CodecTypes['pg/int4@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly deliveredAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly id: CodecTypes['pg/uuid@1']['input'];
+      readonly lastErrorCode: CodecTypes['sql/varchar@1']['input'] | null;
+      readonly leaseUntil: CodecTypes['pg/timestamptz-string@1']['input'] | null;
+      readonly orderId: CodecTypes['pg/uuid@1']['input'];
+      readonly recipientType: CodecTypes['sql/varchar@1']['input'];
+      readonly status: 'PENDING' | 'SENDING' | 'SENT' | 'FAILED' | 'SKIPPED';
+      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+    };
     readonly orderStatusHistory: {
       readonly changedByUserId: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -798,6 +852,7 @@ export type StorageColumnInputTypes = {
         'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'COMPLETED' | 'CANCELLED';
     };
     readonly product: {
+      readonly allergenInfo: CodecTypes['sql/varchar@1']['input'] | null;
       readonly categoryId: CodecTypes['pg/uuid@1']['input'];
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly description: CodecTypes['sql/varchar@1']['input'];
@@ -812,6 +867,7 @@ export type StorageColumnInputTypes = {
       readonly priceMinor: CodecTypes['pg/int4@1']['input'];
       readonly slug: CodecTypes['sql/varchar@1']['input'];
       readonly sortOrder: CodecTypes['pg/int4@1']['input'];
+      readonly unitLabel: CodecTypes['sql/varchar@1']['input'] | null;
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
     };
     readonly rateLimit: {
@@ -1480,6 +1536,101 @@ type ContractBase = Omit<
                 },
               ];
             };
+            readonly orderNotificationDelivery: {
+              columns: {
+                readonly id: {
+                  readonly nativeType: 'uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                };
+                readonly orderId: {
+                  readonly nativeType: 'uuid';
+                  readonly codecId: 'pg/uuid@1';
+                  readonly nullable: false;
+                };
+                readonly recipientType: {
+                  readonly nativeType: 'character varying';
+                  readonly codecId: 'sql/varchar@1';
+                  readonly nullable: false;
+                  readonly typeParams: { readonly length: 16 };
+                };
+                readonly status: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'PENDING'>;
+                  };
+                };
+                readonly attempts: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 0>;
+                  };
+                };
+                readonly lastErrorCode: {
+                  readonly nativeType: 'character varying';
+                  readonly codecId: 'sql/varchar@1';
+                  readonly nullable: true;
+                  readonly typeParams: { readonly length: 80 };
+                };
+                readonly leaseUntil: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly deliveredAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [{ readonly columns: readonly ['orderId', 'recipientType'] }];
+              indexes: readonly [
+                {
+                  readonly name: 'orderNotificationDelivery_status_updatedAt_idx_29f913bb';
+                  readonly prefix: 'orderNotificationDelivery_status_updatedAt_idx';
+                  readonly columns: readonly ['status', 'updatedAt'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'orderNotificationDelivery_orderId_idx_d284871b';
+                  readonly prefix: 'orderNotificationDelivery_orderId_idx';
+                  readonly columns: readonly ['orderId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'orderNotificationDelivery';
+                    readonly columns: readonly ['orderId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'order';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
             readonly orderStatusHistory: {
               columns: {
                 readonly id: {
@@ -1585,6 +1736,18 @@ type ContractBase = Omit<
                   readonly nativeType: 'int4';
                   readonly codecId: 'pg/int4@1';
                   readonly nullable: false;
+                };
+                readonly unitLabel: {
+                  readonly nativeType: 'character varying';
+                  readonly codecId: 'sql/varchar@1';
+                  readonly nullable: true;
+                  readonly typeParams: { readonly length: 40 };
+                };
+                readonly allergenInfo: {
+                  readonly nativeType: 'character varying';
+                  readonly codecId: 'sql/varchar@1';
+                  readonly nullable: true;
+                  readonly typeParams: { readonly length: 500 };
                 };
                 readonly imageUrl: {
                   readonly nativeType: 'text';
@@ -1887,6 +2050,10 @@ type ContractBase = Omit<
             };
           };
           readonly valueSet: {
+            readonly NotificationStatus: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['PENDING', 'SENDING', 'SENT', 'FAILED', 'SKIPPED'];
+            };
             readonly OrderStatus: {
               readonly kind: 'valueSet';
               readonly values: readonly [
@@ -1941,6 +2108,10 @@ type ContractBase = Omit<
       readonly model: 'Verification';
     };
     readonly rateLimit: { readonly namespace: 'public' & NamespaceId; readonly model: 'RateLimit' };
+    readonly orderNotificationDelivery: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'OrderNotificationDelivery';
+    };
   };
   readonly domain: {
     readonly namespaces: {
@@ -2476,6 +2647,17 @@ type ContractBase = Omit<
                   readonly targetFields: readonly ['orderId'];
                 };
               };
+              readonly notifications: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'OrderNotificationDelivery';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['orderId'];
+                };
+              };
               readonly statusHistory: {
                 readonly to: {
                   readonly namespace: 'public' & NamespaceId;
@@ -2592,6 +2774,99 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly OrderNotificationDelivery: {
+            readonly fields: {
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly orderId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/uuid@1' };
+              };
+              readonly recipientType: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'sql/varchar@1';
+                  readonly typeParams: { readonly length: 16 };
+                };
+              };
+              readonly status: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly attempts: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly lastErrorCode: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'sql/varchar@1';
+                  readonly typeParams: { readonly length: 80 };
+                };
+              };
+              readonly leaseUntil: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly deliveredAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
+            };
+            readonly relations: {
+              readonly order: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Order';
+                };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['orderId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'orderNotificationDelivery';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly id: { readonly column: 'id' };
+                readonly orderId: { readonly column: 'orderId' };
+                readonly recipientType: { readonly column: 'recipientType' };
+                readonly status: { readonly column: 'status' };
+                readonly attempts: { readonly column: 'attempts' };
+                readonly lastErrorCode: { readonly column: 'lastErrorCode' };
+                readonly leaseUntil: { readonly column: 'leaseUntil' };
+                readonly deliveredAt: { readonly column: 'deliveredAt' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
           readonly OrderStatusHistory: {
             readonly fields: {
               readonly id: {
@@ -2695,6 +2970,22 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
+              readonly unitLabel: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'sql/varchar@1';
+                  readonly typeParams: { readonly length: 40 };
+                };
+              };
+              readonly allergenInfo: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'sql/varchar@1';
+                  readonly typeParams: { readonly length: 500 };
+                };
+              };
               readonly imageUrl: {
                 readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -2772,6 +3063,8 @@ type ContractBase = Omit<
                 readonly slug: { readonly column: 'slug' };
                 readonly description: { readonly column: 'description' };
                 readonly priceMinor: { readonly column: 'priceMinor' };
+                readonly unitLabel: { readonly column: 'unitLabel' };
+                readonly allergenInfo: { readonly column: 'allergenInfo' };
                 readonly imageUrl: { readonly column: 'imageUrl' };
                 readonly imagePathname: { readonly column: 'imagePathname' };
                 readonly imageWidth: { readonly column: 'imageWidth' };
@@ -3039,6 +3332,16 @@ type ContractBase = Omit<
               { readonly name: 'ADMIN'; readonly value: 'ADMIN' },
             ];
           };
+          readonly NotificationStatus: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'PENDING'; readonly value: 'PENDING' },
+              { readonly name: 'SENDING'; readonly value: 'SENDING' },
+              { readonly name: 'SENT'; readonly value: 'SENT' },
+              { readonly name: 'FAILED'; readonly value: 'FAILED' },
+              { readonly name: 'SKIPPED'; readonly value: 'SKIPPED' },
+            ];
+          };
         };
       };
     };
@@ -3150,6 +3453,23 @@ type ContractBase = Omit<
             readonly column: 'id';
           };
           readonly onCreate: { readonly kind: 'generator'; readonly id: 'uuidv4' };
+        },
+        {
+          readonly ref: {
+            readonly namespace: 'public';
+            readonly table: 'orderNotificationDelivery';
+            readonly column: 'id';
+          };
+          readonly onCreate: { readonly kind: 'generator'; readonly id: 'uuidv4' };
+        },
+        {
+          readonly ref: {
+            readonly namespace: 'public';
+            readonly table: 'orderNotificationDelivery';
+            readonly column: 'updatedAt';
+          };
+          readonly onCreate: { readonly kind: 'generator'; readonly id: 'timestampNow' };
+          readonly onUpdate: { readonly kind: 'generator'; readonly id: 'timestampNow' };
         },
         {
           readonly ref: {

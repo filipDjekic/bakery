@@ -9,6 +9,7 @@ import { OrderStatusBadge } from './order-status-badge';
 type OrdersTableProps = {
   orders: AdminOrdersResult['orders'];
   timezone: string;
+  returnTo?: string;
 };
 
 function localTime(value: string, timezone: string): string {
@@ -18,7 +19,11 @@ function localTime(value: string, timezone: string): string {
     .toFormat('dd. LLL yyyy. HH:mm');
 }
 
-export function OrdersTable({ orders, timezone }: OrdersTableProps) {
+export function OrdersTable({
+  orders,
+  timezone,
+  returnTo = '/admin/orders?view=all',
+}: OrdersTableProps) {
   if (orders.length === 0) {
     return (
       <div className="border-border bg-surface text-muted rounded-xl border px-6 py-14 text-center">
@@ -44,7 +49,10 @@ export function OrdersTable({ orders, timezone }: OrdersTableProps) {
           {orders.map((order) => (
             <tr key={order.id}>
               <td className="px-4 py-3 font-semibold whitespace-nowrap">
-                <Link className="underline" href={`/admin/orders/${order.id}`}>
+                <Link
+                  className="underline"
+                  href={`/admin/orders/${order.id}?returnTo=${encodeURIComponent(returnTo)}`}
+                >
                   {order.orderNumber}
                 </Link>
               </td>

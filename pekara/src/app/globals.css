@@ -9,6 +9,10 @@
 
   --muted: #715a4a;
   --border: #e7d6c5;
+  --control: #927864;
+  --header-height: 4.5rem;
+  --radius-panel: 1rem;
+  --shadow-panel: 0 4px 18px #2b1d1408;
 
   --primary: #a94e1b;
   --primary-hover: #873a12;
@@ -28,6 +32,9 @@
 
   --color-muted: var(--muted);
   --color-border: var(--border);
+  --color-control: var(--control);
+  --font-display: Georgia, Cambria, 'Times New Roman', serif;
+  --font-sans: 'Segoe UI', Arial, sans-serif;
 
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
@@ -43,4 +50,38 @@ body {
   background: var(--background);
   color: var(--foreground);
   scroll-behavior: smooth;
+}
+
+html {
+  scroll-padding-top: calc(var(--header-height) + 1rem);
+}
+body {
+  font-family: var(--font-sans);
+}
+.public-site h1,
+.public-site h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+input[type='checkbox'] {
+  min-width: 1.1rem;
+  min-height: 1.1rem;
+  accent-color: var(--primary);
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23715a4a' stroke-width='2'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+  background-position: right 0.65rem center;
+  background-repeat: no-repeat;
+  padding-right: 2rem;
 }

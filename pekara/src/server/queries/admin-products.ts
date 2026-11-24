@@ -31,6 +31,8 @@ export type AdminProductDetails = {
   name: string;
   slug: string;
   description: string;
+  unitLabel: string | null;
+  allergenInfo: string | null;
   categoryId: string;
   priceMinor: number;
   sortOrder: number;
@@ -93,6 +95,8 @@ export async function getAdminProduct(
     'name',
     'slug',
     'description',
+    'unitLabel',
+    'allergenInfo',
     'categoryId',
     'priceMinor',
     'sortOrder',

@@ -1,7 +1,8 @@
 'use client';
+import { usePathname } from 'next/navigation';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { focusRingInsetClassName } from '@/components/ui/focus';
@@ -16,11 +17,22 @@ const mobileAdminLinkClassName = cn(
 );
 
 export function AdminMobileNav({ role }: { role: CurrentUser['role'] }) {
+  const trigger = useRef<HTMLButtonElement>(null);
   const [isOpen, setIsOpen] = useState(false);
 
+  const pathname = usePathname() ?? '';
   return (
-    <div className="lg:hidden">
+    <div
+      className="lg:hidden"
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') {
+          setIsOpen(false);
+          trigger.current?.focus();
+        }
+      }}
+    >
       <Button
+        ref={trigger}
         aria-expanded={isOpen}
         aria-controls="admin-mobile-menu"
         onClick={() => setIsOpen((open) => !open)}
@@ -39,6 +51,15 @@ export function AdminMobileNav({ role }: { role: CurrentUser['role'] }) {
             <Link
               key={item.href}
               href={item.href}
+              aria-current={
+                (
+                  item.href === '/admin'
+                    ? pathname === item.href
+                    : pathname.startsWith(item.href)
+                )
+                  ? 'page'
+                  : undefined
+              }
               onClick={() => setIsOpen(false)}
               className={mobileAdminLinkClassName}
             >

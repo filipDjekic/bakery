@@ -4,6 +4,7 @@ import { parseServerEnvironment } from './env';
 
 const productionEnvironment = {
   NODE_ENV: 'production',
+  VERCEL: '1',
   DATABASE_URL: 'postgresql://user:password@db.example.test:5432/pekara',
   APP_URL: 'https://pekara.example.test',
   BETTER_AUTH_URL: 'https://pekara.example.test',
@@ -33,4 +34,60 @@ describe('parseServerEnvironment', () => {
       }),
     ).toThrow();
   });
+});
+
+it('permits optional integrations to stay disabled and validates enabled integrations', () => {
+  const env = {
+    ...productionEnvironment,
+    BLOB_READ_WRITE_TOKEN: undefined,
+    RESEND_API_KEY: undefined,
+    EMAIL_FROM: undefined,
+    SENTRY_DSN: undefined,
+  };
+  expect(parseServerEnvironment(env).EMAIL_ENABLED).toBe('false');
+  expect(() =>
+    parseServerEnvironment({ ...env, EMAIL_ENABLED: 'true' }),
+  ).toThrow();
+  expect(() => parseServerEnvironment({ ...env, VERCEL: undefined })).toThrow();
+});
+
+it('normalizes absent optional host vars but rejects origin paths and non-Postgres URLs', () => {
+  expect(
+    parseServerEnvironment({
+      ...productionEnvironment,
+      TRUSTED_PROXY_MODE: '',
+      TRUSTED_PROXY_HOPS: '',
+      EMAIL_ENABLED: '',
+    }).EMAIL_ENABLED,
+  ).toBe('false');
+  expect(() =>
+    parseServerEnvironment({
+      ...productionEnvironment,
+      APP_URL: 'https://pekara.example.test/path',
+    }),
+  ).toThrow();
+  expect(() =>
+    parseServerEnvironment({
+      ...productionEnvironment,
+      DATABASE_URL: 'https://db.example.test',
+    }),
+  ).toThrow();
+  expect(() =>
+    parseServerEnvironment({
+      ...productionEnvironment,
+      EMAIL_ENABLED: 'true',
+      EMAIL_FROM: 'bad',
+    }),
+  ).toThrow();
+});
+
+it('returns structured configuration errors for malformed URLs', () => {
+  for (const change of [{ APP_URL: 'invalid' }, { DATABASE_URL: 'invalid' }]) {
+    try {
+      parseServerEnvironment({ ...productionEnvironment, ...change });
+      throw new Error('Expected invalid configuration.');
+    } catch (error) {
+      expect(error).toHaveProperty('issues');
+    }
+  }
 });

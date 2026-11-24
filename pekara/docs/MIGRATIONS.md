@@ -27,3 +27,9 @@ Never run schema push, development migration generation, or ad-hoc SQL in the
 release pipeline. A destructive migration requires a written data migration,
 backup, rollback/forward-fix decision, maintenance-window plan, and explicit
 owner approval.
+
+## Integrity migration and local verification
+
+The additive 20261123T2335 bundle adds numeric/schedule/configuration CHECKs, optional verified product information, and durable notification tracking. It preserves old orders and snapshot columns; it has no destructive operation. Before a release apply, run `pnpm data:check` against the intended database using a read-only operator connection. It prints only incompatible-row counts; any incompatible data requires reviewed correction first. The production migration wrapper runs this scan before apply and validates core env/explicit confirmation. Never run the wrapper merely to test it on a live DB.
+
+Verify with `pnpm migration:check`, `pnpm migration:replay`, integration CHECK/concurrency tests and `pnpm db:verify`. Replay/reset helpers refuse non-loopback or non-*_test URLs. The application and auth projections have one physical migration owner; see ARCHITECTURE.md. Migration replay does not prove existing production data compatibility or restore readiness.

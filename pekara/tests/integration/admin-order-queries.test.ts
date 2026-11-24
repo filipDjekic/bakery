@@ -5,6 +5,9 @@ import { DateTime } from 'luxon';
 import type { Varchar } from '@prisma/orm-postgres/target/codec-types';
 
 import { db } from '../../src/prisma/db.ts';
+import { authPrisma } from '../../src/server/auth/prisma.ts';
+import { getAdminOrder } from '../../src/server/queries/admin-order.ts';
+import { changeOrderStatus } from '../../src/server/services/change-order-status.ts';
 import { getAdminDashboard } from '../../src/server/queries/admin-dashboard.ts';
 import {
   ACTIVE_ADMIN_ORDERS_LIMIT,
@@ -64,6 +67,7 @@ before(async () => {
 
 after(async () => {
   await db.orm.public.Order.where((order) => order.id.in(orderIds)).deleteAll();
+  await Promise.all([db.close(), authPrisma.$disconnect()]);
 });
 
 test('dashboard returns correct operational counts and newest NEW orders', async () => {
@@ -197,4 +201,65 @@ test('invalid filters normalize safely and an empty result remains page one', as
     totalItems: 0,
     totalPages: 1,
   });
+});
+
+test('active pagination exposes every order beyond the first hundred without overlap', async () => {
+  const rows = await db.orm.public.Order.select('id').createAll(
+    Array.from({ length: 103 }, (_, index) => ({
+      orderNumber: varchar(`${orderNumberPrefix}-X${index}`, 32),
+      idempotencyKey: crypto.randomUUID(),
+      payloadHash: 'pagination',
+      status: 'NEW' as const,
+      customerName: varchar('Paging test', 100),
+      customerPhone: varchar('+381641234567', 20),
+      pickupAt: now.plus({ hours: 5 }).toISO()!,
+      currencyCode: varchar('RSD', 3),
+      subtotalMinor: 100,
+      totalMinor: 100,
+    })),
+  );
+  orderIds.push(...rows.map((row) => row.id));
+  const first = await getActiveAdminOrders(authorize, 1);
+  const second = await getActiveAdminOrders(authorize, 2);
+  assert.equal(first.orders.length, 100);
+  assert.equal(second.page, 2);
+  assert.ok(second.orders.length > 0);
+  assert.equal(first.totalPages, 2);
+  const ids = new Set([...first.orders, ...second.orders].map((row) => row.id));
+  assert.equal(ids.size, first.totalItems);
+  assert.equal(ids.size, first.orders.length + second.orders.length);
+});
+test('protected order detail resolves employee and cancellation history and rejects malformed UUIDs', async () => {
+  const id = crypto.randomUUID();
+  const user = {
+    id,
+    name: 'Test zaposleni',
+    email: `history-${id}@example.test`,
+    role: 'STAFF' as const,
+  };
+  await authPrisma.user.create({ data: user });
+  try {
+    const orderId = orderIds[0]!;
+    await changeOrderStatus(
+      {
+        orderId,
+        currentStatus: 'NEW',
+        targetStatus: 'CANCELLED',
+        cancellationReason: 'Test razlog',
+      },
+      async () => user,
+    );
+    const detail = await getAdminOrder(orderId, authorize);
+    assert.ok(detail);
+    assert.equal(detail.cancellationReason, 'Test razlog');
+    assert.equal(detail.statusHistory.at(-1)?.actorName, user.name);
+    assert.equal(detail.statusHistory.at(-1)?.reason, 'Test razlog');
+    assert.ok(detail.statusHistory.at(-1)?.createdAt);
+    assert.equal(
+      await getAdminOrder('------------------------------------', authorize),
+      null,
+    );
+  } finally {
+    await authPrisma.user.delete({ where: { id } });
+  }
 });

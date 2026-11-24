@@ -79,7 +79,8 @@ export async function getCachedHomepageContent() {
         .where({ isActive: true })
         .orderBy((product) => product.sortOrder.asc())
         .orderBy((product) => product.name.asc())
-        .orderBy((product) => product.id.asc()),
+        .orderBy((product) => product.id.asc())
+        .limit(4),
     )
       .where({ isActive: true })
       .orderBy((category) => category.sortOrder.asc())

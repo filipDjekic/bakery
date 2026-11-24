@@ -1,3 +1,4 @@
+import { fieldErrors } from '../../../lib/field-errors.ts';
 import { AppError } from '../../../server/errors/app-error.ts';
 import { safeActionFailure } from '../../../server/errors/safe-action-result.ts';
 import { ProductImageValidationError } from '../../../server/images/validate-product-image.ts';
@@ -26,5 +27,19 @@ export function productActionError(error: unknown): ProductActionState {
     return null;
   });
   if (result.ok) throw new Error('Expected safe action failure.');
-  return { status: 'error', message: result.error.message };
+  return {
+    status: 'error',
+    message: result.error.message,
+    fieldErrors:
+      error instanceof ProductDomainError
+        ? {
+            ...fieldErrors(error.issues),
+            ...(error.code === 'DUPLICATE_SLUG'
+              ? { slug: error.message }
+              : error.code === 'IMAGE_REQUIRED'
+                ? { image: error.message }
+                : {}),
+          }
+        : {},
+  };
 }

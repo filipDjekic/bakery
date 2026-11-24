@@ -1,9 +1,10 @@
+'use client';
 import type { SettingsActionState } from '../actions/settings-action-state';
 
 export function SettingsFeedback({ state }: { state: SettingsActionState }) {
   if (state.status === 'idle') return null;
   return (
-    <p
+    <div
       role={state.status === 'error' ? 'alert' : 'status'}
       className={
         state.status === 'error'
@@ -12,6 +13,20 @@ export function SettingsFeedback({ state }: { state: SettingsActionState }) {
       }
     >
       {state.message}
-    </p>
+      {state.code === 'CONFLICT' ? (
+        <div className="mt-3">
+          <p>
+            Unos je sačuvan u obrascu. Kopirajte izmene pre ponovnog učitavanja.
+          </p>
+          <button
+            type="button"
+            className="mt-2 min-h-11 font-bold underline"
+            onClick={() => window.location.reload()}
+          >
+            Ponovo učitaj podatke
+          </button>
+        </div>
+      ) : null}
+    </div>
   );
 }

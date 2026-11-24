@@ -11,9 +11,15 @@ function varchar<N extends number>(value: string, maxLength: N): Varchar<N> {
 
 export type CatalogFixture = Awaited<ReturnType<typeof createCatalogFixture>>;
 
-export async function createCatalogFixture() {
+export async function createCatalogFixture(ids?: {
+  categoryId: string;
+  availableId: string;
+  unavailableId: string;
+  inactiveId: string;
+}) {
   const suffix = crypto.randomUUID();
   const category = await db.orm.public.Category.create({
+    ...(ids ? { id: ids.categoryId } : {}),
     name: varchar('Integration kategorija', 80),
     slug: varchar(`integration-category-${suffix}`, 100),
     description: null,
@@ -22,6 +28,7 @@ export async function createCatalogFixture() {
   });
 
   const available = await db.orm.public.Product.create({
+    ...(ids ? { id: ids.availableId } : {}),
     categoryId: category.id,
     name: varchar('Sveža kifla', 120),
     slug: varchar(`available-${suffix}`, 140),
@@ -32,6 +39,7 @@ export async function createCatalogFixture() {
     sortOrder: 0,
   });
   const unavailable = await db.orm.public.Product.create({
+    ...(ids ? { id: ids.unavailableId } : {}),
     categoryId: category.id,
     name: varchar('Nedostupan proizvod', 120),
     slug: varchar(`unavailable-${suffix}`, 140),
@@ -42,6 +50,7 @@ export async function createCatalogFixture() {
     sortOrder: 1,
   });
   const inactive = await db.orm.public.Product.create({
+    ...(ids ? { id: ids.inactiveId } : {}),
     categoryId: category.id,
     name: varchar('Neaktivan proizvod', 120),
     slug: varchar(`inactive-${suffix}`, 140),

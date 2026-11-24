@@ -25,6 +25,8 @@ jobs:
       BETTER_AUTH_SECRET: ci-only-auth-secret-with-at-least-32-characters
       RATE_LIMIT_HMAC_SECRET: ci-only-rate-limit-secret-with-at-least-32-characters
       ALLOW_INTEGRATION_DB_RESET: "true"
+      TRUSTED_PROXY_MODE: local
+      EMAIL_ENABLED: "false"
       SENTRY_ENVIRONMENT: ci
       NEXT_PUBLIC_SENTRY_ENVIRONMENT: ci
     services:
@@ -46,7 +48,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Set up Node.js and pnpm
-        uses: pnpm/setup@v1
+        uses: pnpm/setup@v3
         with:
           version: 12.4.1
           runtime: node@24
@@ -59,7 +61,11 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma contract
-        run: pnpm prisma:generate
+        run: |
+          pnpm prisma:generate
+          git diff --exit-code -- src/prisma/contract.json src/prisma/contract.d.ts
+          pnpm schema:check
+          pnpm migration:check
 
       - name: Lint
         run: pnpm lint

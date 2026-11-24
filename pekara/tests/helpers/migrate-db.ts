@@ -1,16 +1,15 @@
 import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 
 import { getIntegrationDatabaseUrl } from './db.ts';
 
-const pnpmCli = process.env.npm_execpath;
-const isExecutable = pnpmCli?.toLowerCase().endsWith('.exe') ?? false;
-const command = isExecutable ? pnpmCli! : pnpmCli ? process.execPath : 'pnpm';
+getIntegrationDatabaseUrl();
 const result = spawnSync(
-  command,
+  process.execPath,
   [
-    ...(pnpmCli && !isExecutable ? [pnpmCli] : []),
-    'exec',
-    'prisma',
+    fileURLToPath(
+      new URL('../../node_modules/prisma/dist/prisma.js', import.meta.url),
+    ),
     'db',
     'migrate',
     '--db',

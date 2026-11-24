@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { db } from '../../prisma/db.ts';
+import { db, type DatabaseReader } from '../../prisma/db.ts';
 
 export const DEFAULT_BAKERY_SETTINGS_ID = 'default';
 
@@ -18,8 +18,10 @@ export type PickupBakerySettings = {
   notificationEmail: string | null;
 };
 
-export async function getPickupBakerySettings(): Promise<PickupBakerySettings> {
-  const settings = await db.orm.public.BakerySettings.select(
+export async function getPickupBakerySettings(
+  database: DatabaseReader = db,
+): Promise<PickupBakerySettings> {
+  const settings = await database.orm.public.BakerySettings.select(
     'id',
     'timezone',
     'currencyCode',

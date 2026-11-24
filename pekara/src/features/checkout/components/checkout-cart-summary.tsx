@@ -71,7 +71,7 @@ export function CheckoutCartSummary({
   if (collapsible) {
     return (
       <details className="border-border bg-surface rounded-2xl border shadow-sm">
-        <summary className="focus-visible:ring-primary flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 rounded-2xl px-5 font-bold focus-visible:ring-2 focus-visible:outline-none">
+        <summary className="focus-visible:ring-primary flex min-h-14 cursor-pointer list-none flex-wrap items-center justify-between gap-x-4 gap-y-1 rounded-2xl px-5 py-3 font-bold focus-visible:ring-2 focus-visible:outline-none">
           <span>3. Pregled porudžbine</span>
           <span className="text-primary text-sm">
             {itemCount} artikala · {formatRsd(totalMinor)}
@@ -83,7 +83,7 @@ export function CheckoutCartSummary({
   }
 
   return (
-    <aside className="border-border bg-surface rounded-2xl border p-5 shadow-sm lg:sticky lg:top-24 lg:p-6">
+    <aside className="border-border bg-surface rounded-2xl border p-5 shadow-sm lg:sticky lg:top-[calc(var(--header-height)+1.5rem)] lg:p-6">
       {content}
     </aside>
   );

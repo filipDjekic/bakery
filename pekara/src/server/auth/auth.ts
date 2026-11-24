@@ -79,6 +79,8 @@ function createAuthConfiguration(disableSignUp: boolean) {
       },
     },
     advanced: {
+      disableOriginCheck: false,
+      disableCSRFCheck: false,
       database: {
         validateSchema: true,
       },

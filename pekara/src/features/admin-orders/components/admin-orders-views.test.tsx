@@ -40,7 +40,10 @@ describe('admin order history views', () => {
     expect(within(list).getByText('Za 12 min')).toBeInTheDocument();
     expect(
       within(list).getByRole('link', { name: /Otvori porudžbinu PK-1048/ }),
-    ).toHaveAttribute('href', '/admin/orders/order-1');
+    ).toHaveAttribute(
+      'href',
+      '/admin/orders/order-1?returnTo=%2Fadmin%2Forders%3Fview%3Dall',
+    );
   });
 
   it('keeps the desktop history table and provides filter reset when empty', () => {

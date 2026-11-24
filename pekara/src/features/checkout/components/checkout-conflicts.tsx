@@ -8,6 +8,7 @@ type Props = {
   details: OrderConflictDetails;
   cartNames: Map<string, string>;
   onAcceptPrice: (productId: string, priceMinor: number) => void;
+  onAcceptAll?: () => void;
   onRemove: (productId: string) => void;
 };
 
@@ -17,6 +18,7 @@ export function CheckoutConflicts({
   cartNames,
   onAcceptPrice,
   onRemove,
+  onAcceptAll,
 }: Props) {
   return (
     <section
@@ -24,10 +26,24 @@ export function CheckoutConflicts({
       className="mt-5 rounded-xl border border-red-300 bg-red-50 p-4"
     >
       <h2 id="checkout-conflict-heading" className="font-bold text-red-900">
-        {code === 'PRICE_CHANGED'
-          ? 'Cena je promenjena'
-          : 'Proizvod više nije dostupan'}
+        {details.items.some((item) => item.currentPriceMinor !== undefined) &&
+        details.items.some((item) => item.currentPriceMinor === undefined)
+          ? 'Proverite promene u korpi'
+          : code === 'PRICE_CHANGED'
+            ? 'Cena je promenjena'
+            : 'Proizvod više nije dostupan'}
       </h2>
+      {onAcceptAll &&
+      details.items.filter((item) => item.currentPriceMinor !== undefined)
+        .length > 1 ? (
+        <button
+          type="button"
+          className="border-control mt-3 min-h-11 rounded-lg border bg-white px-4 font-bold"
+          onClick={onAcceptAll}
+        >
+          Prihvati sve nove cene
+        </button>
+      ) : null}
       <ul className="mt-3 space-y-3">
         {details.items.map((item) => {
           const name =
@@ -35,8 +51,7 @@ export function CheckoutConflicts({
           return (
             <li key={item.productId} className="rounded-lg bg-white p-3">
               <p className="font-semibold">{name}</p>
-              {code === 'PRICE_CHANGED' &&
-              item.previousPriceMinor !== undefined &&
+              {item.previousPriceMinor !== undefined &&
               item.currentPriceMinor !== undefined ? (
                 <p className="text-muted mt-1 text-sm">
                   <span className="line-through">
@@ -47,18 +62,19 @@ export function CheckoutConflicts({
                     {formatRsd(item.currentPriceMinor)}
                   </strong>
                 </p>
-              ) : null}
+              ) : (
+                <p className="mt-1 text-sm text-red-800">Više nije dostupan.</p>
+              )}
               <button
                 type="button"
                 onClick={() =>
-                  code === 'PRICE_CHANGED' &&
                   item.currentPriceMinor !== undefined
                     ? onAcceptPrice(item.productId, item.currentPriceMinor)
                     : onRemove(item.productId)
                 }
                 className="focus-visible:ring-primary mt-3 min-h-11 rounded-lg border border-red-700 px-4 text-sm font-bold text-red-800 focus-visible:ring-2 focus-visible:outline-none"
               >
-                {code === 'PRICE_CHANGED'
+                {item.currentPriceMinor !== undefined
                   ? 'Prihvati novu cenu'
                   : 'Ukloni iz korpe'}
               </button>

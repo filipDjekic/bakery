@@ -16,7 +16,12 @@ function createAuthPrisma(): PrismaClient {
   }
 
   return new PrismaClient({
-    adapter: new PrismaPg({ connectionString: databaseUrl }),
+    adapter: new PrismaPg({
+      connectionString: databaseUrl,
+      max: 5,
+      connectionTimeoutMillis: 5000,
+      idleTimeoutMillis: 10000,
+    }),
   });
 }
 

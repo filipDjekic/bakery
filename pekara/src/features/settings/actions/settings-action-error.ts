@@ -1,3 +1,4 @@
+import { fieldErrors } from '../../../lib/field-errors.ts';
 import { AppError } from '../../../server/errors/app-error.ts';
 import { safeActionFailure } from '../../../server/errors/safe-action-result.ts';
 import { SettingsDomainError } from '../../../server/services/settings.ts';
@@ -10,5 +11,11 @@ export function settingsActionError(error: unknown): SettingsActionState {
       : null,
   );
   if (result.ok) throw new Error('Expected safe action failure.');
-  return { status: 'error', message: result.error.message };
+  return {
+    code: result.error.code,
+    status: 'error',
+    message: result.error.message,
+    fieldErrors:
+      error instanceof SettingsDomainError ? fieldErrors(error.issues) : {},
+  };
 }

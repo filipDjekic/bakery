@@ -3,6 +3,7 @@ import { pathToFileURL } from 'node:url';
 import { createIntegrationPool } from './db.ts';
 
 const TEST_TABLES = [
+  'orderNotificationDelivery',
   'account',
   'actionRateLimitBucket',
   'businessHours',

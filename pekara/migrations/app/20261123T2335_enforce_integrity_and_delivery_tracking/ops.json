@@ -1,0 +1,623 @@
+[
+  {
+    "id": "table.orderNotificationDelivery",
+    "label": "Create table \"orderNotificationDelivery\"",
+    "summary": "Creates table \"orderNotificationDelivery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "orderNotificationDelivery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"orderNotificationDelivery\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"orderNotificationDelivery\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"orderNotificationDelivery\"",
+        "sql": "CREATE TABLE \"public\".\"orderNotificationDelivery\" (\n  \"attempts\" int4 DEFAULT 0 NOT NULL,\n  \"createdAt\" timestamptz DEFAULT (now()) NOT NULL,\n  \"deliveredAt\" timestamptz,\n  \"id\" uuid NOT NULL,\n  \"lastErrorCode\" character varying(80),\n  \"leaseUntil\" timestamptz,\n  \"orderId\" uuid NOT NULL,\n  \"recipientType\" character varying(16) NOT NULL,\n  \"status\" text DEFAULT 'PENDING' NOT NULL,\n  \"updatedAt\" timestamptz NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"notification_attempts_d5e9f5f8\" CHECK (attempts >= 0 AND attempts <= 5),\n  CONSTRAINT \"notification_recipient_5f9d9902\" CHECK (\"recipientType\" IN ('customer', 'bakery')),\n  CONSTRAINT \"orderNotificationDelivery_status_check_d698e316\" CHECK (\"status\" IN ('PENDING', 'SENDING', 'SENT', 'FAILED', 'SKIPPED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"orderNotificationDelivery\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"orderNotificationDelivery\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.product.allergenInfo",
+    "label": "Add column \"allergenInfo\" to \"product\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "allergenInfo",
+        "table": "product"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"allergenInfo\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "product",
+          "allergenInfo"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"allergenInfo\"",
+        "sql": "ALTER TABLE \"public\".\"product\" ADD COLUMN \"allergenInfo\" character varying(500)"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"allergenInfo\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "product",
+          "allergenInfo"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.product.unitLabel",
+    "label": "Add column \"unitLabel\" to \"product\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "unitLabel",
+        "table": "product"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"unitLabel\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "product",
+          "unitLabel"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"unitLabel\"",
+        "sql": "ALTER TABLE \"public\".\"product\" ADD COLUMN \"unitLabel\" character varying(40)"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"unitLabel\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "product",
+          "unitLabel"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.actionRateLimitBucket.rate_bucket_values_864f4317",
+    "label": "Add check constraint \"rate_bucket_values_864f4317\" on \"actionRateLimitBucket\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "rate_bucket_values_864f4317",
+        "table": "actionRateLimitBucket"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"rate_bucket_values_864f4317\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "rate_bucket_values_864f4317",
+          "public",
+          "\"public\".\"actionRateLimitBucket\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"rate_bucket_values_864f4317\"",
+        "sql": "ALTER TABLE \"public\".\"actionRateLimitBucket\" ADD CONSTRAINT \"rate_bucket_values_864f4317\" CHECK (\"count\" >= 0 AND \"windowSeconds\" > 0)"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"rate_bucket_values_864f4317\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "rate_bucket_values_864f4317",
+          "public",
+          "\"public\".\"actionRateLimitBucket\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.bakerySettings.bakery_configuration_limits_9b095bc1",
+    "label": "Add check constraint \"bakery_configuration_limits_9b095bc1\" on \"bakerySettings\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "bakery_configuration_limits_9b095bc1",
+        "table": "bakerySettings"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"bakery_configuration_limits_9b095bc1\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "bakery_configuration_limits_9b095bc1",
+          "public",
+          "\"public\".\"bakerySettings\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"bakery_configuration_limits_9b095bc1\"",
+        "sql": "ALTER TABLE \"public\".\"bakerySettings\" ADD CONSTRAINT \"bakery_configuration_limits_9b095bc1\" CHECK (\"minimumPreparationMinutes\" BETWEEN 0 AND 240 AND \"maximumAdvanceDays\" BETWEEN 0 AND 30 AND \"pickupSlotMinutes\" IN (5, 10, 15, 20, 30, 60))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"bakery_configuration_limits_9b095bc1\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "bakery_configuration_limits_9b095bc1",
+          "public",
+          "\"public\".\"bakerySettings\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.businessHours.business_hours_range_672bd15b",
+    "label": "Add check constraint \"business_hours_range_672bd15b\" on \"businessHours\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "business_hours_range_672bd15b",
+        "table": "businessHours"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"business_hours_range_672bd15b\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "business_hours_range_672bd15b",
+          "public",
+          "\"public\".\"businessHours\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"business_hours_range_672bd15b\"",
+        "sql": "ALTER TABLE \"public\".\"businessHours\" ADD CONSTRAINT \"business_hours_range_672bd15b\" CHECK (\"weekday\" BETWEEN 1 AND 7 AND \"openMinute\" >= 0 AND \"closeMinute\" <= 1440 AND \"openMinute\" < \"closeMinute\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"business_hours_range_672bd15b\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "business_hours_range_672bd15b",
+          "public",
+          "\"public\".\"businessHours\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.order.order_totals_nonnegative_f7be3536",
+    "label": "Add check constraint \"order_totals_nonnegative_f7be3536\" on \"order\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "order_totals_nonnegative_f7be3536",
+        "table": "order"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"order_totals_nonnegative_f7be3536\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_totals_nonnegative_f7be3536",
+          "public",
+          "\"public\".\"order\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"order_totals_nonnegative_f7be3536\"",
+        "sql": "ALTER TABLE \"public\".\"order\" ADD CONSTRAINT \"order_totals_nonnegative_f7be3536\" CHECK (\"subtotalMinor\" >= 0 AND \"totalMinor\" >= 0)"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"order_totals_nonnegative_f7be3536\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_totals_nonnegative_f7be3536",
+          "public",
+          "\"public\".\"order\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.orderItem.order_item_subtotal_65d941d2",
+    "label": "Add check constraint \"order_item_subtotal_65d941d2\" on \"orderItem\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "order_item_subtotal_65d941d2",
+        "table": "orderItem"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"order_item_subtotal_65d941d2\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_item_subtotal_65d941d2",
+          "public",
+          "\"public\".\"orderItem\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"order_item_subtotal_65d941d2\"",
+        "sql": "ALTER TABLE \"public\".\"orderItem\" ADD CONSTRAINT \"order_item_subtotal_65d941d2\" CHECK (\"subtotalMinor\"::bigint = \"unitPriceMinor\"::bigint * \"quantity\"::bigint)"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"order_item_subtotal_65d941d2\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_item_subtotal_65d941d2",
+          "public",
+          "\"public\".\"orderItem\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.orderItem.order_item_values_75e916ae",
+    "label": "Add check constraint \"order_item_values_75e916ae\" on \"orderItem\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "order_item_values_75e916ae",
+        "table": "orderItem"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"order_item_values_75e916ae\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_item_values_75e916ae",
+          "public",
+          "\"public\".\"orderItem\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"order_item_values_75e916ae\"",
+        "sql": "ALTER TABLE \"public\".\"orderItem\" ADD CONSTRAINT \"order_item_values_75e916ae\" CHECK (\"unitPriceMinor\" >= 0 AND \"quantity\" > 0 AND \"subtotalMinor\" >= 0)"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"order_item_values_75e916ae\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_item_values_75e916ae",
+          "public",
+          "\"public\".\"orderItem\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.orderNotificationDelivery.orderNotificationDelivery_orderId_recipientType_key",
+    "label": "Add unique constraint on \"orderNotificationDelivery\" (orderId, recipientType)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "orderNotificationDelivery_orderId_recipientType_key",
+        "table": "orderNotificationDelivery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"orderNotificationDelivery_orderId_recipientType_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "orderNotificationDelivery_orderId_recipientType_key",
+          "public",
+          "\"public\".\"orderNotificationDelivery\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"orderNotificationDelivery_orderId_recipientType_key\"",
+        "sql": "ALTER TABLE \"public\".\"orderNotificationDelivery\" ADD CONSTRAINT \"orderNotificationDelivery_orderId_recipientType_key\" UNIQUE (\"orderId\", \"recipientType\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"orderNotificationDelivery_orderId_recipientType_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "orderNotificationDelivery_orderId_recipientType_key",
+          "public",
+          "\"public\".\"orderNotificationDelivery\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.product.product_image_dimensions_f23b31c6",
+    "label": "Add check constraint \"product_image_dimensions_f23b31c6\" on \"product\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "product_image_dimensions_f23b31c6",
+        "table": "product"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"product_image_dimensions_f23b31c6\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "product_image_dimensions_f23b31c6",
+          "public",
+          "\"public\".\"product\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"product_image_dimensions_f23b31c6\"",
+        "sql": "ALTER TABLE \"public\".\"product\" ADD CONSTRAINT \"product_image_dimensions_f23b31c6\" CHECK ((\"imageWidth\" IS NULL OR \"imageWidth\" > 0) AND (\"imageHeight\" IS NULL OR \"imageHeight\" > 0))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"product_image_dimensions_f23b31c6\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "product_image_dimensions_f23b31c6",
+          "public",
+          "\"public\".\"product\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.product.product_price_nonnegative_ca42cbb6",
+    "label": "Add check constraint \"product_price_nonnegative_ca42cbb6\" on \"product\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "product_price_nonnegative_ca42cbb6",
+        "table": "product"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"product_price_nonnegative_ca42cbb6\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "product_price_nonnegative_ca42cbb6",
+          "public",
+          "\"public\".\"product\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"product_price_nonnegative_ca42cbb6\"",
+        "sql": "ALTER TABLE \"public\".\"product\" ADD CONSTRAINT \"product_price_nonnegative_ca42cbb6\" CHECK (\"priceMinor\" >= 0)"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"product_price_nonnegative_ca42cbb6\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "product_price_nonnegative_ca42cbb6",
+          "public",
+          "\"public\".\"product\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.orderNotificationDelivery.orderNotificationDelivery_orderId_idx_d284871b",
+    "label": "Create index \"orderNotificationDelivery_orderId_idx_d284871b\" on \"orderNotificationDelivery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "orderNotificationDelivery_orderId_idx_d284871b",
+        "table": "orderNotificationDelivery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"orderNotificationDelivery_orderId_idx_d284871b\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"orderNotificationDelivery_orderId_idx_d284871b\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"orderNotificationDelivery_orderId_idx_d284871b\"",
+        "sql": "CREATE INDEX \"orderNotificationDelivery_orderId_idx_d284871b\" ON \"public\".\"orderNotificationDelivery\" (\"orderId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"orderNotificationDelivery_orderId_idx_d284871b\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"orderNotificationDelivery_orderId_idx_d284871b\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.orderNotificationDelivery.orderNotificationDelivery_status_updatedAt_idx_29f913bb",
+    "label": "Create index \"orderNotificationDelivery_status_updatedAt_idx_29f913bb\" on \"orderNotificationDelivery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "orderNotificationDelivery_status_updatedAt_idx_29f913bb",
+        "table": "orderNotificationDelivery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"orderNotificationDelivery_status_updatedAt_idx_29f913bb\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"orderNotificationDelivery_status_updatedAt_idx_29f913bb\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"orderNotificationDelivery_status_updatedAt_idx_29f913bb\"",
+        "sql": "CREATE INDEX \"orderNotificationDelivery_status_updatedAt_idx_29f913bb\" ON \"public\".\"orderNotificationDelivery\" (\"status\", \"updatedAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"orderNotificationDelivery_status_updatedAt_idx_29f913bb\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"orderNotificationDelivery_status_updatedAt_idx_29f913bb\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.orderNotificationDelivery.orderNotificationDelivery_orderId_fkey",
+    "label": "Add foreign key \"orderNotificationDelivery_orderId_fkey\" on \"orderNotificationDelivery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "orderNotificationDelivery_orderId_fkey",
+        "table": "orderNotificationDelivery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"orderNotificationDelivery_orderId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "orderNotificationDelivery_orderId_fkey",
+          "public",
+          "\"public\".\"orderNotificationDelivery\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"orderNotificationDelivery_orderId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"orderNotificationDelivery\"\nADD CONSTRAINT \"orderNotificationDelivery_orderId_fkey\"\nFOREIGN KEY (\"orderId\")\nREFERENCES \"public\".\"order\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"orderNotificationDelivery_orderId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "orderNotificationDelivery_orderId_fkey",
+          "public",
+          "\"public\".\"orderNotificationDelivery\""
+        ]
+      }
+    ]
+  }
+]

@@ -8,6 +8,7 @@ import { SettingsDomainError } from './settings.ts';
 
 export async function updateWorkingHours(
   input: unknown,
+  expectedUpdatedAt: string,
   authorize: () => Promise<unknown> = requireAdmin,
 ) {
   await authorize();
@@ -18,7 +19,30 @@ export async function updateWorkingHours(
       'Radno vreme nije validno.',
       parsed.error.issues,
     );
-  await db.transaction(async (tx) => {
+  if (
+    !/^\d{4}-\d{2}-\d{2}T/.test(expectedUpdatedAt) ||
+    !Number.isFinite(Date.parse(expectedUpdatedAt))
+  )
+    throw new SettingsDomainError(
+      'VALIDATION_ERROR',
+      'Verzija podešavanja nije validna.',
+    );
+  return db.transaction(async (tx) => {
+    const changed = await tx.orm.public.BakerySettings.where({
+      id: DEFAULT_BAKERY_SETTINGS_ID,
+      updatedAt: expectedUpdatedAt,
+    })
+      .select('updatedAt')
+      .updateAll({
+        updatedAt: new Date(
+          Math.max(Date.now(), Date.parse(expectedUpdatedAt) + 1),
+        ).toISOString(),
+      });
+    if (changed.length !== 1)
+      throw new SettingsDomainError(
+        'CONFLICT',
+        'Radno vreme je u međuvremenu promenjeno. Osvežite stranicu.',
+      );
     await tx.orm.public.BusinessHours.where({
       bakerySettingsId: DEFAULT_BAKERY_SETTINGS_ID,
     }).deleteAll();
@@ -30,6 +54,6 @@ export async function updateWorkingHours(
         })),
       );
     }
+    return changed[0]!;
   });
-  return parsed.data;
 }

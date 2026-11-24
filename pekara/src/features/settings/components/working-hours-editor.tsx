@@ -1,6 +1,7 @@
 'use client';
+import { usePreservedFormAction } from '@/lib/use-preserved-form-action';
 
-import { useActionState, useState } from 'react';
+import { useState } from 'react';
 
 import { cardVariants } from '@/components/ui/card';
 
@@ -22,13 +23,15 @@ const days = [
 export function WorkingHoursEditor({
   initialIntervals,
   timezone,
+  updatedAt,
 }: {
   initialIntervals: EditableInterval[];
   timezone: string;
+  updatedAt: string;
 }) {
   const [intervals, setIntervals] = useState(initialIntervals);
   const [dirty, setDirty] = useState(false);
-  const [state, action, pending] = useActionState(
+  const [state, action, pending] = usePreservedFormAction(
     updateWorkingHoursAction,
     initialSettingsActionState,
   );
@@ -36,12 +39,19 @@ export function WorkingHoursEditor({
   return (
     <form
       id="hours"
-      action={action}
-      onSubmit={() => setDirty(false)}
+      onSubmit={(event) => {
+        action(event);
+        setDirty(false);
+      }}
       className={cardVariants({
         className: 'scroll-mt-24 space-y-5 rounded-xl p-6',
       })}
     >
+      <input
+        type="hidden"
+        name="expectedUpdatedAt"
+        value={state.updatedAt ?? updatedAt}
+      />
       <input type="hidden" name="intervals" value={JSON.stringify(intervals)} />
       <div>
         <h2 className="text-xl font-bold">Radno vreme</h2>

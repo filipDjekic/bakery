@@ -20,6 +20,10 @@ porudžbina i 100+ proizvoda.
   jednom DB upitu učitava tražene proizvode i proverava cenu, aktivnost,
   dostupnost i aktivnost kategorije. Cached kartica zato nije autoritativna.
 - Admin order upiti nisu cache-irani.
+- Početna strana učitava najviše četiri aktivna proizvoda po aktivnoj kategoriji,
+  a prikazuje četiri izdvojena proizvoda i do šest kategorija. Ne učitava ceo
+  katalog za mali izbor. Slika kategorije bira se iz tog ograničenog izbora;
+  odsustvo slike prikazuje iskren placeholder.
 
 ## Baza i upiti
 
@@ -34,6 +38,16 @@ porudžbina i 100+ proizvoda.
   `Product(categoryId, isActive, isAvailable, sortOrder)`, kao i
   `Category(isActive, sortOrder)`.
 - Checkout učitava sve proizvode iz korpe jednim `WHERE id IN (...)` upitom.
+- Aktivni red prikazuje do 100 porudžbina po stranici, sa ukupnim brojem i
+  navigacijom na sledeće stranice. Integracioni test sa 101 aktivnom porudžbinom
+  proverava da poslednja nije sakrivena. Dashboard pokazuje ograničen pregled
+  novih porudžbina, a puna lista ostaje dostupna.
+- Dashboard paralelno izvršava četiri indeksirana statusna COUNT upita, dnevni
+  završeni COUNT/SUM i ograničen spisak novih porudžbina. To je fiksan broj upita,
+  bez N+1; objedinjavanje agregacija nije uvedeno bez merenja koristi.
+- Katalog filtrira i sortira mali keširani read model u memoriji. Za očekivanih
+  100+ proizvoda to čuva postojeći ugovor i izbegava novi query/cache sloj.
+  Prelazak na SQL pretragu/paginaciju zahteva merenje sa stvarnim obimom.
 
 Offset paginacija je dovoljna za očekivanih 10k redova. Prelazak na cursor
 paginaciju treba razmatrati tek kada produkciono merenje pokaže problem na
@@ -70,3 +84,8 @@ proveriti listu bez filtera, status filter, date range i poslednju dostupnu
 stranicu. Seed se ne pokreće nad production bazom. U browser build analizi
 proveriti da client chunkovi ne sadrže `@prisma`, `orm-postgres`, `pg`,
 `better-auth` server adapter ili Vercel Blob write klijent.
+
+Remedijacija je proverila podrazumevani Turbopack build i responsive/a11y
+ponašanje produkcionog build-a. Nisu merene produkcione latencije, Core Web
+Vitals, opterećenje sa 10.000 porudžbina niti veličina bundle-a pre/posle;
+ne izvodi se tvrdnja o ubrzanju iz uspešnog build-a.

@@ -1,3 +1,4 @@
+import { OrderPolling } from '@/features/admin-orders/components/order-polling';
 import { DateTime } from 'luxon';
 import Link from 'next/link';
 import { connection } from 'next/server';
@@ -53,7 +54,10 @@ export default async function AdminOrdersPage({
   );
 
   if (view === 'active') {
-    const result = await getActiveAdminOrders();
+    const result = await getActiveAdminOrders(
+      undefined,
+      Number(first(params.page) ?? 1),
+    );
     return (
       <div>
         <header className="mb-6">
@@ -63,6 +67,7 @@ export default async function AdminOrdersPage({
           </p>
         </header>
         {tabs}
+        <OrderPolling refreshedAt={nowIso} timezone={result.timezone} />
         <ActiveOrderQueue {...result} nowIso={nowIso} />
       </div>
     );
@@ -83,6 +88,7 @@ export default async function AdminOrdersPage({
         </p>
       </header>
       {tabs}
+      <OrderPolling refreshedAt={nowIso} timezone={result.timezone} />
       <OrderFilters filters={result.filters} />
       <div className="mt-6">
         <OrdersHistory result={result} nowIso={nowIso} />

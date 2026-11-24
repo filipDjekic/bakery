@@ -19,7 +19,7 @@ const focusableSelector =
 
 export function CartDrawer() {
   const [isOpen, setIsOpen] = useState(false);
-  const panelRef = useRef<HTMLElement>(null);
+  const panelRef = useRef<HTMLDialogElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
   const items = useCartStore((state) => state.items);
@@ -36,6 +36,8 @@ export function CartDrawer() {
 
   useEffect(() => {
     if (!isOpen) return;
+    const panel = panelRef.current;
+    panel?.showModal();
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     closeRef.current?.focus();
@@ -64,11 +66,21 @@ export function CartDrawer() {
 
     document.addEventListener('keydown', onKeyDown);
     return () => {
+      panel?.close();
       document.body.style.overflow = previousOverflow;
       document.removeEventListener('keydown', onKeyDown);
       returnFocusRef.current?.focus();
     };
   }, [isOpen]);
+
+  useEffect(() => {
+    if (
+      isOpen &&
+      panelRef.current &&
+      !panelRef.current.contains(document.activeElement)
+    )
+      closeRef.current?.focus();
+  }, [isOpen, items]);
 
   if (!isOpen) return null;
 
@@ -77,20 +89,16 @@ export function CartDrawer() {
   const close = () => setIsOpen(false);
 
   return (
-    <div className="fixed inset-0 z-[70]">
-      <button
-        type="button"
-        aria-label="Zatvori korpu"
-        onClick={close}
-        className="motion-safe:animate-in motion-safe:fade-in absolute inset-0 bg-black/45"
-      />
-      <aside
-        ref={panelRef}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="cart-drawer-title"
-        className="bg-background motion-safe:animate-in motion-safe:slide-in-from-right absolute inset-y-0 right-0 flex w-[min(94vw,28rem)] flex-col shadow-2xl"
-      >
+    <dialog
+      ref={panelRef}
+      aria-labelledby="cart-drawer-title"
+      onCancel={() => setIsOpen(false)}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) close();
+      }}
+      className="bg-background fixed inset-y-0 right-0 left-auto m-0 h-dvh max-h-none w-[min(94vw,28rem)] max-w-none p-0 shadow-2xl backdrop:bg-black/45"
+    >
+      <div className="flex h-full flex-col">
         <header className="border-border flex items-center justify-between border-b px-5 py-4">
           <div>
             <h2 id="cart-drawer-title" className="text-xl font-bold">
@@ -147,7 +155,7 @@ export function CartDrawer() {
                     <div className="min-w-0 flex-1">
                       <p className="font-bold break-words">{item.name}</p>
                       <p className="text-muted mt-1 text-sm">
-                        {formatRsd(item.displayPriceMinor)} po komadu
+                        {formatRsd(item.displayPriceMinor)} po jedinici
                       </p>
                     </div>
                     <p className="font-bold">
@@ -190,7 +198,7 @@ export function CartDrawer() {
             </div>
           </footer>
         ) : null}
-      </aside>
-    </div>
+      </div>
+    </dialog>
   );
 }

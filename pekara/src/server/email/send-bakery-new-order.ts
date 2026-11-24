@@ -19,6 +19,7 @@ export async function sendBakeryNewOrder(
 ): Promise<'sent' | 'skipped' | 'failed'> {
   if (!order.bakery.notificationEmail) return 'skipped';
 
+  if (!emailService && process.env.EMAIL_ENABLED === 'false') return 'skipped';
   const requestId = randomUUID();
   try {
     const appUrl = process.env.APP_URL;
@@ -28,6 +29,7 @@ export async function sendBakeryNewOrder(
       appUrl,
     ).toString();
     const delivery = await (emailService ?? getEmailService()).send({
+      idempotencyKey: `order/${order.orderId}/bakery/v1`,
       to: order.bakery.notificationEmail,
       subject: `Nova porudžbina ${order.orderNumber}`,
       react: createElement(NewOrderNotificationEmail, {

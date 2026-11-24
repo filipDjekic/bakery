@@ -1,5 +1,8 @@
 export const APP_ERROR_CODES = [
   'VALIDATION_ERROR',
+  'PAYLOAD_TOO_LARGE',
+  'UNSUPPORTED_MEDIA_TYPE',
+  'INVALID_DATE',
   'AUTHENTICATION_REQUIRED',
   'AUTHORIZATION_DENIED',
   'NOT_FOUND',
@@ -21,6 +24,12 @@ export const DEFAULT_ERROR_DEFINITIONS: Record<
   AppErrorCode,
   { status: number; safeMessage: string }
 > = {
+  PAYLOAD_TOO_LARGE: { status: 413, safeMessage: 'Zahtev je prevelik.' },
+  UNSUPPORTED_MEDIA_TYPE: {
+    status: 415,
+    safeMessage: 'Očekivan je JSON zahtev.',
+  },
+  INVALID_DATE: { status: 400, safeMessage: 'Izaberite ispravan datum.' },
   VALIDATION_ERROR: {
     status: 400,
     safeMessage: 'Podaci zahteva nisu validni.',

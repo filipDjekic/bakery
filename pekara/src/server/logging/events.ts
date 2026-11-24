@@ -4,6 +4,7 @@ import { AppError } from '../errors/app-error.ts';
 import { safeError, safeInfo, type EventLogger } from './logger.ts';
 
 export const OBSERVABILITY_EVENTS = {
+  pickupSlotsFailed: 'pickup.slots.failed',
   orderCreateSucceeded: 'order.create.succeeded',
   orderCreateFailed: 'order.create.failed',
   orderStatusChanged: 'order.status.changed',

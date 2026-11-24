@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { captureException } from '@sentry/nextjs';
 import { useEffect } from 'react';
 
 export default function PublicError({
@@ -11,7 +12,7 @@ export default function PublicError({
   retry: () => void;
 }) {
   useEffect(() => {
-    console.error('Public route render failed.', error);
+    captureException(error, { tags: { boundary: 'route' } });
   }, [error]);
   return (
     <section className="mx-auto flex min-h-[55vh] max-w-2xl items-center px-4 py-16">

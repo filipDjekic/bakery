@@ -11,7 +11,7 @@ type CartSummaryProps = {
 
 export function CartSummary({ totalMinor, itemCount }: CartSummaryProps) {
   return (
-    <aside className="border-border bg-surface rounded-xl border p-5 lg:sticky lg:top-6 lg:p-6">
+    <aside className="border-border bg-surface rounded-xl border p-5 lg:sticky lg:top-[calc(var(--header-height)+1.5rem)] lg:p-6">
       <h2 className="text-foreground text-xl font-semibold">Pregled korpe</h2>
 
       <dl className="mt-6 space-y-4">

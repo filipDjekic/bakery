@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useRouter } from 'next/navigation';
+import { usePreservedFormAction } from '@/lib/use-preserved-form-action';
 
 import {
   getOrderStatusMeta,
@@ -18,7 +19,11 @@ export function OrderStatusActions({
   id: string;
   status: PublicOrderStatus;
 }) {
-  const [state, action, pending] = useActionState(updateOrderStatusAction, {});
+  const router = useRouter();
+  const [state, action, pending] = usePreservedFormAction(
+    updateOrderStatusAction,
+    {},
+  );
   const targets = ORDER_STATUS_TRANSITIONS[
     status
   ] as readonly PublicOrderStatus[];
@@ -26,6 +31,8 @@ export function OrderStatusActions({
 
   return (
     <section
+      aria-busy={pending}
+      data-order-mutation
       aria-labelledby="order-status-actions"
       className="border-border bg-surface rounded-xl border p-5 shadow-sm sm:p-6"
     >
@@ -43,7 +50,7 @@ export function OrderStatusActions({
       ) : (
         <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           {regularTargets.map((target) => (
-            <form action={action} key={target} className="sm:w-auto">
+            <form onSubmit={action} key={target} className="sm:w-auto">
               <input type="hidden" name="orderId" value={id} />
               <input type="hidden" name="currentStatus" value={status} />
               <input type="hidden" name="targetStatus" value={target} />
@@ -59,6 +66,8 @@ export function OrderStatusActions({
           {targets.includes('CANCELLED') ? (
             <CancelOrderDialog
               action={action}
+              error={state.error}
+              onRefresh={() => router.refresh()}
               currentStatus={status}
               orderId={id}
               pending={pending}
@@ -71,6 +80,15 @@ export function OrderStatusActions({
         {state.error ? (
           <p className="font-medium text-red-800" role="alert" tabIndex={-1}>
             {state.error}
+            {state.code === 'CONFLICT' ? (
+              <button
+                type="button"
+                className="ml-3 min-h-11 underline"
+                onClick={() => router.refresh()}
+              >
+                Učitaj aktuelni status
+              </button>
+            ) : null}
           </p>
         ) : null}
         {state.success ? (

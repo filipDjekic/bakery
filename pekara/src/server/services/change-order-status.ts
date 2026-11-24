@@ -57,16 +57,17 @@ export async function changeOrderStatus(
         throw new AppError({ code: 'CONFLICT' });
       }
 
-      await tx.orm.public.Order.where({
+      const updated = await tx.orm.public.Order.where({
         id: value.orderId,
         status: value.currentStatus,
-      }).update({
+      }).updateAll({
         status: value.targetStatus,
         cancellationReason:
           value.targetStatus === 'CANCELLED'
             ? varchar(value.cancellationReason ?? '', 300)
             : null,
       });
+      if (updated.length !== 1) throw new AppError({ code: 'CONFLICT' });
       await tx.orm.public.OrderStatusHistory.create({
         orderId: value.orderId,
         fromStatus: value.currentStatus,

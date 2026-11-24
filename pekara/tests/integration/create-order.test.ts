@@ -30,6 +30,7 @@ let availableProductId = '';
 let unavailableProductId = '';
 let pickupAt = '';
 let fixedNow = DateTime.utc();
+let originalRecipient: string | null = null;
 
 before(async () => {
   const category = await db.orm.public.Category.create({
@@ -66,6 +67,10 @@ before(async () => {
   unavailableProductId = unavailable.id;
 
   const settings = await getPickupBakerySettings();
+  originalRecipient = settings.notificationEmail;
+  await db.orm.public.BakerySettings.where({ id: 'default' }).updateAll({
+    notificationEmail: varchar('bakery@example.test', 254),
+  });
   fixedNow = DateTime.utc();
 
   for (let day = 0; day <= settings.maximumAdvanceDays; day += 1) {
@@ -99,6 +104,11 @@ after(async () => {
     await db.orm.public.Product.where({ categoryId }).deleteAll();
     await db.orm.public.Category.where({ id: categoryId }).deleteAll();
   }
+  await db.orm.public.BakerySettings.where({ id: 'default' }).updateAll({
+    notificationEmail: originalRecipient
+      ? varchar(originalRecipient, 254)
+      : null,
+  });
   await db.runtime().close();
 });
 
@@ -140,6 +150,13 @@ test('creates an atomic NEW order from authoritative product prices', async () =
   assert.equal(result.totalMinor, 24_690);
   assert.equal(customerNotificationAttempted, true);
   assert.equal(bakeryNotificationAttempted, true);
+  const deliveries = await db.orm.public.OrderNotificationDelivery.where({
+    orderId: result.orderId,
+  }).all();
+  assert.equal(deliveries.length, 2);
+  assert.ok(
+    deliveries.every((row) => row.status === 'FAILED' && row.attempts === 1),
+  );
   assert.match(result.orderNumber, /^PK-\d{6}-[2-9A-HJ-NP-Z]{6}$/);
 
   const order = await db.orm.public.Order.include('items')

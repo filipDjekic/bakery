@@ -12,6 +12,8 @@ export type OrderConfirmationDto = {
 
 export type OrderErrorCode =
   | 'VALIDATION_ERROR'
+  | 'PAYLOAD_TOO_LARGE'
+  | 'UNSUPPORTED_MEDIA_TYPE'
   | 'NOT_FOUND'
   | 'CONFLICT'
   | 'PRODUCT_UNAVAILABLE'

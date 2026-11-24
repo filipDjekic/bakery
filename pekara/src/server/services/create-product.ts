@@ -73,6 +73,12 @@ export async function createProduct(
       slug: varchar(parsed.data.slug, 140),
       description: varchar(parsed.data.description, 1000),
       priceMinor: parsed.data.priceMinor,
+      unitLabel: parsed.data.unitLabel
+        ? varchar(parsed.data.unitLabel, 40)
+        : null,
+      allergenInfo: parsed.data.allergenInfo
+        ? varchar(parsed.data.allergenInfo, 500)
+        : null,
       imageUrl: input.image?.url ?? null,
       imagePathname: input.image?.pathname ?? null,
       imageWidth: input.image?.width ?? null,

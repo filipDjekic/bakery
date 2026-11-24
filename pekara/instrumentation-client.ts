@@ -10,7 +10,7 @@ const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
 
 Sentry.init({
   dsn,
-  enabled: Boolean(dsn),
+  enabled: Boolean(dsn) && process.env.NEXT_PUBLIC_SENTRY_ENABLED === 'true',
   environment: sentryEnvironment(),
   release: sentryRelease(),
   sendDefaultPii: false,

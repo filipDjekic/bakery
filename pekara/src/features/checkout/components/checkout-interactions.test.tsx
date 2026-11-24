@@ -2,6 +2,7 @@
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import type { PickupAvailability } from '@/server/services/pickup-slots';
@@ -152,4 +153,106 @@ describe('checkout conflicts', () => {
     await user.click(screen.getByRole('button', { name: 'Ukloni iz korpe' }));
     expect(onRemove).toHaveBeenCalledWith('product-2');
   });
+});
+
+it('resolves one of several mixed conflicts while retaining the others and explicitly accepts all prices', async () => {
+  const user = userEvent.setup();
+  function Conflicts() {
+    const [items, setItems] = useState([
+      {
+        productId: 'a',
+        productName: 'Prvi',
+        previousPriceMinor: 100,
+        currentPriceMinor: 200,
+      },
+      {
+        productId: 'b',
+        productName: 'Drugi',
+        previousPriceMinor: 100,
+        currentPriceMinor: 300,
+      },
+      {
+        productId: 'c',
+        productName: 'Nedostupan',
+        previousPriceMinor: undefined,
+        currentPriceMinor: undefined,
+      },
+    ]);
+    return (
+      <CheckoutConflicts
+        code="PRODUCT_UNAVAILABLE"
+        details={{ items }}
+        cartNames={new Map()}
+        onAcceptPrice={(id) =>
+          setItems((old) => old.filter((item) => item.productId !== id))
+        }
+        onRemove={(id) =>
+          setItems((old) => old.filter((item) => item.productId !== id))
+        }
+        onAcceptAll={() =>
+          setItems((old) =>
+            old.filter((item) => item.currentPriceMinor === undefined),
+          )
+        }
+      />
+    );
+  }
+  render(<Conflicts />);
+  await user.click(
+    screen.getByRole('button', { name: 'Prihvati sve nove cene' }),
+  );
+  expect(screen.queryByText('Prvi')).not.toBeInTheDocument();
+  expect(screen.queryByText('Drugi')).not.toBeInTheDocument();
+  expect(screen.getByText('Nedostupan')).toBeInTheDocument();
+  await user.click(screen.getByRole('button', { name: 'Ukloni iz korpe' }));
+  expect(screen.queryByText('Nedostupan')).not.toBeInTheDocument();
+});
+
+it('accepting one updated price leaves a different price and unavailable item visible', async () => {
+  const user = userEvent.setup();
+  function Form() {
+    const [items, setItems] = useState([
+      {
+        productId: 'a',
+        productName: 'Prvi',
+        currentPriceMinor: 200,
+        previousPriceMinor: 100,
+      },
+      {
+        productId: 'b',
+        productName: 'Drugi',
+        currentPriceMinor: 300,
+        previousPriceMinor: 100,
+      },
+      {
+        productId: 'c',
+        productName: 'Nedostupan',
+        currentPriceMinor: undefined,
+        previousPriceMinor: undefined,
+      },
+    ]);
+    return (
+      <CheckoutConflicts
+        code="PRODUCT_UNAVAILABLE"
+        details={{ items }}
+        cartNames={new Map()}
+        onAcceptPrice={(id) =>
+          setItems((old) => old.filter((item) => item.productId !== id))
+        }
+        onRemove={(id) =>
+          setItems((old) => old.filter((item) => item.productId !== id))
+        }
+      />
+    );
+  }
+  render(<Form />);
+  await user.click(
+    screen.getAllByRole('button', { name: 'Prihvati novu cenu' })[0]!,
+  );
+  expect(screen.queryByText('Prvi')).not.toBeInTheDocument();
+  expect(screen.getByText('Drugi')).toBeInTheDocument();
+  expect(screen.getByText('Nedostupan')).toBeInTheDocument();
+  expect(
+    screen.getByRole('button', { name: 'Ukloni iz korpe' }),
+  ).toBeInTheDocument();
 });

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 
 import { CART_LIMITS } from '@/config/limits';
 
@@ -40,6 +40,7 @@ export function CartQuantityControls({
   quantity,
   compact = false,
 }: CartQuantityControlsProps) {
+  const quantityId = useId();
   const increment = useCartStore((state) => state.increment);
   const decrement = useCartStore((state) => state.decrement);
   const setQuantity = useCartStore((state) => state.setQuantity);
@@ -73,23 +74,23 @@ export function CartQuantityControls({
           disabled={quantity <= CART_LIMITS.minItemQuantity}
           onClick={() => runQuantityAction(() => decrement(productId))}
           aria-label={`Smanji količinu proizvoda ${productName}`}
-          className="border-border hover:border-primary hover:text-primary focus-visible:ring-primary inline-flex size-11 items-center justify-center rounded-md border text-lg font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-40"
+          className="border-control hover:border-primary hover:text-primary focus-visible:ring-primary inline-flex size-11 items-center justify-center rounded-md border text-lg font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-40"
         >
           <span aria-hidden="true">−</span>
         </button>
 
-        <label className="sr-only" htmlFor={`quantity-${productId}`}>
+        <label className="sr-only" htmlFor={`quantity-${quantityId}`}>
           Količina proizvoda {productName}
         </label>
         <select
-          id={`quantity-${productId}`}
+          id={`quantity-${quantityId}`}
           value={quantity}
           onChange={(event) =>
             runQuantityAction(() =>
               setQuantity(productId, Number(event.target.value)),
             )
           }
-          className="border-border focus-visible:ring-primary bg-surface-muted h-11 min-w-16 rounded-md border px-2 text-center text-sm font-semibold tabular-nums focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+          className="border-control focus-visible:ring-primary bg-surface-muted h-11 min-w-16 rounded-md border px-2 text-center text-sm font-semibold tabular-nums focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
         >
           {quantityOptions.map((option) => (
             <option key={option} value={option}>
@@ -103,7 +104,7 @@ export function CartQuantityControls({
           disabled={cannotIncrement}
           onClick={() => runQuantityAction(() => increment(productId))}
           aria-label={`Povećaj količinu proizvoda ${productName}`}
-          className="border-border hover:border-primary hover:text-primary focus-visible:ring-primary inline-flex size-11 items-center justify-center rounded-md border text-lg font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-40"
+          className="border-control hover:border-primary hover:text-primary focus-visible:ring-primary inline-flex size-11 items-center justify-center rounded-md border text-lg font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-40"
         >
           <span aria-hidden="true">+</span>
         </button>

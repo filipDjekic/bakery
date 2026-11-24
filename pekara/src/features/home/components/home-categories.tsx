@@ -1,4 +1,3 @@
-import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -13,7 +12,7 @@ export function HomeCategories({
   return (
     <section
       aria-labelledby="home-categories-heading"
-      className="py-16 lg:py-24"
+      className="py-12 lg:py-16"
     >
       <h2
         id="home-categories-heading"
@@ -47,11 +46,6 @@ export function HomeCategories({
               </div>
               <div className="flex items-center justify-between gap-3 p-4">
                 <h3 className="font-bold">{category.name}</h3>
-                <ArrowRight
-                  aria-hidden
-                  className="text-primary shrink-0"
-                  size={18}
-                />
               </div>
             </Link>
           ))}

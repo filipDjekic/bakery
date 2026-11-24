@@ -2,7 +2,7 @@ import 'server-only';
 
 import type { Varchar } from '@prisma/orm-postgres/target/codec-types';
 
-import { db } from '../../prisma/db.ts';
+import { db, type DatabaseTransaction } from '../../prisma/db.ts';
 import type { OrderConfirmationDto } from '../../types/order.ts';
 
 export type OrderItemSnapshot = {
@@ -78,8 +78,11 @@ export async function findOrderByIdempotencyKey(
 
 export async function persistOrder(
   input: PersistOrderInput,
+  transaction?: DatabaseTransaction,
 ): Promise<OrderConfirmationDto> {
-  return db.transaction(async (tx) => {
+  const persist = async (
+    tx: DatabaseTransaction,
+  ): Promise<OrderConfirmationDto> => {
     const order = await tx.orm.public.Order.select(
       'id',
       'orderNumber',
@@ -125,7 +128,8 @@ export async function persistOrder(
     });
 
     return toConfirmation(order);
-  });
+  };
+  return transaction ? persist(transaction) : db.transaction(persist);
 }
 
 function hasConstraint(error: unknown, constraintName: string): boolean {

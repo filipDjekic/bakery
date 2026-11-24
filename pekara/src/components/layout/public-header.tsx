@@ -27,7 +27,7 @@ export async function PublicHeader() {
             <span className="bg-primary text-surface inline-flex size-10 shrink-0 items-center justify-center rounded-full">
               <Wheat aria-hidden size={21} />
             </span>
-            <span className="text-foreground block truncate text-lg font-bold tracking-tight sm:text-xl">
+            <span className="font-display text-foreground block truncate text-lg font-bold tracking-tight sm:text-xl">
               {settings?.bakeryName ?? 'Pekara'}
             </span>
           </Link>

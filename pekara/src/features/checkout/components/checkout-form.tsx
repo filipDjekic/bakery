@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import { createCheckoutIdempotency } from '../lib/idempotency-storage';
+
 import { buttonVariants } from '@/components/ui/button';
 import { cardVariants } from '@/components/ui/card';
 import { Input, Textarea } from '@/components/ui/input';
@@ -37,8 +39,6 @@ type PickupSlotsResponse = {
   slots: PickupSlot[];
   bakeryTimezone: string;
 };
-
-const IDEMPOTENCY_SESSION_KEY = 'bakery:checkout-idempotency';
 
 const orderErrorMessages: Partial<Record<CreateOrderApiError['code'], string>> =
   {
@@ -81,6 +81,7 @@ export function CheckoutForm({
   pickupAvailability: PickupAvailability;
 }) {
   const router = useRouter();
+  const [idempotency] = useState(createCheckoutIdempotency);
   const items = useCartStore((state) => state.items);
   const clearCart = useCartStore((state) => state.clear);
   const removeItem = useCartStore((state) => state.removeItem);
@@ -136,7 +137,6 @@ export function CheckoutForm({
     setValue('pickupAt', '');
     clearErrors('pickupAt');
     setSubmitMessage('');
-    setConflict(null);
     setSlots([]);
     setSlotLoadError(null);
 
@@ -180,6 +180,18 @@ export function CheckoutForm({
     }
   }
 
+  function resolveConflict(productId: string) {
+    const remaining =
+      conflict?.details.items.filter((item) => item.productId !== productId) ??
+      [];
+    setConflict(
+      remaining.length && conflict
+        ? { ...conflict, details: { items: remaining } }
+        : null,
+    );
+    if (!remaining.length) clearErrors('root');
+  }
+
   async function submitOrder(values: CheckoutFormValues) {
     setSubmitMessage('');
     clearErrors('root');
@@ -197,30 +209,7 @@ export function CheckoutForm({
       })),
     };
     const signature = await createDraftSignature(draft);
-    let idempotencyKey = crypto.randomUUID();
-
-    try {
-      const stored = sessionStorage.getItem(IDEMPOTENCY_SESSION_KEY);
-      const parsed: unknown = stored ? JSON.parse(stored) : null;
-
-      if (
-        parsed &&
-        typeof parsed === 'object' &&
-        'signature' in parsed &&
-        'idempotencyKey' in parsed &&
-        parsed.signature === signature &&
-        typeof parsed.idempotencyKey === 'string'
-      ) {
-        idempotencyKey = parsed.idempotencyKey;
-      }
-    } catch {
-      sessionStorage.removeItem(IDEMPOTENCY_SESSION_KEY);
-    }
-
-    sessionStorage.setItem(
-      IDEMPOTENCY_SESSION_KEY,
-      JSON.stringify({ signature, idempotencyKey }),
-    );
+    const idempotencyKey = idempotency.keyFor(signature);
 
     try {
       const confirmation = await createOrderRequest({
@@ -228,7 +217,7 @@ export function CheckoutForm({
         ...draft,
       });
 
-      sessionStorage.removeItem(IDEMPOTENCY_SESSION_KEY);
+      idempotency.complete();
       clearCart();
       router.push(`/porudzbina/${confirmation.orderId}`);
     } catch (error) {
@@ -288,11 +277,11 @@ export function CheckoutForm({
   const timeRegistration = register('pickupAt');
 
   return (
-    <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_24rem]">
+    <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_24rem]">
       <form
         noValidate
         onSubmit={handleSubmit(submitOrder)}
-        className="space-y-6"
+        className="min-w-0 space-y-6"
       >
         <section className={cardVariants({ className: 'p-5 sm:p-7' })}>
           <h2 className="text-foreground text-xl font-bold">1. Kontakt</h2>
@@ -427,15 +416,27 @@ export function CheckoutForm({
             cartNames={
               new Map(items.map((item) => [item.productId, item.name]))
             }
+            onAcceptAll={() => {
+              const remaining = conflict.details.items.filter(
+                (item) => item.currentPriceMinor === undefined,
+              );
+              for (const item of conflict.details.items)
+                if (item.currentPriceMinor !== undefined)
+                  updateItemPrice(item.productId, item.currentPriceMinor);
+              setConflict(
+                remaining.length
+                  ? { ...conflict, details: { items: remaining } }
+                  : null,
+              );
+              if (!remaining.length) clearErrors('root');
+            }}
             onAcceptPrice={(id, price) => {
               updateItemPrice(id, price);
-              setConflict(null);
-              clearErrors('root');
+              resolveConflict(id);
             }}
             onRemove={(id) => {
               removeItem(id);
-              setConflict(null);
-              clearErrors('root');
+              resolveConflict(id);
             }}
           />
         ) : null}
@@ -454,8 +455,12 @@ export function CheckoutForm({
           {submitMessage}
         </p>
 
+        <p className="text-muted text-sm">
+          Plaćanje je prilikom preuzimanja u pekari.
+        </p>
         <CheckoutSubmitButton
           disabled={
+            Boolean(conflict?.details.items.length) ||
             isSubmitting ||
             isLoadingSlots ||
             slots.length === 0 ||

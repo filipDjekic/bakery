@@ -33,3 +33,5 @@ Afterward cancel the smoke order with reason `PRODUCTION_SMOKE_TEST` if policy
 allows; otherwise retain it clearly marked in the operational record. Restore
 any toggled product state and remove temporary images. Launch is blocked while
 any critical checkbox is incomplete.
+
+Remediation release additions: check payment-at-pickup copy, RSD price save, optional unit/allergen display, keyboard cart modal, canceled/completed confirmation wording, active queue auto-refresh/offline recovery, status history/stale-write rejection, and durable failed-email retry. Confirm public confirmation exposes no customer contact data. Verify no production test/reset flags are enabled.

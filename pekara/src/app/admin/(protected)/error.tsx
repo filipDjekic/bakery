@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { captureException } from '@sentry/nextjs';
 import { useEffect } from 'react';
 
 export default function AdminError({
@@ -11,7 +12,7 @@ export default function AdminError({
   retry: () => void;
 }) {
   useEffect(() => {
-    console.error('Admin route render failed.', error);
+    captureException(error, { tags: { boundary: 'route' } });
   }, [error]);
   return (
     <section className="border-border bg-surface mx-auto max-w-2xl rounded-xl border p-8">

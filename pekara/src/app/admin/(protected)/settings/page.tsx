@@ -54,6 +54,7 @@ export default async function AdminSettingsPage() {
         <BakeryProfileForm settings={settings} />
         <OrderSettingsForm settings={settings} />
         <WorkingHoursEditor
+          updatedAt={settings.updatedAt}
           timezone={settings.timezone}
           initialIntervals={settings.businessHours.map(
             ({ weekday, openMinute, closeMinute }) => ({

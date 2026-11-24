@@ -1,4 +1,4 @@
-import { ArrowRight, Clock3, MapPin } from 'lucide-react';
+import { Clock3, MapPin } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -26,14 +26,14 @@ export function HomeHero({
       <div className="grid items-center gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:gap-14">
         <div>
           <p className="text-primary text-xs font-bold tracking-[0.2em] uppercase sm:text-sm">
-            Sveže pečeno svakog dana
+            Iz naše pekare, za vaš sto
           </p>
           <h1 className="text-foreground mt-4 max-w-2xl text-4xl leading-tight font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl">
             {bakeryName}
           </h1>
           <p className="text-muted mt-5 max-w-xl text-lg leading-8">
-            Poručite omiljene proizvode unapred i preuzmite ih u pekari bez
-            čekanja.
+            Izaberite proizvode iz ponude, rezervišite termin i preuzmite
+            porudžbinu u našoj pekari. Plaćanje je prilikom preuzimanja.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -41,7 +41,7 @@ export function HomeHero({
               href="/proizvodi"
               className="bg-primary hover:bg-primary-hover focus-visible:ring-primary inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-6 py-3 font-semibold text-white transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
             >
-              Pogledaj ponudu <ArrowRight aria-hidden size={18} />
+              Pogledaj ponudu
             </Link>
             <Link
               href="#kako-funkcionise"
@@ -51,7 +51,7 @@ export function HomeHero({
             </Link>
           </div>
 
-          <div className="border-border bg-surface mt-8 grid gap-4 rounded-2xl border p-5 shadow-sm sm:grid-cols-2">
+          <div className="border-border bg-surface mt-8 grid gap-4 rounded-xl border p-5 sm:grid-cols-2">
             <div>
               <p className="flex items-center gap-2 font-bold">
                 <span

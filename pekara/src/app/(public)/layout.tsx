@@ -12,9 +12,17 @@ type PublicLayoutProps = {
 
 export default function PublicLayout({ children }: PublicLayoutProps) {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="public-site flex min-h-screen flex-col">
+      <a
+        href="#main-content"
+        className="bg-surface text-primary fixed top-2 left-2 z-[100] -translate-y-24 rounded-lg px-4 py-3 font-bold focus:translate-y-0"
+      >
+        Preskoči na sadržaj
+      </a>
       <PublicHeader />
-      <main className="flex-1">{children}</main>
+      <main id="main-content" tabIndex={-1} className="flex-1">
+        {children}
+      </main>
       <Suspense fallback={null}>
         <MobileCartBar />
       </Suspense>

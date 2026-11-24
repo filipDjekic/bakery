@@ -36,19 +36,6 @@ function varchar<N extends number>(value: string, maxLength: N): Varchar<N> {
   return value as Varchar<N>;
 }
 
-async function ensureCurrent(expectedUpdatedAt: string) {
-  const current = await db.orm.public.BakerySettings.select('updatedAt')
-    .where({ id: DEFAULT_BAKERY_SETTINGS_ID })
-    .first();
-  if (!current)
-    throw new SettingsDomainError('NOT_FOUND', 'Podešavanja ne postoje.');
-  if (new Date(current.updatedAt).toISOString() !== expectedUpdatedAt)
-    throw new SettingsDomainError(
-      'CONFLICT',
-      'Podešavanja su u međuvremenu promenjena. Osvežite stranicu.',
-    );
-}
-
 export async function updateBakeryProfile(
   input: BakeryProfileInput,
   authorize: () => Promise<unknown> = requireAdmin,
@@ -61,23 +48,25 @@ export async function updateBakeryProfile(
       'Podaci profila nisu validni.',
       parsed.error.issues,
     );
-  await ensureCurrent(parsed.data.expectedUpdatedAt);
   const updated = await db.orm.public.BakerySettings.where({
     id: DEFAULT_BAKERY_SETTINGS_ID,
     updatedAt: parsed.data.expectedUpdatedAt,
   })
     .select('updatedAt')
-    .update({
+    .updateAll({
+      updatedAt: new Date(
+        Math.max(Date.now(), Date.parse(parsed.data.expectedUpdatedAt) + 1),
+      ).toISOString(),
       bakeryName: varchar(parsed.data.bakeryName, 120),
       phone: varchar(parsed.data.phone, 30),
       address: varchar(parsed.data.address, 250),
     });
-  if (!updated)
+  if (updated.length !== 1)
     throw new SettingsDomainError(
       'CONFLICT',
       'Podešavanja su promenjena. Osvežite stranicu.',
     );
-  return updated;
+  return updated[0]!;
 }
 
 export async function updateNotificationSettings(
@@ -92,23 +81,25 @@ export async function updateNotificationSettings(
       'Podešavanja obaveštenja nisu validna.',
       parsed.error.issues,
     );
-  await ensureCurrent(parsed.data.expectedUpdatedAt);
   const updated = await db.orm.public.BakerySettings.where({
     id: DEFAULT_BAKERY_SETTINGS_ID,
     updatedAt: parsed.data.expectedUpdatedAt,
   })
     .select('updatedAt')
-    .update({
+    .updateAll({
+      updatedAt: new Date(
+        Math.max(Date.now(), Date.parse(parsed.data.expectedUpdatedAt) + 1),
+      ).toISOString(),
       notificationEmail: parsed.data.notificationEmail
         ? varchar(parsed.data.notificationEmail, 254)
         : null,
     });
-  if (!updated)
+  if (updated.length !== 1)
     throw new SettingsDomainError(
       'CONFLICT',
       'Podešavanja su promenjena. Osvežite stranicu.',
     );
-  return updated;
+  return updated[0]!;
 }
 
 export async function updateOrderSettings(
@@ -123,22 +114,24 @@ export async function updateOrderSettings(
       'Operativna podešavanja nisu validna.',
       parsed.error.issues,
     );
-  await ensureCurrent(parsed.data.expectedUpdatedAt);
   const updated = await db.orm.public.BakerySettings.where({
     id: DEFAULT_BAKERY_SETTINGS_ID,
     updatedAt: parsed.data.expectedUpdatedAt,
   })
     .select('updatedAt')
-    .update({
+    .updateAll({
+      updatedAt: new Date(
+        Math.max(Date.now(), Date.parse(parsed.data.expectedUpdatedAt) + 1),
+      ).toISOString(),
       orderAcceptingEnabled: parsed.data.orderAcceptingEnabled,
       minimumPreparationMinutes: parsed.data.minimumPreparationMinutes,
       maximumAdvanceDays: parsed.data.maximumAdvanceDays,
       pickupSlotMinutes: parsed.data.pickupSlotMinutes,
     });
-  if (!updated)
+  if (updated.length !== 1)
     throw new SettingsDomainError(
       'CONFLICT',
       'Podešavanja su promenjena. Osvežite stranicu.',
     );
-  return updated;
+  return updated[0]!;
 }

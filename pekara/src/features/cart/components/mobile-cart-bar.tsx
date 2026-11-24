@@ -28,7 +28,7 @@ export function MobileCartBar() {
   return (
     <>
       <div className="h-24 lg:hidden" aria-hidden="true" />
-      <div className="border-border bg-background/95 fixed inset-x-0 bottom-0 z-40 border-t p-3 pb-[max(.75rem,env(safe-area-inset-bottom))] backdrop-blur">
+      <div className="border-border bg-background/95 fixed inset-x-0 bottom-0 z-40 border-t p-3 pb-[max(.75rem,env(safe-area-inset-bottom))] backdrop-blur lg:hidden">
         <button
           type="button"
           onClick={openCartDrawer}

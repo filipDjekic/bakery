@@ -25,7 +25,11 @@ test('public catalog, cart and checkout have accessible keyboard boundaries', as
   });
   await addButton.focus();
   await page.keyboard.press('Enter');
-  await expect(page.getByRole('status')).toContainText('dodat u korpu');
+  await expect(
+    page.getByRole('status', {
+      name: `Količina proizvoda ${seed.availableProductName}`,
+    }),
+  ).toHaveText('1');
   await expectNoSeriousViolations(page);
 
   await page.goto('/checkout');
@@ -45,6 +49,7 @@ test('admin cancellation dialog traps keyboard focus and is labelled', async ({
   await page.getByLabel('Email').fill(E2E_ADMIN.email);
   await page.getByLabel('Lozinka').fill(E2E_ADMIN.password);
   await page.getByRole('button', { name: 'Prijavi se' }).click();
+  await expect(page).toHaveURL(/\/admin$/);
   await page.goto(`/admin/orders/${seed.orderId}`);
   const trigger = page.getByRole('button', { name: 'Otkaži porudžbinu' });
   await trigger.focus();

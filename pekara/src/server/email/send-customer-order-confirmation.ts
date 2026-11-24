@@ -19,9 +19,11 @@ export async function sendCustomerOrderConfirmation(
 ): Promise<'sent' | 'skipped' | 'failed'> {
   if (!order.customerEmail) return 'skipped';
 
+  if (!emailService && process.env.EMAIL_ENABLED === 'false') return 'skipped';
   const requestId = randomUUID();
   try {
     const delivery = await (emailService ?? getEmailService()).send({
+      idempotencyKey: `order/${order.orderId}/customer/v1`,
       to: order.customerEmail,
       subject: `Potvrda porudžbine ${order.orderNumber}`,
       react: createElement(OrderConfirmationEmail, {

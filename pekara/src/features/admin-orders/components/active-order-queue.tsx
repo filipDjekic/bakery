@@ -13,6 +13,9 @@ export function ActiveOrderQueue({
   orders,
   timezone,
   nowIso,
+  page = 1,
+  totalPages = 1,
+  totalItems = orders.length,
 }: ActiveAdminOrdersResult & { nowIso: string }) {
   if (orders.length === 0) {
     return (
@@ -39,10 +42,37 @@ export function ActiveOrderQueue({
             Aktivne porudžbine
           </h2>
           <p className="text-muted text-sm">
-            {orders.length} porudžbina · najbliže preuzimanje prvo
+            {orders.length} od {totalItems} porudžbina · najbliže preuzimanje
+            prvo
           </p>
         </div>
       </div>
+      {totalPages > 1 ? (
+        <nav
+          className="mb-4 flex gap-4"
+          aria-label="Stranice aktivnih porudžbina"
+        >
+          {page > 1 ? (
+            <Link
+              className="text-primary min-h-11 underline"
+              href={`/admin/orders?view=active&page=${page - 1}`}
+            >
+              Prethodna
+            </Link>
+          ) : null}
+          <span>
+            Strana {page} od {totalPages}
+          </span>
+          {page < totalPages ? (
+            <Link
+              className="text-primary min-h-11 underline"
+              href={`/admin/orders?view=active&page=${page + 1}`}
+            >
+              Sledeća
+            </Link>
+          ) : null}
+        </nav>
+      ) : null}
       <ol className="grid gap-4 xl:grid-cols-2">
         {orders.map((order) => {
           const pickup = formatPickupDayTime(order.pickupAt, timezone, now);
@@ -81,7 +111,7 @@ export function ActiveOrderQueue({
                 </p>
               </div>
               <Link
-                href={`/admin/orders/${order.id}`}
+                href={`/admin/orders/${order.id}?returnTo=${encodeURIComponent(`/admin/orders?view=active&page=${page}`)}`}
                 className="bg-primary focus-visible:ring-primary mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-lg px-4 font-bold text-white focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
               >
                 Otvori{' '}

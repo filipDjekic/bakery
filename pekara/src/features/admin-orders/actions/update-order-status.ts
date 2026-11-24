@@ -1,10 +1,15 @@
 'use server';
 
+import { safeActionFailure } from '@/server/errors/safe-action-result';
 import { revalidatePath } from 'next/cache';
 
 import { changeOrderStatus } from '@/server/services/change-order-status';
 
-export type OrderStatusActionState = { error?: string; success?: string };
+export type OrderStatusActionState = {
+  error?: string;
+  success?: string;
+  code?: string;
+};
 
 export async function updateOrderStatusAction(
   _state: OrderStatusActionState,
@@ -21,8 +26,10 @@ export async function updateOrderStatusAction(
     revalidatePath(`/admin/orders/${orderId}`);
     revalidatePath('/admin/orders');
     return { success: 'Status je sačuvan.' };
-  } catch {
+  } catch (error) {
+    const result = safeActionFailure(error);
     return {
+      code: result.ok ? undefined : result.error.code,
       error: 'Status nije promenjen. Osvežite stranicu i pokušajte ponovo.',
     };
   }

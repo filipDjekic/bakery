@@ -25,8 +25,9 @@ function authRequest(
   cookie?: string,
   clientIp = testIp,
 ): Request {
+  const origin = new URL(process.env.APP_URL ?? 'http://localhost:3000').origin;
   const headers = new Headers({
-    origin: 'http://localhost:3000',
+    origin,
     'x-forwarded-for': clientIp,
   });
 
@@ -38,7 +39,7 @@ function authRequest(
     headers.set('cookie', cookie);
   }
 
-  return new Request(`http://localhost:3000/api/auth${path}`, {
+  return new Request(`${origin}/api/auth${path}`, {
     method: body === undefined ? 'GET' : 'POST',
     headers,
     body: body === undefined ? undefined : JSON.stringify(body),

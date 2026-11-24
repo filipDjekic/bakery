@@ -1,6 +1,7 @@
 'use client';
+import { usePreservedFormAction } from '@/lib/use-preserved-form-action';
 
-import { useActionState, useState } from 'react';
+import { useState } from 'react';
 
 import { cardVariants } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -17,7 +18,7 @@ export function NotificationSettingsForm({
   updatedAt: string;
 }) {
   const [dirty, setDirty] = useState(false);
-  const [state, action, pending] = useActionState(
+  const [state, action, pending] = usePreservedFormAction(
     updateNotificationSettingsAction,
     initialSettingsActionState,
   );
@@ -25,8 +26,10 @@ export function NotificationSettingsForm({
   return (
     <form
       id="notifications"
-      action={action}
-      onSubmit={() => setDirty(false)}
+      onSubmit={(event) => {
+        action(event);
+        setDirty(false);
+      }}
       onChange={() => setDirty(true)}
       className={cardVariants({
         className: 'scroll-mt-24 space-y-5 rounded-xl p-6',
@@ -45,14 +48,31 @@ export function NotificationSettingsForm({
         </p>
       </div>
       <label className="block space-y-2">
-        <span className="font-semibold">Email za obaveštenja</span>
+        <span id="notificationEmail-label" className="font-semibold">
+          Email za obaveštenja
+        </span>
         <Input
           type="email"
           maxLength={254}
+          id="notificationEmail"
+          aria-labelledby="notificationEmail-label"
+          aria-invalid={Boolean(state.fieldErrors?.notificationEmail)}
+          aria-describedby={
+            state.fieldErrors?.notificationEmail
+              ? 'notificationEmail-error'
+              : undefined
+          }
           name="notificationEmail"
           defaultValue={notificationEmail ?? ''}
-          aria-describedby="notification-email-description"
         />
+        {state.fieldErrors?.notificationEmail ? (
+          <span
+            id="notificationEmail-error"
+            className="block text-sm text-red-800"
+          >
+            {state.fieldErrors.notificationEmail}
+          </span>
+        ) : null}
       </label>
       <p id="notification-email-description" className="text-muted text-sm">
         Koristi se samo za interno obaveštenje o novoj porudžbini. API ključevi

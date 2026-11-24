@@ -1,3 +1,4 @@
+import { parseRsdInput } from '../../../lib/price-input.ts';
 import type { ProductMutationInput } from '../../../validation/product.ts';
 
 function checked(formData: FormData, name: string): boolean {
@@ -11,7 +12,10 @@ export function productValuesFromFormData(
     name: String(formData.get('name') ?? ''),
     slug: String(formData.get('slug') ?? ''),
     description: String(formData.get('description') ?? ''),
-    priceMinor: String(formData.get('priceMinor') ?? ''),
+    priceMinor:
+      parseRsdInput(String(formData.get('priceRsd') ?? '')) ?? Number.NaN,
+    unitLabel: String(formData.get('unitLabel') ?? ''),
+    allergenInfo: String(formData.get('allergenInfo') ?? ''),
     categoryId: String(formData.get('categoryId') ?? ''),
     sortOrder: String(formData.get('sortOrder') ?? ''),
     isActive: checked(formData, 'isActive'),

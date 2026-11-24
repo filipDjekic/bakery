@@ -18,3 +18,5 @@ maps. Do not introduce a public permanent error endpoint.
 Record the Sentry event ID, release, operator and timestamp. Do not copy event
 payloads containing customer data into this repository. Delete the temporary
 trigger and redeploy before marking this check complete.
+
+Monitoring is opt-in: SENTRY_ENABLED=true on server and NEXT_PUBLIC_SENTRY_ENABLED=true for browser capture, with corresponding DSNs. Auth token is build-only. Global/public/admin boundaries capture exceptions through the same scrubber. Request body,cookies,query,URL credentials/query and sensitive headers are removed. Verify an actual event with release/environment and request ID after deployment; local tests do not prove provider delivery.

@@ -12,3 +12,13 @@ process.env.BETTER_AUTH_SECRET ??=
 afterEach(() => {
   cleanup();
 });
+
+// jsdom has no native dialog top layer. Real inert/focus behavior is covered by Playwright.
+if (typeof HTMLDialogElement !== 'undefined') {
+  HTMLDialogElement.prototype.showModal = function () {
+    this.setAttribute('open', '');
+  };
+  HTMLDialogElement.prototype.close = function () {
+    this.removeAttribute('open');
+  };
+}

@@ -13,7 +13,9 @@ const { getTrustedApplicationOrigins, hasTrustedMutationOrigin } =
 function authMutation(origin: string): Request {
   return new Request('http://localhost:3000/api/auth/sign-out', {
     method: 'POST',
+    body: '{}',
     headers: {
+      'content-type': 'application/json',
       cookie: 'better-auth.session_token=forged-session',
       origin,
     },

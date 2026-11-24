@@ -1,3 +1,5 @@
+'use client';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
 import { focusRingInsetClassName } from '@/components/ui/focus';
@@ -12,6 +14,7 @@ const adminLinkClassName = cn(
 );
 
 export function AdminSidebar({ role }: { role: CurrentUser['role'] }) {
+  const pathname = usePathname() ?? '';
   return (
     <aside className="border-border bg-surface hidden min-h-screen w-64 shrink-0 border-r lg:block">
       <div className="sticky top-0 p-6">
@@ -23,7 +26,22 @@ export function AdminSidebar({ role }: { role: CurrentUser['role'] }) {
             <Link
               key={item.href}
               href={item.href}
-              className={adminLinkClassName}
+              aria-current={
+                (
+                  item.href === '/admin'
+                    ? pathname === item.href
+                    : pathname.startsWith(item.href)
+                )
+                  ? 'page'
+                  : undefined
+              }
+              className={cn(
+                adminLinkClassName,
+                (item.href === '/admin'
+                  ? pathname === item.href
+                  : pathname.startsWith(item.href)) &&
+                  'bg-surface-muted text-primary font-bold',
+              )}
             >
               {item.label}
             </Link>

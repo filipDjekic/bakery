@@ -26,6 +26,8 @@ type BlobClient = {
 function productionBlobToken(
   environment: NodeJS.ProcessEnv = process.env,
 ): string {
+  if (environment.BLOB_ENABLED !== 'true')
+    throw new Error('Product image uploads are disabled.');
   const token = environment.BLOB_READ_WRITE_TOKEN;
   if (!token || token !== token.trim()) {
     throw new Error('BLOB_READ_WRITE_TOKEN is not configured correctly.');

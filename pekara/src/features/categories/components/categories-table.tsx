@@ -22,7 +22,7 @@ export function CategoriesTable({
       />
     );
   return (
-    <div className="border-border bg-surface overflow-x-auto rounded-xl border">
+    <div className="border-border bg-surface relative overflow-x-auto rounded-xl border">
       <table className="w-full min-w-3xl text-left text-sm">
         <thead className="bg-surface-muted text-muted">
           <tr>

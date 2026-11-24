@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { db } from '../../prisma/db.ts';
+import { db, type DatabaseReader } from '../../prisma/db.ts';
 
 export type PickupBusinessHours = {
   weekday: number;
@@ -11,8 +11,9 @@ export type PickupBusinessHours = {
 export async function getBusinessHoursForWeekday(
   bakerySettingsId: string,
   weekday: number,
+  database: DatabaseReader = db,
 ): Promise<PickupBusinessHours[]> {
-  const rows = await db.orm.public.BusinessHours.select(
+  const rows = await database.orm.public.BusinessHours.select(
     'weekday',
     'openMinute',
     'closeMinute',
@@ -30,8 +31,9 @@ export async function getBusinessHoursForWeekday(
 
 export async function getAllBusinessHours(
   bakerySettingsId: string,
+  database: DatabaseReader = db,
 ): Promise<PickupBusinessHours[]> {
-  const rows = await db.orm.public.BusinessHours.select(
+  const rows = await database.orm.public.BusinessHours.select(
     'weekday',
     'openMinute',
     'closeMinute',

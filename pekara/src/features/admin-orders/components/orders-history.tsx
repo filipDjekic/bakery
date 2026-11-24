@@ -14,6 +14,13 @@ export function OrdersHistory({
   result: AdminOrdersResult;
   nowIso: string;
 }) {
+  const params = new URLSearchParams({
+    view: 'all',
+    page: String(result.pagination.page),
+  });
+  for (const [key, value] of Object.entries(result.filters))
+    if (value) params.set(key, value);
+  const returnTo = `/admin/orders?${params}`;
   if (result.orders.length === 0) {
     return (
       <EmptyState
@@ -33,12 +40,17 @@ export function OrdersHistory({
   return (
     <>
       <OrderMobileCards
+        returnTo={returnTo}
         orders={result.orders}
         timezone={result.timezone}
         nowIso={nowIso}
       />
       <div className="hidden lg:block">
-        <OrdersTable orders={result.orders} timezone={result.timezone} />
+        <OrdersTable
+          returnTo={returnTo}
+          orders={result.orders}
+          timezone={result.timezone}
+        />
       </div>
     </>
   );

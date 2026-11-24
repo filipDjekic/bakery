@@ -44,6 +44,8 @@ export default async function ProductsPage({
             selectedCategorySlug={selectedCategorySlug}
             categoryFilter={
               <CategoryFilter
+                query={query}
+                sort={sort}
                 categories={filterCategories}
                 selectedCategorySlug={selectedCategorySlug}
               />

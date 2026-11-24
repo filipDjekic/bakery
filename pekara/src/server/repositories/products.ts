@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { db } from '../../prisma/db.ts';
+import { db, type DatabaseReader } from '../../prisma/db.ts';
 
 export type OrderProduct = {
   id: string;
@@ -13,12 +13,13 @@ export type OrderProduct = {
 
 export async function getProductsForOrder(
   productIds: string[],
+  database: DatabaseReader = db,
 ): Promise<OrderProduct[]> {
   if (productIds.length === 0) {
     return [];
   }
 
-  const rows = await db.orm.public.Product.include('category')
+  const rows = await database.orm.public.Product.include('category')
     .where((product) => product.id.in(productIds))
     .all();
 

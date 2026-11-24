@@ -37,6 +37,18 @@ export function scrubSentryEvent(event: ErrorEvent): ErrorEvent {
     delete event.request.cookies;
     delete event.request.data;
     delete event.request.query_string;
+    if (event.request.url) {
+      try {
+        const url = new URL(event.request.url);
+        url.search = '';
+        url.hash = '';
+        url.username = '';
+        url.password = '';
+        event.request.url = url.toString();
+      } catch {
+        delete event.request.url;
+      }
+    }
 
     if (event.request.headers) {
       for (const header of Object.keys(event.request.headers)) {

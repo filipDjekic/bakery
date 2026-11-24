@@ -1,3 +1,4 @@
+import { fieldErrors } from '../../../lib/field-errors.ts';
 import { AppError } from '../../../server/errors/app-error.ts';
 import { safeActionFailure } from '../../../server/errors/safe-action-result.ts';
 import { CategoryDomainError } from '../../../server/services/categories.ts';
@@ -21,5 +22,10 @@ export function categoryActionError(error: unknown): CategoryActionState {
       : null,
   );
   if (result.ok) throw new Error('Expected safe action failure.');
-  return { status: 'error', message: result.error.message };
+  return {
+    status: 'error',
+    message: result.error.message,
+    fieldErrors:
+      error instanceof CategoryDomainError ? fieldErrors(error.issues) : {},
+  };
 }
