@@ -50,6 +50,7 @@ export function OrdersTable({
             <tr key={order.id}>
               <td className="px-4 py-3 font-semibold whitespace-nowrap">
                 <Link
+                  prefetch={false}
                   className="underline"
                   href={`/admin/orders/${order.id}?returnTo=${encodeURIComponent(returnTo)}`}
                 >

@@ -12,7 +12,8 @@ export default function AdminError({
   retry: () => void;
 }) {
   useEffect(() => {
-    captureException(error, { tags: { boundary: 'route' } });
+    if (process.env.NEXT_PUBLIC_SENTRY_ENABLED === 'true')
+      captureException(error, { tags: { boundary: 'route' } });
   }, [error]);
   return (
     <section className="border-border bg-surface mx-auto max-w-2xl rounded-xl border p-8">

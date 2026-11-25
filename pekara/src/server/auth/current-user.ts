@@ -1,6 +1,7 @@
 import 'server-only';
 
 import { headers } from 'next/headers.js';
+import { cache } from 'react';
 import { auth } from './auth.ts';
 import { authPrisma } from './prisma.ts';
 
@@ -31,8 +32,8 @@ const defaultDependencies: CurrentUserDependencies = {
     }),
 };
 
-export async function getCurrentUser(
-  dependencies: CurrentUserDependencies = defaultDependencies,
+async function resolveCurrentUser(
+  dependencies: CurrentUserDependencies,
 ): Promise<CurrentUser | null> {
   const session = await dependencies.getSession();
 
@@ -56,4 +57,19 @@ export async function getCurrentUser(
     email: user.email,
     role: user.role,
   };
+}
+
+// React owns this cache for one server render only. Each new request still
+// validates the DB session and the current role/isActive flag. Never use a
+// module Map, `use cache`, or a shared authenticated-data cache here.
+const getRequestCurrentUser = cache(() =>
+  resolveCurrentUser(defaultDependencies),
+);
+
+export function getCurrentUser(
+  dependencies: CurrentUserDependencies = defaultDependencies,
+): Promise<CurrentUser | null> {
+  return dependencies === defaultDependencies
+    ? getRequestCurrentUser()
+    : resolveCurrentUser(dependencies);
 }

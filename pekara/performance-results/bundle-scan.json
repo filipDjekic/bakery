@@ -1,0 +1,11 @@
+{
+  "chunks": 28,
+  "patterns": [
+    "PrismaPg",
+    "@prisma/orm-postgres",
+    "BLOB_READ_WRITE_TOKEN",
+    "prismaAdapter",
+    "postgresql://"
+  ],
+  "findings": []
+}

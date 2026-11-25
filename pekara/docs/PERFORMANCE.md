@@ -1,5 +1,21 @@
 # Performance baseline
 
+## Izmereni profil od 24. novembra 2026.
+
+Konsolidovani rezultati, sirovi sanitizovani JSON uzorci, metodologija i tačne
+Windows CMD komande nalaze se u [PERFORMANCE_REPORT.md](../../PERFORMANCE_REPORT.md)
+i `performance-results/`. Lokalni produkcioni režim pokreće se preko
+`build:local` / `start:local`; strogi deployment preflight ostaje odvojen.
+
+Potvrđene izmene: React `cache()` deduplikuje čitanje trenutnog korisnika samo
+u jednom server renderu; detalji proizvoda imaju Suspense granicu za runtime
+`params`; linkovi pojedinačnih porudžbina ne pokreću automatski prefetch; javni
+Sentry flag omogućava uklanjanje isključene browser instrumentacije iz bundle-a.
+Katalog tagovi, `hours` cache, `updateTag()`, autoritativni checkout i privatni
+dinamički admin upiti zadržavaju svoje prethodne ugovore. Ostale odluke ispod
+ostaju važeće; poslednji pasus o ranije neizmerenim performansama opisuje stanje
+pre ovog zasebnog profiling zadatka.
+
 Ovaj dokument beleži performance odluke za MVP i granice koje treba ponovo
 proveriti sa production podacima. Ciljani obim je najmanje 10.000 istorijskih
 porudžbina i 100+ proizvoda.

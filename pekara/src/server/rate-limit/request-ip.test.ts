@@ -9,6 +9,30 @@ it('ignores injected headers in local development', () => {
     }),
   ).toBe('127.0.0.1');
 });
+it('ignores spoofed forwarding headers in explicitly loopback local production', () => {
+  const env = {
+    NODE_ENV: 'production' as const,
+    APP_URL: 'http://localhost:3000',
+    TRUSTED_PROXY_MODE: 'local',
+  };
+  for (const forwarded of ['8.8.8.8', '8.8.8.8, 10.0.0.1', 'invalid'])
+    expect(
+      requestClientIp(new Headers({ 'x-forwarded-for': forwarded }), env),
+    ).toBe('127.0.0.1');
+});
+it.each(['0', '6', '1.5', 'invalid'])(
+  'rejects invalid production proxy hops %s',
+  (hops) => {
+    expect(() =>
+      requestClientIp(new Headers({ 'x-forwarded-for': '8.8.8.8' }), {
+        NODE_ENV: 'production',
+        APP_URL: 'https://bakery.example',
+        TRUSTED_PROXY_MODE: 'proxy',
+        TRUSTED_PROXY_HOPS: hops,
+      }),
+    ).toThrow();
+  },
+);
 it('fails closed without an explicitly trusted production ingress', () => {
   expect(() =>
     requestClientIp(new Headers({ 'x-forwarded-for': '8.8.8.8' }), {

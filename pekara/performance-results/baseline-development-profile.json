@@ -1,0 +1,682 @@
+{
+  "routes": {
+    "GET / 200": {
+      "n": 35,
+      "firstQueryCount": 6,
+      "warmQueryCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "sqlDurationMs": {
+        "n": 35,
+        "min": 0,
+        "median": 0,
+        "p95": 0,
+        "max": 131.41
+      }
+    },
+    "GET /proizvodi 200": {
+      "n": 4,
+      "firstQueryCount": 1,
+      "warmQueryCounts": [
+        0,
+        0,
+        0
+      ],
+      "sqlDurationMs": {
+        "n": 4,
+        "min": 0,
+        "median": 0,
+        "p95": 11.12,
+        "max": 11.12
+      }
+    },
+    "GET /proizvodi/burek-sa-sirom 200": {
+      "n": 4,
+      "firstQueryCount": 2,
+      "warmQueryCounts": [
+        0,
+        0,
+        0
+      ],
+      "sqlDurationMs": {
+        "n": 4,
+        "min": 0,
+        "median": 0,
+        "p95": 30.43,
+        "max": 30.43
+      }
+    },
+    "GET /korpa 200": {
+      "n": 4,
+      "firstQueryCount": 0,
+      "warmQueryCounts": [
+        0,
+        0,
+        0
+      ],
+      "sqlDurationMs": {
+        "n": 4,
+        "min": 0,
+        "median": 0,
+        "p95": 0,
+        "max": 0
+      }
+    },
+    "GET /checkout 200": {
+      "n": 35,
+      "firstQueryCount": 2,
+      "warmQueryCounts": [
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+      ],
+      "sqlDurationMs": {
+        "n": 35,
+        "min": 24.59,
+        "median": 33.55,
+        "p95": 72.1,
+        "max": 74.37
+      }
+    },
+    "GET /api/pickup-slots 200": {
+      "n": 4,
+      "firstQueryCount": 2,
+      "warmQueryCounts": [
+        2,
+        2,
+        2
+      ],
+      "sqlDurationMs": {
+        "n": 4,
+        "min": 1.48,
+        "median": 2.09,
+        "p95": 7.5,
+        "max": 7.5
+      }
+    },
+    "GET /admin/login 200": {
+      "n": 4,
+      "firstQueryCount": 0,
+      "warmQueryCounts": [
+        0,
+        0,
+        0
+      ],
+      "sqlDurationMs": {
+        "n": 4,
+        "min": 0,
+        "median": 0,
+        "p95": 0,
+        "max": 0
+      }
+    },
+    "GET /admin 307": {
+      "n": 4,
+      "firstQueryCount": 0,
+      "warmQueryCounts": [
+        0,
+        0,
+        0
+      ],
+      "sqlDurationMs": {
+        "n": 4,
+        "min": 0,
+        "median": 0,
+        "p95": 0,
+        "max": 0
+      }
+    },
+    "POST /__nextjs_original-stack-frames 200": {
+      "n": 4,
+      "firstQueryCount": 0,
+      "warmQueryCounts": [
+        0,
+        0,
+        0
+      ],
+      "sqlDurationMs": {
+        "n": 4,
+        "min": 0,
+        "median": 0,
+        "p95": 0,
+        "max": 0
+      }
+    },
+    "POST /api/auth/sign-in/email 200": {
+      "n": 4,
+      "firstQueryCount": 10,
+      "warmQueryCounts": [
+        9,
+        9,
+        9
+      ],
+      "sqlDurationMs": {
+        "n": 4,
+        "min": 5.25,
+        "median": 9.28,
+        "p95": 27.87,
+        "max": 27.87
+      }
+    },
+    "GET /admin 200": {
+      "n": 35,
+      "firstQueryCount": 13,
+      "warmQueryCounts": [
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13,
+        13
+      ],
+      "sqlDurationMs": {
+        "n": 35,
+        "min": 107.68,
+        "median": 126.91,
+        "p95": 250.78,
+        "max": 251.67
+      }
+    },
+    "GET /admin/orders 200": {
+      "n": 4,
+      "firstQueryCount": 9,
+      "warmQueryCounts": [
+        9,
+        9,
+        9
+      ],
+      "sqlDurationMs": {
+        "n": 4,
+        "min": 75.06,
+        "median": 89.36,
+        "p95": 252.24,
+        "max": 252.24
+      }
+    },
+    "GET /admin/orders/:id 200": {
+      "n": 4,
+      "firstQueryCount": 8,
+      "warmQueryCounts": [
+        8,
+        8,
+        8
+      ],
+      "sqlDurationMs": {
+        "n": 4,
+        "min": 87.55,
+        "median": 107.28,
+        "p95": 122.15,
+        "max": 122.15
+      }
+    },
+    "GET /admin/products 200": {
+      "n": 4,
+      "firstQueryCount": 7,
+      "warmQueryCounts": [
+        7,
+        7,
+        7
+      ],
+      "sqlDurationMs": {
+        "n": 4,
+        "min": 61.71,
+        "median": 107.43,
+        "p95": 128.59,
+        "max": 128.59
+      }
+    },
+    "GET /admin/categories 200": {
+      "n": 4,
+      "firstQueryCount": 7,
+      "warmQueryCounts": [
+        7,
+        7,
+        7
+      ],
+      "sqlDurationMs": {
+        "n": 4,
+        "min": 66.66,
+        "median": 112.52,
+        "p95": 137.03,
+        "max": 137.03
+      }
+    },
+    "GET /admin/settings 200": {
+      "n": 4,
+      "firstQueryCount": 7,
+      "warmQueryCounts": [
+        7,
+        7,
+        7
+      ],
+      "sqlDurationMs": {
+        "n": 4,
+        "min": 55.78,
+        "median": 65.04,
+        "p95": 153.53,
+        "max": 153.53
+      }
+    },
+    "POST /api/auth/sign-out 200": {
+      "n": 4,
+      "firstQueryCount": 7,
+      "warmQueryCounts": [
+        10,
+        10,
+        10
+      ],
+      "sqlDurationMs": {
+        "n": 4,
+        "min": 7.16,
+        "median": 12.66,
+        "p95": 31.39,
+        "max": 31.39
+      }
+    }
+  },
+  "connections": {
+    "n": 16,
+    "min": 56.67,
+    "median": 145.34,
+    "p95": 228.88,
+    "max": 228.88
+  },
+  "queries": [
+    {
+      "sql": "SELECT \"tables\".\"table_schema\" AS \"table_schema\" FROM \"information_schema\".\"tables\" WHERE (\"tables\".\"table_schema\" = $? AND \"tables\".\"table_name\" = $?)",
+      "n": 1,
+      "min": 16.25,
+      "median": 16.25,
+      "p95": 16.25,
+      "max": 16.25
+    },
+    {
+      "sql": "select column_name\n         from information_schema.columns\n        where table_schema = ?\n          and table_name = ?",
+      "n": 1,
+      "min": 21.46,
+      "median": 21.46,
+      "p95": 21.46,
+      "max": 21.46
+    },
+    {
+      "sql": "SELECT \"marker\".\"core_hash\" AS \"core_hash\", \"marker\".\"profile_hash\" AS \"profile_hash\", \"marker\".\"contract_json\" AS \"contract_json\", \"marker\".\"canonical_version\" AS \"canonical_version\", \"marker\".\"updated_at\" AS \"updated_at\", \"marker\".\"app_tag\" AS \"app_tag\", \"marker\".\"meta\" AS \"meta\", \"marker\".\"invariants\" AS \"invariants\" FROM \"prisma_contract\".\"marker\" WHERE \"marker\".\"space\" = $?",
+      "n": 1,
+      "min": 3.89,
+      "median": 3.89,
+      "p95": 3.89,
+      "max": 3.89
+    },
+    {
+      "sql": "SELECT \"bakerySettings\".\"address\" AS \"address\", \"bakerySettings\".\"bakeryName\" AS \"bakeryName\", \"bakerySettings\".\"createdAt\" AS \"createdAt\", \"bakerySettings\".\"currencyCode\" AS \"currencyCode\", \"bakerySettings\".\"id\" AS \"id\", \"bakerySettings\".\"maximumAdvanceDays\" AS \"maximumAdvanceDays\", \"bakerySettings\".\"minimumPreparationMinutes\" AS \"minimumPreparationMinutes\", \"bakerySettings\".\"notificationEmail\" AS \"notificationEmail\", \"bakerySettings\".\"orderAcceptingEnabled\" AS \"orderAcceptingEnabled\", \"bakerySettings\".\"phone\" AS \"phone\", \"bakerySettings\".\"pickupSlotMinutes\" AS \"pickupSlotMinutes\", \"bakerySettings\".\"timezone\" AS \"timezone\", \"bakerySettings\".\"updatedAt\" AS \"updatedAt\", (SELECT coalesce(json_agg(json_build_object(?, \"businessHours__rows\".\"bakerySettingsId\", ?, \"businessHours__rows\".\"closeMinute\", ?, CAST(\"businessHours__rows\".\"createdAt\" AS text), ?, \"businessHours__rows\".\"id\", ?, \"businessHours__rows\".\"openMinute\", ?, CAST(\"businessHours__rows\".\"updatedAt\" AS text), ?, \"businessHours__rows\".\"weekday\") ORDER BY \"businessHours__rows\".\"businessHours__order_0\" ASC), json_build_array()) AS \"businessHours\" FROM (SELECT \"businessHours\".\"bakerySettingsId\" AS \"bakerySettingsId\", \"businessHours\".\"closeMinute\" AS \"closeMinute\", \"businessHours\".\"createdAt\" AS \"createdAt\", \"businessHours\".\"id\" AS \"id\", \"businessHours\".\"openMinute\" AS \"openMinute\", \"businessHours\".\"updatedAt\" AS \"updatedAt\", \"businessHours\".\"weekday\" AS \"weekday\", \"businessHours\".\"openMinute\" AS \"businessHours__order_0\" FROM \"public\".\"businessHours\" WHERE \"businessHours\".\"bakerySettingsId\" = \"bakerySettings\".\"id\" ORDER BY \"businessHours\".\"openMinute\" ASC) AS \"businessHours__rows\") AS \"businessHours\" FROM \"public\".\"bakerySettings\" WHERE \"bakerySettings\".\"id\" = $? LIMIT ?",
+      "n": 2,
+      "min": 9.83,
+      "median": 16.29,
+      "p95": 22.76,
+      "max": 22.76
+    },
+    {
+      "sql": "SELECT \"category\".\"createdAt\" AS \"createdAt\", \"category\".\"description\" AS \"description\", \"category\".\"id\" AS \"id\", \"category\".\"isActive\" AS \"isActive\", \"category\".\"name\" AS \"name\", \"category\".\"slug\" AS \"slug\", \"category\".\"sortOrder\" AS \"sortOrder\", \"category\".\"updatedAt\" AS \"updatedAt\", (SELECT coalesce(json_agg(json_build_object(?, \"products__rows\".\"id\", ?, \"products__rows\".\"name\", ?, \"products__rows\".\"slug\", ?, \"products__rows\".\"description\", ?, \"products__rows\".\"priceMinor\", ?, \"products__rows\".\"imageUrl\", ?, \"products__rows\".\"imageWidth\", ?, \"products__rows\".\"imageHeight\", ?, \"products__rows\".\"isAvailable\", ?, \"products__rows\".\"sortOrder\") ORDER BY \"products__rows\".\"products__order_0\" ASC, \"products__rows\".\"products__order_1\" ASC, \"products__rows\".\"products__order_2\" ASC), json_build_array()) AS \"products\" FROM (SELECT \"product\".\"id\" AS \"id\", \"product\".\"name\" AS \"name\", \"product\".\"slug\" AS \"slug\", \"product\".\"description\" AS \"description\", \"product\".\"priceMinor\" AS \"priceMinor\", \"product\".\"imageUrl\" AS \"imageUrl\", \"product\".\"imageWidth\" AS \"imageWidth\", \"product\".\"imageHeight\" AS \"imageHeight\", \"product\".\"isAvailable\" AS \"isAvailable\", \"product\".\"sortOrder\" AS \"sortOrder\", \"product\".\"sortOrder\" AS \"products__order_0\", \"product\".\"name\" AS \"products__order_1\", \"product\".\"id\" AS \"products__order_2\" FROM \"public\".\"product\" WHERE (\"product\".\"categoryId\" = \"category\".\"id\" AND \"product\".\"isActive\" = $?) ORDER BY \"product\".\"sortOrder\" ASC, \"product\".\"name\" ASC, \"product\".\"id\" ASC LIMIT ?) AS \"products__rows\") AS \"products\" FROM \"public\".\"category\" WHERE \"category\".\"isActive\" = $? ORDER BY \"category\".\"sortOrder\" ASC, \"category\".\"id\" ASC",
+      "n": 1,
+      "min": 57.23,
+      "median": 57.23,
+      "p95": 57.23,
+      "max": 57.23
+    },
+    {
+      "sql": "SELECT \"category\".\"createdAt\" AS \"createdAt\", \"category\".\"description\" AS \"description\", \"category\".\"id\" AS \"id\", \"category\".\"isActive\" AS \"isActive\", \"category\".\"name\" AS \"name\", \"category\".\"slug\" AS \"slug\", \"category\".\"sortOrder\" AS \"sortOrder\", \"category\".\"updatedAt\" AS \"updatedAt\", (SELECT coalesce(json_agg(json_build_object(?, \"products__rows\".\"id\", ?, \"products__rows\".\"name\", ?, \"products__rows\".\"slug\", ?, \"products__rows\".\"description\", ?, \"products__rows\".\"unitLabel\", ?, \"products__rows\".\"allergenInfo\", ?, \"products__rows\".\"priceMinor\", ?, \"products__rows\".\"imageUrl\", ?, \"products__rows\".\"imageWidth\", ?, \"products__rows\".\"imageHeight\", ?, \"products__rows\".\"isAvailable\", ?, \"products__rows\".\"sortOrder\") ORDER BY \"products__rows\".\"products__order_0\" ASC, \"products__rows\".\"products__order_1\" ASC, \"products__rows\".\"products__order_2\" ASC), json_build_array()) AS \"products\" FROM (SELECT \"product\".\"id\" AS \"id\", \"product\".\"name\" AS \"name\", \"product\".\"slug\" AS \"slug\", \"product\".\"description\" AS \"description\", \"product\".\"unitLabel\" AS \"unitLabel\", \"product\".\"allergenInfo\" AS \"allergenInfo\", \"product\".\"priceMinor\" AS \"priceMinor\", \"product\".\"imageUrl\" AS \"imageUrl\", \"product\".\"imageWidth\" AS \"imageWidth\", \"product\".\"imageHeight\" AS \"imageHeight\", \"product\".\"isAvailable\" AS \"isAvailable\", \"product\".\"sortOrder\" AS \"sortOrder\", \"product\".\"sortOrder\" AS \"products__order_0\", \"product\".\"name\" AS \"products__order_1\", \"product\".\"id\" AS \"products__order_2\" FROM \"public\".\"product\" WHERE (\"product\".\"categoryId\" = \"category\".\"id\" AND \"product\".\"isActive\" = $?) ORDER BY \"product\".\"sortOrder\" ASC, \"product\".\"name\" ASC, \"product\".\"id\" ASC) AS \"products__rows\") AS \"products\" FROM \"public\".\"category\" WHERE \"category\".\"isActive\" = $? ORDER BY \"category\".\"sortOrder\" ASC, \"category\".\"id\" ASC",
+      "n": 1,
+      "min": 11.12,
+      "median": 11.12,
+      "p95": 11.12,
+      "max": 11.12
+    },
+    {
+      "sql": "SELECT \"product\".\"allergenInfo\" AS \"allergenInfo\", \"product\".\"categoryId\" AS \"categoryId\", \"product\".\"createdAt\" AS \"createdAt\", \"product\".\"description\" AS \"description\", \"product\".\"id\" AS \"id\", \"product\".\"imageHeight\" AS \"imageHeight\", \"product\".\"imagePathname\" AS \"imagePathname\", \"product\".\"imageUrl\" AS \"imageUrl\", \"product\".\"imageWidth\" AS \"imageWidth\", \"product\".\"isActive\" AS \"isActive\", \"product\".\"isAvailable\" AS \"isAvailable\", \"product\".\"name\" AS \"name\", \"product\".\"priceMinor\" AS \"priceMinor\", \"product\".\"slug\" AS \"slug\", \"product\".\"sortOrder\" AS \"sortOrder\", \"product\".\"unitLabel\" AS \"unitLabel\", \"product\".\"updatedAt\" AS \"updatedAt\", (SELECT coalesce(json_agg(json_build_object(?, \"category__rows\".\"id\", ?, \"category__rows\".\"name\", ?, \"category__rows\".\"slug\", ?, \"category__rows\".\"isActive\")), json_build_array()) AS \"category\" FROM (SELECT \"category\".\"id\" AS \"id\", \"category\".\"name\" AS \"name\", \"category\".\"slug\" AS \"slug\", \"category\".\"isActive\" AS \"isActive\" FROM \"public\".\"category\" WHERE \"category\".\"id\" = \"product\".\"categoryId\") AS \"category__rows\") AS \"category\" FROM \"public\".\"product\" WHERE (\"product\".\"slug\" = $? AND \"product\".\"isActive\" = $?) LIMIT ?",
+      "n": 1,
+      "min": 20.36,
+      "median": 20.36,
+      "p95": 20.36,
+      "max": 20.36
+    },
+    {
+      "sql": "SELECT \"category\".\"createdAt\" AS \"createdAt\", \"category\".\"description\" AS \"description\", \"category\".\"id\" AS \"id\", \"category\".\"isActive\" AS \"isActive\", \"category\".\"name\" AS \"name\", \"category\".\"slug\" AS \"slug\", \"category\".\"sortOrder\" AS \"sortOrder\", \"category\".\"updatedAt\" AS \"updatedAt\", (SELECT coalesce(json_agg(json_build_object(?, \"products__rows\".\"id\", ?, \"products__rows\".\"name\", ?, \"products__rows\".\"slug\", ?, \"products__rows\".\"description\", ?, \"products__rows\".\"unitLabel\", ?, \"products__rows\".\"allergenInfo\", ?, \"products__rows\".\"priceMinor\", ?, \"products__rows\".\"imageUrl\", ?, \"products__rows\".\"imageWidth\", ?, \"products__rows\".\"imageHeight\", ?, \"products__rows\".\"isAvailable\", ?, \"products__rows\".\"sortOrder\") ORDER BY \"products__rows\".\"products__order_0\" ASC, \"products__rows\".\"products__order_1\" ASC), json_build_array()) AS \"products\" FROM (SELECT \"product\".\"id\" AS \"id\", \"product\".\"name\" AS \"name\", \"product\".\"slug\" AS \"slug\", \"product\".\"description\" AS \"description\", \"product\".\"unitLabel\" AS \"unitLabel\", \"product\".\"allergenInfo\" AS \"allergenInfo\", \"product\".\"priceMinor\" AS \"priceMinor\", \"product\".\"imageUrl\" AS \"imageUrl\", \"product\".\"imageWidth\" AS \"imageWidth\", \"product\".\"imageHeight\" AS \"imageHeight\", \"product\".\"isAvailable\" AS \"isAvailable\", \"product\".\"sortOrder\" AS \"sortOrder\", \"product\".\"sortOrder\" AS \"products__order_0\", \"product\".\"id\" AS \"products__order_1\" FROM \"public\".\"product\" WHERE (\"product\".\"categoryId\" = \"category\".\"id\" AND \"product\".\"isActive\" = $?) ORDER BY \"product\".\"sortOrder\" ASC, \"product\".\"id\" ASC) AS \"products__rows\") AS \"products\" FROM \"public\".\"category\" WHERE (\"category\".\"id\" = $?::uuid AND \"category\".\"isActive\" = $?) LIMIT ?",
+      "n": 1,
+      "min": 10.07,
+      "median": 10.07,
+      "p95": 10.07,
+      "max": 10.07
+    },
+    {
+      "sql": "SELECT \"bakerySettings\".\"id\" AS \"id\", \"bakerySettings\".\"timezone\" AS \"timezone\", \"bakerySettings\".\"currencyCode\" AS \"currencyCode\", \"bakerySettings\".\"orderAcceptingEnabled\" AS \"orderAcceptingEnabled\", \"bakerySettings\".\"minimumPreparationMinutes\" AS \"minimumPreparationMinutes\", \"bakerySettings\".\"maximumAdvanceDays\" AS \"maximumAdvanceDays\", \"bakerySettings\".\"pickupSlotMinutes\" AS \"pickupSlotMinutes\", \"bakerySettings\".\"bakeryName\" AS \"bakeryName\", \"bakerySettings\".\"phone\" AS \"phone\", \"bakerySettings\".\"address\" AS \"address\", \"bakerySettings\".\"notificationEmail\" AS \"notificationEmail\" FROM \"public\".\"bakerySettings\" WHERE \"bakerySettings\".\"id\" = $? LIMIT ?",
+      "n": 82,
+      "min": 0.74,
+      "median": 17.42,
+      "p95": 54.03,
+      "max": 64.12
+    },
+    {
+      "sql": "SELECT \"businessHours\".\"weekday\" AS \"weekday\", \"businessHours\".\"openMinute\" AS \"openMinute\", \"businessHours\".\"closeMinute\" AS \"closeMinute\" FROM \"public\".\"businessHours\" WHERE \"businessHours\".\"bakerySettingsId\" = $? ORDER BY \"businessHours\".\"weekday\" ASC, \"businessHours\".\"openMinute\" ASC",
+      "n": 35,
+      "min": 0.72,
+      "median": 0.99,
+      "p95": 12.87,
+      "max": 14.21
+    },
+    {
+      "sql": "SELECT \"businessHours\".\"weekday\" AS \"weekday\", \"businessHours\".\"openMinute\" AS \"openMinute\", \"businessHours\".\"closeMinute\" AS \"closeMinute\" FROM \"public\".\"businessHours\" WHERE (\"businessHours\".\"bakerySettingsId\" = $? AND \"businessHours\".\"weekday\" = $?) ORDER BY \"businessHours\".\"openMinute\" ASC",
+      "n": 4,
+      "min": 0.74,
+      "median": 1.08,
+      "p95": 4.21,
+      "max": 4.21
+    },
+    {
+      "sql": "SELECT \"public\".\"rateLimit\".\"id\", \"public\".\"rateLimit\".\"key\", \"public\".\"rateLimit\".\"count\", \"public\".\"rateLimit\".\"lastRequest\" FROM \"public\".\"rateLimit\" WHERE \"public\".\"rateLimit\".\"key\" = $? ORDER BY \"public\".\"rateLimit\".\"id\" ASC LIMIT $? OFFSET $?",
+      "n": 8,
+      "min": 0.57,
+      "median": 1.48,
+      "p95": 22.09,
+      "max": 22.09
+    },
+    {
+      "sql": "BEGIN",
+      "n": 7,
+      "min": 0.31,
+      "median": 0.37,
+      "p95": 0.54,
+      "max": 0.54
+    },
+    {
+      "sql": "SELECT \"public\".\"rateLimit\".\"id\", \"public\".\"rateLimit\".\"key\", \"public\".\"rateLimit\".\"count\", \"public\".\"rateLimit\".\"lastRequest\" FROM \"public\".\"rateLimit\" WHERE (\"public\".\"rateLimit\".\"key\" = $? AND \"public\".\"rateLimit\".\"lastRequest\" <= $?) LIMIT $? OFFSET $?",
+      "n": 1,
+      "min": 0.78,
+      "median": 0.78,
+      "p95": 0.78,
+      "max": 0.78
+    },
+    {
+      "sql": "UPDATE \"public\".\"rateLimit\" SET \"count\" = $?, \"lastRequest\" = $? WHERE ((\"public\".\"rateLimit\".\"key\" = $? AND \"public\".\"rateLimit\".\"id\" = $?) AND \"public\".\"rateLimit\".\"lastRequest\" <= $?) RETURNING \"public\".\"rateLimit\".\"id\", \"public\".\"rateLimit\".\"key\", \"public\".\"rateLimit\".\"count\", \"public\".\"rateLimit\".\"lastRequest\"",
+      "n": 1,
+      "min": 5.49,
+      "median": 5.49,
+      "p95": 5.49,
+      "max": 5.49
+    },
+    {
+      "sql": "COMMIT",
+      "n": 7,
+      "min": 0.44,
+      "median": 0.68,
+      "p95": 1.86,
+      "max": 1.86
+    },
+    {
+      "sql": "DELETE FROM \"public\".\"rateLimit\" WHERE \"public\".\"rateLimit\".\"lastRequest\" < $?",
+      "n": 1,
+      "min": 0.81,
+      "median": 0.81,
+      "p95": 0.81,
+      "max": 0.81
+    },
+    {
+      "sql": "SELECT \"public\".\"user\".\"id\", \"public\".\"user\".\"name\", \"public\".\"user\".\"email\", \"public\".\"user\".\"emailVerified\", \"public\".\"user\".\"image\", \"public\".\"user\".\"role\", \"public\".\"user\".\"isActive\", \"public\".\"user\".\"createdAt\", \"public\".\"user\".\"updatedAt\" FROM \"public\".\"user\" WHERE \"public\".\"user\".\"email\" = $? LIMIT $? OFFSET $?",
+      "n": 4,
+      "min": 0.6,
+      "median": 0.79,
+      "p95": 4.71,
+      "max": 4.71
+    },
+    {
+      "sql": "SELECT \"public\".\"account\".\"id\", \"public\".\"account\".\"accountId\", \"public\".\"account\".\"providerId\", \"public\".\"account\".\"userId\", \"public\".\"account\".\"accessToken\", \"public\".\"account\".\"refreshToken\", \"public\".\"account\".\"idToken\", \"public\".\"account\".\"accessTokenExpiresAt\", \"public\".\"account\".\"refreshTokenExpiresAt\", \"public\".\"account\".\"scope\", \"public\".\"account\".\"password\", \"public\".\"account\".\"createdAt\", \"public\".\"account\".\"updatedAt\" FROM \"public\".\"account\" WHERE \"public\".\"account\".\"userId\" = $? ORDER BY \"public\".\"account\".\"id\" ASC LIMIT $? OFFSET $?",
+      "n": 8,
+      "min": 0.6,
+      "median": 0.89,
+      "p95": 4.15,
+      "max": 4.15
+    },
+    {
+      "sql": "SELECT \"public\".\"user\".\"id\", \"public\".\"user\".\"isActive\" FROM \"public\".\"user\" WHERE (\"public\".\"user\".\"id\" = $? AND ?=?) LIMIT $? OFFSET $?",
+      "n": 4,
+      "min": 0.63,
+      "median": 0.69,
+      "p95": 0.8,
+      "max": 0.8
+    },
+    {
+      "sql": "INSERT INTO \"public\".\"session\" (\"id\",\"expiresAt\",\"token\",\"createdAt\",\"updatedAt\",\"ipAddress\",\"userAgent\",\"userId\") VALUES ($?,$?,$?,$?,$?,$?,$?,$?) RETURNING \"public\".\"session\".\"id\", \"public\".\"session\".\"expiresAt\", \"public\".\"session\".\"token\", \"public\".\"session\".\"createdAt\", \"public\".\"session\".\"updatedAt\", \"public\".\"session\".\"ipAddress\", \"public\".\"session\".\"userAgent\", \"public\".\"session\".\"userId\"",
+      "n": 4,
+      "min": 0.96,
+      "median": 2.3,
+      "p95": 4.86,
+      "max": 4.86
+    },
+    {
+      "sql": "SELECT \"public\".\"session\".\"id\", \"public\".\"session\".\"expiresAt\", \"public\".\"session\".\"token\", \"public\".\"session\".\"createdAt\", \"public\".\"session\".\"updatedAt\", \"public\".\"session\".\"ipAddress\", \"public\".\"session\".\"userAgent\", \"public\".\"session\".\"userId\" FROM \"public\".\"session\" WHERE \"public\".\"session\".\"token\" = $? LIMIT $? OFFSET $?",
+      "n": 114,
+      "min": 0.91,
+      "median": 6.44,
+      "p95": 34.96,
+      "max": 95.81
+    },
+    {
+      "sql": "SELECT \"public\".\"user\".\"id\", \"public\".\"user\".\"name\", \"public\".\"user\".\"email\", \"public\".\"user\".\"emailVerified\", \"public\".\"user\".\"image\", \"public\".\"user\".\"role\", \"public\".\"user\".\"isActive\", \"public\".\"user\".\"createdAt\", \"public\".\"user\".\"updatedAt\" FROM \"public\".\"user\" WHERE \"public\".\"user\".\"id\" = $? LIMIT $? OFFSET $?",
+      "n": 114,
+      "min": 0.67,
+      "median": 5.77,
+      "p95": 21.27,
+      "max": 35.29
+    },
+    {
+      "sql": "SELECT \"public\".\"user\".\"id\", \"public\".\"user\".\"name\", \"public\".\"user\".\"email\", \"public\".\"user\".\"role\", \"public\".\"user\".\"isActive\" FROM \"public\".\"user\" WHERE (\"public\".\"user\".\"id\" = $? AND ?=?) LIMIT $? OFFSET $?",
+      "n": 110,
+      "min": 0.88,
+      "median": 9.53,
+      "p95": 33.73,
+      "max": 44.65
+    },
+    {
+      "sql": "SELECT COUNT(*) AS \"count\" FROM \"public\".\"order\" WHERE \"order\".\"status\" = $?",
+      "n": 140,
+      "min": 1.43,
+      "median": 8.75,
+      "p95": 18.9,
+      "max": 27.69
+    },
+    {
+      "sql": "SELECT \"order\".\"id\" AS \"id\", \"order\".\"orderNumber\" AS \"orderNumber\", \"order\".\"customerName\" AS \"customerName\", \"order\".\"pickupAt\" AS \"pickupAt\", \"order\".\"totalMinor\" AS \"totalMinor\", \"order\".\"currencyCode\" AS \"currencyCode\", \"order\".\"createdAt\" AS \"createdAt\" FROM \"public\".\"order\" WHERE \"order\".\"status\" = $? ORDER BY \"order\".\"createdAt\" DESC, \"order\".\"id\" DESC LIMIT ?",
+      "n": 35,
+      "min": 9.75,
+      "median": 18.14,
+      "p95": 34.31,
+      "max": 37.75
+    },
+    {
+      "sql": "SELECT COUNT(*) AS \"count\", SUM(\"order\".\"totalMinor\") AS \"revenueMinor\" FROM \"public\".\"order\" WHERE (\"order\".\"status\" = $? AND \"order\".\"updatedAt\" >= $? AND \"order\".\"updatedAt\" < $?)",
+      "n": 35,
+      "min": 10.9,
+      "median": 15.2,
+      "p95": 30.42,
+      "max": 32.57
+    },
+    {
+      "sql": "SELECT COUNT(*) AS \"count\" FROM \"public\".\"order\"",
+      "n": 4,
+      "min": 1.1,
+      "median": 1.44,
+      "p95": 3.24,
+      "max": 3.24
+    },
+    {
+      "sql": "SELECT \"order\".\"id\" AS \"id\", \"order\".\"orderNumber\" AS \"orderNumber\", \"order\".\"status\" AS \"status\", \"order\".\"customerName\" AS \"customerName\", \"order\".\"pickupAt\" AS \"pickupAt\", \"order\".\"totalMinor\" AS \"totalMinor\", \"order\".\"currencyCode\" AS \"currencyCode\", \"order\".\"createdAt\" AS \"createdAt\" FROM \"public\".\"order\" ORDER BY \"order\".\"createdAt\" DESC, \"order\".\"id\" DESC LIMIT ? OFFSET ?",
+      "n": 4,
+      "min": 1.24,
+      "median": 1.6,
+      "p95": 4.65,
+      "max": 4.65
+    },
+    {
+      "sql": "SELECT \"order\".\"cancellationReason\" AS \"cancellationReason\", \"order\".\"createdAt\" AS \"createdAt\", \"order\".\"currencyCode\" AS \"currencyCode\", \"order\".\"customerEmail\" AS \"customerEmail\", \"order\".\"customerName\" AS \"customerName\", \"order\".\"customerPhone\" AS \"customerPhone\", \"order\".\"id\" AS \"id\", \"order\".\"idempotencyKey\" AS \"idempotencyKey\", \"order\".\"note\" AS \"note\", \"order\".\"orderNumber\" AS \"orderNumber\", \"order\".\"payloadHash\" AS \"payloadHash\", \"order\".\"pickupAt\" AS \"pickupAt\", \"order\".\"status\" AS \"status\", \"order\".\"subtotalMinor\" AS \"subtotalMinor\", \"order\".\"totalMinor\" AS \"totalMinor\", \"order\".\"updatedAt\" AS \"updatedAt\", (SELECT coalesce(json_agg(json_build_object(?, CAST(\"items__rows\".\"createdAt\" AS text), ?, \"items__rows\".\"id\", ?, \"items__rows\".\"orderId\", ?, \"items__rows\".\"productId\", ?, \"items__rows\".\"productName\", ?, \"items__rows\".\"quantity\", ?, \"items__rows\".\"subtotalMinor\", ?, \"items__rows\".\"unitPriceMinor\")), json_build_array()) AS \"items\" FROM (SELECT \"orderItem\".\"createdAt\" AS \"createdAt\", \"orderItem\".\"id\" AS \"id\", \"orderItem\".\"orderId\" AS \"orderId\", \"orderItem\".\"productId\" AS \"productId\", \"orderItem\".\"productName\" AS \"productName\", \"orderItem\".\"quantity\" AS \"quantity\", \"orderItem\".\"subtotalMinor\" AS \"subtotalMinor\", \"orderItem\".\"unitPriceMinor\" AS \"unitPriceMinor\" FROM \"public\".\"orderItem\" WHERE \"orderItem\".\"orderId\" = \"order\".\"id\") AS \"items__rows\") AS \"items\", (SELECT coalesce(json_agg(json_build_object(?, \"statusHistory__rows\".\"changedByUserId\", ?, CAST(\"statusHistory__rows\".\"createdAt\" AS text), ?, \"statusHistory__rows\".\"fromStatus\", ?, \"statusHistory__rows\".\"id\", ?, \"statusHistory__rows\".\"orderId\", ?, \"statusHistory__rows\".\"reason\", ?, \"statusHistory__rows\".\"toStatus\") ORDER BY \"statusHistory__rows\".\"statusHistory__order_0\" ASC, \"statusHistory__rows\".\"statusHistory__order_1\" ASC), json_build_array()) AS \"statusHistory\" FROM (SELECT \"orderStatusHistory\".\"changedByUserId\" AS \"changedByUserId\", \"orderStatusHistory\".\"createdAt\" AS \"createdAt\", \"orderStatusHistory\".\"fromStatus\" AS \"fromStatus\", \"orderStatusHistory\".\"id\" AS \"id\", \"orderStatusHistory\".\"orderId\" AS \"orderId\", \"orderStatusHistory\".\"reason\" AS \"reason\", \"orderStatusHistory\".\"toStatus\" AS \"toStatus\", \"orderStatusHistory\".\"createdAt\" AS \"statusHistory__order_0\", \"orderStatusHistory\".\"id\" AS \"statusHistory__order_1\" FROM \"public\".\"orderStatusHistory\" WHERE \"orderStatusHistory\".\"orderId\" = \"order\".\"id\" ORDER BY \"orderStatusHistory\".\"createdAt\" ASC, \"orderStatusHistory\".\"id\" ASC) AS \"statusHistory__rows\") AS \"statusHistory\", (SELECT coalesce(json_agg(json_build_object(?, \"notifications__rows\".\"attempts\", ?, CAST(\"notifications__rows\".\"createdAt\" AS text), ?, CAST(\"notifications__rows\".\"deliveredAt\" AS text), ?, \"notifications__rows\".\"id\", ?, \"notifications__rows\".\"lastErrorCode\", ?, CAST(\"notifications__rows\".\"leaseUntil\" AS text), ?, \"notifications__rows\".\"orderId\", ?, \"notifications__rows\".\"recipientType\", ?, \"notifications__rows\".\"status\", ?, CAST(\"notifications__rows\".\"updatedAt\" AS text))), json_build_array()) AS \"notifications\" FROM (SELECT \"orderNotificationDelivery\".\"attempts\" AS \"attempts\", \"orderNotificationDelivery\".\"createdAt\" AS \"createdAt\", \"orderNotificationDelivery\".\"deliveredAt\" AS \"deliveredAt\", \"orderNotificationDelivery\".\"id\" AS \"id\", \"orderNotificationDelivery\".\"lastErrorCode\" AS \"lastErrorCode\", \"orderNotificationDelivery\".\"leaseUntil\" AS \"leaseUntil\", \"orderNotificationDelivery\".\"orderId\" AS \"orderId\", \"orderNotificationDelivery\".\"recipientType\" AS \"recipientType\", \"orderNotificationDelivery\".\"status\" AS \"status\", \"orderNotificationDelivery\".\"updatedAt\" AS \"updatedAt\" FROM \"public\".\"orderNotificationDelivery\" WHERE \"orderNotificationDelivery\".\"orderId\" = \"order\".\"id\") AS \"notifications__rows\") AS \"notifications\" FROM \"public\".\"order\" WHERE \"order\".\"id\" = $?::uuid LIMIT ?",
+      "n": 4,
+      "min": 28.87,
+      "median": 30.93,
+      "p95": 33.09,
+      "max": 33.09
+    },
+    {
+      "sql": "SELECT \"product\".\"allergenInfo\" AS \"allergenInfo\", \"product\".\"categoryId\" AS \"categoryId\", \"product\".\"createdAt\" AS \"createdAt\", \"product\".\"description\" AS \"description\", \"product\".\"id\" AS \"id\", \"product\".\"imageHeight\" AS \"imageHeight\", \"product\".\"imagePathname\" AS \"imagePathname\", \"product\".\"imageUrl\" AS \"imageUrl\", \"product\".\"imageWidth\" AS \"imageWidth\", \"product\".\"isActive\" AS \"isActive\", \"product\".\"isAvailable\" AS \"isAvailable\", \"product\".\"name\" AS \"name\", \"product\".\"priceMinor\" AS \"priceMinor\", \"product\".\"slug\" AS \"slug\", \"product\".\"sortOrder\" AS \"sortOrder\", \"product\".\"unitLabel\" AS \"unitLabel\", \"product\".\"updatedAt\" AS \"updatedAt\", (SELECT coalesce(json_agg(json_build_object(?, \"category__rows\".\"name\", ?, \"category__rows\".\"isActive\")), json_build_array()) AS \"category\" FROM (SELECT \"category\".\"name\" AS \"name\", \"category\".\"isActive\" AS \"isActive\" FROM \"public\".\"category\" WHERE \"category\".\"id\" = \"product\".\"categoryId\") AS \"category__rows\") AS \"category\" FROM \"public\".\"product\" ORDER BY \"product\".\"updatedAt\" DESC, \"product\".\"id\" ASC",
+      "n": 4,
+      "min": 25.8,
+      "median": 31.6,
+      "p95": 40.21,
+      "max": 40.21
+    },
+    {
+      "sql": "SELECT \"category\".\"createdAt\" AS \"createdAt\", \"category\".\"description\" AS \"description\", \"category\".\"id\" AS \"id\", \"category\".\"isActive\" AS \"isActive\", \"category\".\"name\" AS \"name\", \"category\".\"slug\" AS \"slug\", \"category\".\"sortOrder\" AS \"sortOrder\", \"category\".\"updatedAt\" AS \"updatedAt\", (SELECT coalesce(json_agg(json_build_object(?, \"products__rows\".\"isActive\")), json_build_array()) AS \"products\" FROM (SELECT \"product\".\"isActive\" AS \"isActive\" FROM \"public\".\"product\" WHERE \"product\".\"categoryId\" = \"category\".\"id\") AS \"products__rows\") AS \"products\" FROM \"public\".\"category\" ORDER BY \"category\".\"sortOrder\" ASC, \"category\".\"name\" ASC, \"category\".\"id\" ASC",
+      "n": 4,
+      "min": 27.43,
+      "median": 36.83,
+      "p95": 44.26,
+      "max": 44.26
+    },
+    {
+      "sql": "SELECT \"bakerySettings\".\"address\" AS \"address\", \"bakerySettings\".\"bakeryName\" AS \"bakeryName\", \"bakerySettings\".\"createdAt\" AS \"createdAt\", \"bakerySettings\".\"currencyCode\" AS \"currencyCode\", \"bakerySettings\".\"id\" AS \"id\", \"bakerySettings\".\"maximumAdvanceDays\" AS \"maximumAdvanceDays\", \"bakerySettings\".\"minimumPreparationMinutes\" AS \"minimumPreparationMinutes\", \"bakerySettings\".\"notificationEmail\" AS \"notificationEmail\", \"bakerySettings\".\"orderAcceptingEnabled\" AS \"orderAcceptingEnabled\", \"bakerySettings\".\"phone\" AS \"phone\", \"bakerySettings\".\"pickupSlotMinutes\" AS \"pickupSlotMinutes\", \"bakerySettings\".\"timezone\" AS \"timezone\", \"bakerySettings\".\"updatedAt\" AS \"updatedAt\", (SELECT coalesce(json_agg(json_build_object(?, \"businessHours__rows\".\"bakerySettingsId\", ?, \"businessHours__rows\".\"closeMinute\", ?, CAST(\"businessHours__rows\".\"createdAt\" AS text), ?, \"businessHours__rows\".\"id\", ?, \"businessHours__rows\".\"openMinute\", ?, CAST(\"businessHours__rows\".\"updatedAt\" AS text), ?, \"businessHours__rows\".\"weekday\") ORDER BY \"businessHours__rows\".\"businessHours__order_0\" ASC, \"businessHours__rows\".\"businessHours__order_1\" ASC), json_build_array()) AS \"businessHours\" FROM (SELECT \"businessHours\".\"bakerySettingsId\" AS \"bakerySettingsId\", \"businessHours\".\"closeMinute\" AS \"closeMinute\", \"businessHours\".\"createdAt\" AS \"createdAt\", \"businessHours\".\"id\" AS \"id\", \"businessHours\".\"openMinute\" AS \"openMinute\", \"businessHours\".\"updatedAt\" AS \"updatedAt\", \"businessHours\".\"weekday\" AS \"weekday\", \"businessHours\".\"weekday\" AS \"businessHours__order_0\", \"businessHours\".\"openMinute\" AS \"businessHours__order_1\" FROM \"public\".\"businessHours\" WHERE \"businessHours\".\"bakerySettingsId\" = \"bakerySettings\".\"id\" ORDER BY \"businessHours\".\"weekday\" ASC, \"businessHours\".\"openMinute\" ASC) AS \"businessHours__rows\") AS \"businessHours\" FROM \"public\".\"bakerySettings\" WHERE \"bakerySettings\".\"id\" = $? LIMIT ?",
+      "n": 4,
+      "min": 21.35,
+      "median": 27.61,
+      "p95": 44.82,
+      "max": 44.82
+    },
+    {
+      "sql": "SELECT \"public\".\"rateLimit\".\"id\", \"public\".\"rateLimit\".\"key\", \"public\".\"rateLimit\".\"count\", \"public\".\"rateLimit\".\"lastRequest\" FROM \"public\".\"rateLimit\" WHERE (\"public\".\"rateLimit\".\"key\" = $? AND \"public\".\"rateLimit\".\"lastRequest\" > $? AND \"public\".\"rateLimit\".\"count\" < $?) LIMIT $? OFFSET $?",
+      "n": 6,
+      "min": 0.54,
+      "median": 0.75,
+      "p95": 0.85,
+      "max": 0.85
+    },
+    {
+      "sql": "UPDATE \"public\".\"rateLimit\" SET \"lastRequest\" = $?, \"count\" = (\"public\".\"rateLimit\".\"count\" + $?) WHERE ((\"public\".\"rateLimit\".\"key\" = $? AND \"public\".\"rateLimit\".\"id\" = $?) AND (\"public\".\"rateLimit\".\"lastRequest\" > $? AND \"public\".\"rateLimit\".\"count\" < $?)) RETURNING \"public\".\"rateLimit\".\"id\", \"public\".\"rateLimit\".\"key\", \"public\".\"rateLimit\".\"count\", \"public\".\"rateLimit\".\"lastRequest\"",
+      "n": 6,
+      "min": 0.59,
+      "median": 0.9,
+      "p95": 1.95,
+      "max": 1.95
+    },
+    {
+      "sql": "INSERT INTO \"public\".\"rateLimit\" (\"id\",\"key\",\"count\",\"lastRequest\") VALUES ($?,$?,$?,$?) RETURNING \"public\".\"rateLimit\".\"id\", \"public\".\"rateLimit\".\"key\", \"public\".\"rateLimit\".\"count\", \"public\".\"rateLimit\".\"lastRequest\"",
+      "n": 1,
+      "min": 4.33,
+      "median": 4.33,
+      "p95": 4.33,
+      "max": 4.33
+    },
+    {
+      "sql": "SELECT \"public\".\"session\".\"id\", \"public\".\"session\".\"expiresAt\", \"public\".\"session\".\"token\", \"public\".\"session\".\"createdAt\", \"public\".\"session\".\"updatedAt\", \"public\".\"session\".\"ipAddress\", \"public\".\"session\".\"userAgent\", \"public\".\"session\".\"userId\" FROM \"public\".\"session\" WHERE \"public\".\"session\".\"token\" = $? ORDER BY \"public\".\"session\".\"id\" ASC LIMIT $? OFFSET $?",
+      "n": 4,
+      "min": 0.68,
+      "median": 0.71,
+      "p95": 0.77,
+      "max": 0.77
+    },
+    {
+      "sql": "DELETE FROM \"public\".\"session\" WHERE \"public\".\"session\".\"token\" = $?",
+      "n": 4,
+      "min": 0.78,
+      "median": 1.23,
+      "p95": 1.35,
+      "max": 1.35
+    }
+  ]
+}

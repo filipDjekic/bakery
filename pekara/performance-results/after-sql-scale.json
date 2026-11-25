@@ -1,0 +1,302 @@
+{
+  "connectMs": 148.60500000000002,
+  "queries": {
+    "orders-first-page": {
+      "sql": "SELECT id, \"orderNumber\", status, \"customerName\", \"pickupAt\", \"totalMinor\", \"currencyCode\", \"createdAt\" FROM \"order\" ORDER BY \"createdAt\" DESC, id DESC LIMIT 25",
+      "latencyMs": {
+        "n": 20,
+        "min": 0.55,
+        "median": 0.73,
+        "p95": 1.51,
+        "max": 9.82
+      },
+      "explain": {
+        "Plan": {
+          "Node Type": "Limit",
+          "Actual Startup Time": 0.027,
+          "Actual Total Time": 0.029,
+          "Actual Rows": 25,
+          "Actual Loops": 1,
+          "Shared Hit Blocks": 4,
+          "Shared Read Blocks": 0,
+          "Plans": [
+            {
+              "Node Type": "Incremental Sort",
+              "Actual Startup Time": 0.027,
+              "Actual Total Time": 0.028,
+              "Actual Rows": 25,
+              "Actual Loops": 1,
+              "Shared Hit Blocks": 4,
+              "Shared Read Blocks": 0,
+              "Plans": [
+                {
+                  "Node Type": "Index Scan",
+                  "Index Name": "order_createdAt_idx_9575dbd7",
+                  "Relation Name": "order",
+                  "Actual Startup Time": 0.009,
+                  "Actual Total Time": 0.015,
+                  "Actual Rows": 26,
+                  "Actual Loops": 1,
+                  "Shared Hit Blocks": 4,
+                  "Shared Read Blocks": 0
+                }
+              ]
+            }
+          ]
+        },
+        "Planning Time": 0.09,
+        "Execution Time": 0.044
+      }
+    },
+    "orders-last-page": {
+      "sql": "SELECT id, \"orderNumber\", status, \"customerName\", \"pickupAt\", \"totalMinor\", \"currencyCode\", \"createdAt\" FROM \"order\" ORDER BY \"createdAt\" DESC, id DESC LIMIT 25 OFFSET 9975",
+      "latencyMs": {
+        "n": 20,
+        "min": 4.28,
+        "median": 4.73,
+        "p95": 6.39,
+        "max": 7.37
+      },
+      "explain": {
+        "Plan": {
+          "Node Type": "Limit",
+          "Actual Startup Time": 6.407,
+          "Actual Total Time": 6.411,
+          "Actual Rows": 25,
+          "Actual Loops": 1,
+          "Shared Hit Blocks": 223,
+          "Shared Read Blocks": 0,
+          "Plans": [
+            {
+              "Node Type": "Sort",
+              "Actual Startup Time": 5.58,
+              "Actual Total Time": 6.08,
+              "Actual Rows": 10000,
+              "Actual Loops": 1,
+              "Sort Method": "quicksort",
+              "Sort Space Used": 1713,
+              "Shared Hit Blocks": 223,
+              "Shared Read Blocks": 0,
+              "Plans": [
+                {
+                  "Node Type": "Seq Scan",
+                  "Relation Name": "order",
+                  "Actual Startup Time": 0.011,
+                  "Actual Total Time": 1.715,
+                  "Actual Rows": 10006,
+                  "Actual Loops": 1,
+                  "Shared Hit Blocks": 223,
+                  "Shared Read Blocks": 0
+                }
+              ]
+            }
+          ]
+        },
+        "Planning Time": 0.115,
+        "Execution Time": 6.728
+      }
+    },
+    "orders-status": {
+      "sql": "SELECT id FROM \"order\" WHERE status='NEW' ORDER BY \"createdAt\" DESC,id DESC LIMIT 25",
+      "latencyMs": {
+        "n": 20,
+        "min": 0.25,
+        "median": 0.35,
+        "p95": 0.79,
+        "max": 0.93
+      },
+      "explain": {
+        "Plan": {
+          "Node Type": "Limit",
+          "Actual Startup Time": 0.025,
+          "Actual Total Time": 0.028,
+          "Actual Rows": 25,
+          "Actual Loops": 1,
+          "Shared Hit Blocks": 24,
+          "Shared Read Blocks": 0,
+          "Plans": [
+            {
+              "Node Type": "Incremental Sort",
+              "Actual Startup Time": 0.025,
+              "Actual Total Time": 0.026,
+              "Actual Rows": 25,
+              "Actual Loops": 1,
+              "Shared Hit Blocks": 24,
+              "Shared Read Blocks": 0,
+              "Plans": [
+                {
+                  "Node Type": "Index Scan",
+                  "Index Name": "order_status_createdAt_idx_58610442",
+                  "Relation Name": "order",
+                  "Actual Startup Time": 0.01,
+                  "Actual Total Time": 0.019,
+                  "Actual Rows": 26,
+                  "Actual Loops": 1,
+                  "Shared Hit Blocks": 24,
+                  "Shared Read Blocks": 0
+                }
+              ]
+            }
+          ]
+        },
+        "Planning Time": 0.059,
+        "Execution Time": 0.044
+      }
+    },
+    "orders-date": {
+      "sql": "SELECT id FROM \"order\" WHERE \"createdAt\">=CURRENT_DATE-INTERVAL '7 days' AND \"createdAt\"<CURRENT_DATE+INTERVAL '1 day' ORDER BY \"createdAt\" DESC,id DESC LIMIT 25",
+      "latencyMs": {
+        "n": 20,
+        "min": 0.27,
+        "median": 0.41,
+        "p95": 0.66,
+        "max": 1.98
+      },
+      "explain": {
+        "Plan": {
+          "Node Type": "Limit",
+          "Actual Startup Time": 0.029,
+          "Actual Total Time": 0.032,
+          "Actual Rows": 25,
+          "Actual Loops": 1,
+          "Shared Hit Blocks": 4,
+          "Shared Read Blocks": 0,
+          "Plans": [
+            {
+              "Node Type": "Incremental Sort",
+              "Actual Startup Time": 0.029,
+              "Actual Total Time": 0.03,
+              "Actual Rows": 25,
+              "Actual Loops": 1,
+              "Shared Hit Blocks": 4,
+              "Shared Read Blocks": 0,
+              "Plans": [
+                {
+                  "Node Type": "Index Scan",
+                  "Index Name": "order_createdAt_idx_9575dbd7",
+                  "Relation Name": "order",
+                  "Actual Startup Time": 0.019,
+                  "Actual Total Time": 0.023,
+                  "Actual Rows": 26,
+                  "Actual Loops": 1,
+                  "Shared Hit Blocks": 4,
+                  "Shared Read Blocks": 0
+                }
+              ]
+            }
+          ]
+        },
+        "Planning Time": 0.096,
+        "Execution Time": 0.044
+      }
+    },
+    "dashboard-count": {
+      "sql": "SELECT count(*)::int FROM \"order\" WHERE status='NEW'",
+      "latencyMs": {
+        "n": 20,
+        "min": 0.19,
+        "median": 0.23,
+        "p95": 0.35,
+        "max": 0.42
+      },
+      "explain": {
+        "Plan": {
+          "Node Type": "Aggregate",
+          "Actual Startup Time": 0.025,
+          "Actual Total Time": 0.025,
+          "Actual Rows": 1,
+          "Actual Loops": 1,
+          "Shared Hit Blocks": 4,
+          "Shared Read Blocks": 0,
+          "Plans": [
+            {
+              "Node Type": "Index Only Scan",
+              "Index Name": "order_status_createdAt_idx_58610442",
+              "Relation Name": "order",
+              "Actual Startup Time": 0.01,
+              "Actual Total Time": 0.018,
+              "Actual Rows": 106,
+              "Actual Loops": 1,
+              "Shared Hit Blocks": 4,
+              "Shared Read Blocks": 0
+            }
+          ]
+        },
+        "Planning Time": 0.047,
+        "Execution Time": 0.036
+      }
+    },
+    "dashboard-completed": {
+      "sql": "SELECT count(*)::int, sum(\"totalMinor\") FROM \"order\" WHERE status='COMPLETED' AND \"updatedAt\">=CURRENT_DATE AND \"updatedAt\"<CURRENT_DATE+INTERVAL '1 day'",
+      "latencyMs": {
+        "n": 20,
+        "min": 2.39,
+        "median": 2.88,
+        "p95": 5.22,
+        "max": 5.33
+      },
+      "explain": {
+        "Plan": {
+          "Node Type": "Aggregate",
+          "Actual Startup Time": 2.929,
+          "Actual Total Time": 2.931,
+          "Actual Rows": 1,
+          "Actual Loops": 1,
+          "Shared Hit Blocks": 223,
+          "Shared Read Blocks": 0,
+          "Plans": [
+            {
+              "Node Type": "Seq Scan",
+              "Relation Name": "order",
+              "Actual Startup Time": 0.013,
+              "Actual Total Time": 2.895,
+              "Actual Rows": 405,
+              "Actual Loops": 1,
+              "Shared Hit Blocks": 223,
+              "Shared Read Blocks": 0
+            }
+          ]
+        },
+        "Planning Time": 0.124,
+        "Execution Time": 2.958
+      }
+    },
+    "catalog": {
+      "sql": "SELECT id,name,slug,\"priceMinor\" FROM product WHERE \"isActive\" ORDER BY \"sortOrder\",name,id",
+      "latencyMs": {
+        "n": 20,
+        "min": 0.5,
+        "median": 0.85,
+        "p95": 1.63,
+        "max": 5.64
+      },
+      "explain": {
+        "Plan": {
+          "Node Type": "Sort",
+          "Actual Startup Time": 0.112,
+          "Actual Total Time": 0.121,
+          "Actual Rows": 122,
+          "Actual Loops": 1,
+          "Sort Method": "quicksort",
+          "Sort Space Used": 34,
+          "Shared Hit Blocks": 3,
+          "Shared Read Blocks": 0,
+          "Plans": [
+            {
+              "Node Type": "Seq Scan",
+              "Relation Name": "product",
+              "Actual Startup Time": 0.013,
+              "Actual Total Time": 0.061,
+              "Actual Rows": 122,
+              "Actual Loops": 1,
+              "Shared Hit Blocks": 3,
+              "Shared Read Blocks": 0
+            }
+          ]
+        },
+        "Planning Time": 0.113,
+        "Execution Time": 0.156
+      }
+    }
+  }
+}

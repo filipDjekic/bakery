@@ -1,0 +1,94 @@
+{
+  "checks": [
+    {
+      "name": "lint (finalni kod)",
+      "result": "PASS",
+      "details": "Ponovljen 25.11.2026: exit 0, bez grešaka; generisani lokalni cache isključen iz lint ciljeva."
+    },
+    {
+      "name": "typecheck",
+      "result": "PASS",
+      "details": "Ponovljen 25.11.2026: tsc --noEmit, exit 0; takođe provereno kroz build."
+    },
+    {
+      "name": "unit",
+      "result": "PASS",
+      "details": "214/214, 56 fajlova, 0 neuspešnih; 96,57 s"
+    },
+    {
+      "name": "test:integration",
+      "result": "PASS",
+      "details": "101/101, 0 failed/skipped, 144,51 s; isključivo izolovana baza"
+    },
+    {
+      "name": "test:e2e",
+      "result": "PASS",
+      "details": "Pun paket: 14 testova u 5 fajlova; sačuvani .last-run.json status passed, failedTests=[] (24.11.2026). Spisak ponovo potvrđen 25.11; izvorni stdout i trajanje nisu dostupni posle prekida."
+    },
+    {
+      "name": "test:a11y",
+      "result": "PASS",
+      "details": "Zaseban paket: 3 testa u 1 fajlu; sačuvani a11y-performance/.last-run.json status passed, failedTests=[] (24.11.2026). Spisak ponovo potvrđen 25.11; trajanje nije obnovljeno."
+    },
+    {
+      "name": "schema:check",
+      "result": "PASS",
+      "details": "Prisma 7 auth projekcija i generisani client odgovaraju schema owner-u"
+    },
+    {
+      "name": "migration:check",
+      "result": "PASS",
+      "details": "Graf sačuvan, nema novih duplicate edge-a, svi check-ovi prolaze"
+    },
+    {
+      "name": "data integrity: razvojna baza",
+      "result": "PASS",
+      "details": "READ ONLY: 0 nekompatibilnih redova u svih 6 kontrolisanih tabela"
+    },
+    {
+      "name": "db:verify",
+      "result": "PASS",
+      "details": "Ponovljen 25.11.2026: full read-only introspekcija postojeće baze; schema/marker odgovaraju, warnings=[], exit 0."
+    },
+    {
+      "name": "default build",
+      "result": "PASS",
+      "details": "Ponovljen 25.11.2026: pnpm build, Turbopack, TypeScript, 24 rute; compile 8,9 s, TS 13,7 s, exit 0."
+    },
+    {
+      "name": "build:local / start:local",
+      "result": "PASS",
+      "details": "Ponovljeno 25.11.2026: build 24 rute, compile 5,7 s / TS 14,4 s; start Ready 778 ms (config 2,3 s); netstat potvrđuje samo 127.0.0.1:3000."
+    },
+    {
+      "name": "local production browser smoke",
+      "result": "PASS",
+      "details": "Ponovljen 25.11.2026: homepage, anon redirect, postojeći admin login, dashboard, reload/nova kartica, cookie politika, forged Origin 403; 0 pageerror."
+    },
+    {
+      "name": "env:check:production",
+      "result": "PASS",
+      "details": "Sintetički HTTPS/proxy production env bez DB konekcije; insecure i local-profile odbijanje unit testovima"
+    },
+    {
+      "name": "HTTP pre/posle i business digest",
+      "result": "PASS",
+      "details": "Isti workload i otisak svih šest poslovnih tabela pre/posle; ponovo potvrđen 25.11.2026 pre završnog smoke-a."
+    },
+    {
+      "name": "browser performance",
+      "result": "PASS",
+      "details": "Po 5 navigacija/ruta, 4 topla reload-a; 0 pageerror pre/posle"
+    },
+    {
+      "name": "order benchmark",
+      "result": "PASS",
+      "details": "Po 5 sintetičkih kreiranja + 5 idempotentnih retry-ja pre/posle, samo *_performance_test"
+    },
+    {
+      "name": "client bundle server-only scan",
+      "result": "PASS",
+      "details": "28 chunk-ova, 0 nalaza Prisma/DB/Blob secret obrazaca"
+    }
+  ]
+}

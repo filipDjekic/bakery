@@ -9,7 +9,8 @@ export default function GlobalError({
   retry: () => void;
 }) {
   useEffect(() => {
-    captureException(error, { tags: { boundary: 'global' } });
+    if (process.env.NEXT_PUBLIC_SENTRY_ENABLED === 'true')
+      captureException(error, { tags: { boundary: 'global' } });
   }, [error]);
   return (
     <html lang="sr-Latn">

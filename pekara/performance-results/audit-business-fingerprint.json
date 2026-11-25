@@ -1,0 +1,14 @@
+{
+  "recordedAt": "2026-11-25T13:40:21.087Z",
+  "database": "existing development database; read-only",
+  "queryMode": "BEGIN READ ONLY / ROLLBACK",
+  "allSixBusinessFingerprintsMatchBaseline": true,
+  "counts": {
+    "product": 13,
+    "category": 5,
+    "order": 5,
+    "user": 1,
+    "bakerySettings": 1,
+    "businessHours": 7
+  }
+}

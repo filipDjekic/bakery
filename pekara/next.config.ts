@@ -6,6 +6,12 @@ import { securityHeaders } from './src/config/security-headers.ts';
 const nextConfig: NextConfig = {
   cacheComponents: true,
   poweredByHeader: false,
+  // A literal public flag lets the production bundler remove disabled client
+  // telemetry, including error-boundary imports, without changing enabled SDKs.
+  env: {
+    NEXT_PUBLIC_SENTRY_ENABLED:
+      process.env.NEXT_PUBLIC_SENTRY_ENABLED === 'true' ? 'true' : 'false',
+  },
   experimental: {
     serverActions: {
       bodySizeLimit: '4mb',

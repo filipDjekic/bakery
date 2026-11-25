@@ -1,0 +1,34 @@
+{
+  "recordedAt": "2026-11-25T13:09:16.349Z",
+  "buildId": "Pe_PgGL3KX24RI7Ytiu9y",
+  "listener": "127.0.0.1:3000 only (netstat.exe)",
+  "smoke": {
+    "homepage": "PASS",
+    "anonymousAdminRedirect": "PASS",
+    "login": "PASS",
+    "reloadAndNewPageSession": "PASS",
+    "httpOnlySameSiteCookie": "PASS",
+    "crossOriginRejected": "PASS",
+    "pageErrors": 0
+  },
+  "recoveredPlaywrightResults": [
+    {
+      "path": "test-results/.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+      "result": {
+        "status": "passed",
+        "failedTests": []
+      }
+    },
+    {
+      "path": "test-results/a11y-performance/.last-run.json",
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+      "result": {
+        "status": "passed",
+        "failedTests": []
+      }
+    }
+  ],
+  "recoveryLimitation": "Original E2E/a11y stdout and elapsed durations unavailable after interruption. Current --list: 14 full tests; 3 separate accessibility tests.",
+  "businessFingerprintMatchesBaseline": true
+}

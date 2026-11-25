@@ -1,0 +1,101 @@
+{
+  "viewport": "1440x1000",
+  "settleMs": 1500,
+  "listRequests": [
+    {
+      "path": "/admin",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/products",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/categories",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/settings",
+      "prefetch": true
+    },
+    {
+      "path": "/",
+      "prefetch": true
+    },
+    {
+      "path": "/admin",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/products",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/categories",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/settings",
+      "prefetch": true
+    },
+    {
+      "path": "/",
+      "prefetch": true
+    },
+    {
+      "path": "/",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/orders/:id",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/orders/:id",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/orders/:id",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/orders/:id",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/orders/:id",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/orders/:id",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/orders/:id",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/orders/:id",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/orders/:id",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/orders/:id",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/orders/:id",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/orders/:id",
+      "prefetch": true
+    }
+  ],
+  "listPrefetches": 23,
+  "orderDetailPrefetches": 12,
+  "clickToOrderHistoryMs": 908.8909999999996
+}

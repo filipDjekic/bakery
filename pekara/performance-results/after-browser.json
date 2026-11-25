@@ -1,0 +1,1568 @@
+{
+  "browser": "153.0.8010.12",
+  "viewport": "1440x1000",
+  "throttle": "none",
+  "sampleCount": 5,
+  "settledAfterLoadMs": 300,
+  "results": {
+    "home": {
+      "coldBrowser": {
+        "ttfbMs": 9.099999904632568,
+        "responseEndMs": 49.299999952316284,
+        "domContentLoadedMs": 93.59999990463257,
+        "loadMs": 144.39999997615814,
+        "fcpMs": 108,
+        "lcpMs": 440,
+        "cls": 0,
+        "jsTransferBytes": 158413,
+        "jsDecodedBytes": 512709,
+        "scriptRequests": 11,
+        "fetchRequests": 2,
+        "externalHosts": []
+      },
+      "warmSamples": [
+        {
+          "ttfbMs": 3.700000047683716,
+          "responseEndMs": 29.299999952316284,
+          "domContentLoadedMs": 40.60000002384186,
+          "loadMs": 44.10000002384186,
+          "fcpMs": 48,
+          "lcpMs": 372,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 512709,
+          "scriptRequests": 11,
+          "fetchRequests": 2,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 4.200000047683716,
+          "responseEndMs": 31,
+          "domContentLoadedMs": 40.300000071525574,
+          "loadMs": 42.800000071525574,
+          "fcpMs": 44,
+          "lcpMs": 356,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 512709,
+          "scriptRequests": 11,
+          "fetchRequests": 2,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 4.5,
+          "responseEndMs": 27.799999952316284,
+          "domContentLoadedMs": 41.39999997615814,
+          "loadMs": 44.200000047683716,
+          "fcpMs": 52,
+          "lcpMs": 364,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 512709,
+          "scriptRequests": 11,
+          "fetchRequests": 2,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 4.299999952316284,
+          "responseEndMs": 25.799999952316284,
+          "domContentLoadedMs": 34.60000002384186,
+          "loadMs": 36.39999997615814,
+          "fcpMs": 40,
+          "lcpMs": 360,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 512709,
+          "scriptRequests": 11,
+          "fetchRequests": 2,
+          "externalHosts": []
+        }
+      ],
+      "warm": {
+        "ttfbMs": {
+          "n": 4,
+          "min": 3.7,
+          "median": 4.25,
+          "p95": 4.5,
+          "max": 4.5
+        },
+        "responseEndMs": {
+          "n": 4,
+          "min": 25.8,
+          "median": 28.55,
+          "p95": 31,
+          "max": 31
+        },
+        "loadMs": {
+          "n": 4,
+          "min": 36.4,
+          "median": 43.45,
+          "p95": 44.2,
+          "max": 44.2
+        },
+        "fcpMs": {
+          "n": 4,
+          "min": 40,
+          "median": 46,
+          "p95": 52,
+          "max": 52
+        },
+        "lcpMs": {
+          "n": 4,
+          "min": 356,
+          "median": 362,
+          "p95": 372,
+          "max": 372
+        },
+        "cls": {
+          "n": 4,
+          "min": 0,
+          "median": 0,
+          "p95": 0,
+          "max": 0
+        },
+        "jsDecodedBytes": {
+          "n": 4,
+          "min": 512709,
+          "median": 512709,
+          "p95": 512709,
+          "max": 512709
+        }
+      }
+    },
+    "catalog": {
+      "coldBrowser": {
+        "ttfbMs": 3.799999952316284,
+        "responseEndMs": 24.5,
+        "domContentLoadedMs": 35.199999928474426,
+        "loadMs": 37.199999928474426,
+        "fcpMs": 40,
+        "lcpMs": 380,
+        "cls": 0,
+        "jsTransferBytes": 0,
+        "jsDecodedBytes": 512709,
+        "scriptRequests": 11,
+        "fetchRequests": 10,
+        "externalHosts": []
+      },
+      "warmSamples": [
+        {
+          "ttfbMs": 3.899999976158142,
+          "responseEndMs": 34.699999928474426,
+          "domContentLoadedMs": 41.299999952316284,
+          "loadMs": 43.39999997615814,
+          "fcpMs": 40,
+          "lcpMs": 376,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 512709,
+          "scriptRequests": 11,
+          "fetchRequests": 10,
+          "externalHosts": [
+            ""
+          ]
+        },
+        {
+          "ttfbMs": 4.100000023841858,
+          "responseEndMs": 36.39999997615814,
+          "domContentLoadedMs": 46,
+          "loadMs": 47.799999952316284,
+          "fcpMs": 44,
+          "lcpMs": 356,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 512709,
+          "scriptRequests": 11,
+          "fetchRequests": 10,
+          "externalHosts": [
+            ""
+          ]
+        },
+        {
+          "ttfbMs": 3.899999976158142,
+          "responseEndMs": 23.600000023841858,
+          "domContentLoadedMs": 35,
+          "loadMs": 37.200000047683716,
+          "fcpMs": 40,
+          "lcpMs": 364,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 512709,
+          "scriptRequests": 11,
+          "fetchRequests": 10,
+          "externalHosts": [
+            ""
+          ]
+        },
+        {
+          "ttfbMs": 3.6999999284744263,
+          "responseEndMs": 35.5,
+          "domContentLoadedMs": 41.799999952316284,
+          "loadMs": 43.09999990463257,
+          "fcpMs": 40,
+          "lcpMs": 360,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 512709,
+          "scriptRequests": 11,
+          "fetchRequests": 10,
+          "externalHosts": [
+            ""
+          ]
+        }
+      ],
+      "warm": {
+        "ttfbMs": {
+          "n": 4,
+          "min": 3.7,
+          "median": 3.9,
+          "p95": 4.1,
+          "max": 4.1
+        },
+        "responseEndMs": {
+          "n": 4,
+          "min": 23.6,
+          "median": 35.1,
+          "p95": 36.4,
+          "max": 36.4
+        },
+        "loadMs": {
+          "n": 4,
+          "min": 37.2,
+          "median": 43.25,
+          "p95": 47.8,
+          "max": 47.8
+        },
+        "fcpMs": {
+          "n": 4,
+          "min": 40,
+          "median": 40,
+          "p95": 44,
+          "max": 44
+        },
+        "lcpMs": {
+          "n": 4,
+          "min": 356,
+          "median": 362,
+          "p95": 376,
+          "max": 376
+        },
+        "cls": {
+          "n": 4,
+          "min": 0,
+          "median": 0,
+          "p95": 0,
+          "max": 0
+        },
+        "jsDecodedBytes": {
+          "n": 4,
+          "min": 512709,
+          "median": 512709,
+          "p95": 512709,
+          "max": 512709
+        }
+      }
+    },
+    "product": {
+      "coldBrowser": {
+        "ttfbMs": 4.399999976158142,
+        "responseEndMs": 19.5,
+        "domContentLoadedMs": 31.09999990463257,
+        "loadMs": 43,
+        "fcpMs": 56,
+        "lcpMs": 56,
+        "cls": 0,
+        "jsTransferBytes": 2041,
+        "jsDecodedBytes": 514853,
+        "scriptRequests": 11,
+        "fetchRequests": 4,
+        "externalHosts": []
+      },
+      "warmSamples": [
+        {
+          "ttfbMs": 4.700000047683716,
+          "responseEndMs": 25.5,
+          "domContentLoadedMs": 31,
+          "loadMs": 32.10000002384186,
+          "fcpMs": 36,
+          "lcpMs": 344,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 514853,
+          "scriptRequests": 11,
+          "fetchRequests": 4,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 5.099999904632568,
+          "responseEndMs": 19.399999976158142,
+          "domContentLoadedMs": 27,
+          "loadMs": 34.799999952316284,
+          "fcpMs": 48,
+          "lcpMs": 48,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 514853,
+          "scriptRequests": 11,
+          "fetchRequests": 4,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 4.399999976158142,
+          "responseEndMs": 21.200000047683716,
+          "domContentLoadedMs": 30.899999976158142,
+          "loadMs": 34.200000047683716,
+          "fcpMs": 48,
+          "lcpMs": 48,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 514853,
+          "scriptRequests": 11,
+          "fetchRequests": 5,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 4.5,
+          "responseEndMs": 28.799999952316284,
+          "domContentLoadedMs": 34.700000047683716,
+          "loadMs": 36.60000002384186,
+          "fcpMs": 44,
+          "lcpMs": 348,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 514853,
+          "scriptRequests": 11,
+          "fetchRequests": 4,
+          "externalHosts": []
+        }
+      ],
+      "warm": {
+        "ttfbMs": {
+          "n": 4,
+          "min": 4.4,
+          "median": 4.6,
+          "p95": 5.1,
+          "max": 5.1
+        },
+        "responseEndMs": {
+          "n": 4,
+          "min": 19.4,
+          "median": 23.35,
+          "p95": 28.8,
+          "max": 28.8
+        },
+        "loadMs": {
+          "n": 4,
+          "min": 32.1,
+          "median": 34.5,
+          "p95": 36.6,
+          "max": 36.6
+        },
+        "fcpMs": {
+          "n": 4,
+          "min": 36,
+          "median": 46,
+          "p95": 48,
+          "max": 48
+        },
+        "lcpMs": {
+          "n": 4,
+          "min": 48,
+          "median": 196,
+          "p95": 348,
+          "max": 348
+        },
+        "cls": {
+          "n": 4,
+          "min": 0,
+          "median": 0,
+          "p95": 0,
+          "max": 0
+        },
+        "jsDecodedBytes": {
+          "n": 4,
+          "min": 514853,
+          "median": 514853,
+          "p95": 514853,
+          "max": 514853
+        }
+      }
+    },
+    "cart": {
+      "coldBrowser": {
+        "ttfbMs": 3.600000023841858,
+        "responseEndMs": 17.199999928474426,
+        "domContentLoadedMs": 25,
+        "loadMs": 32.39999997615814,
+        "fcpMs": 48,
+        "lcpMs": 76,
+        "cls": 0.0119375,
+        "jsTransferBytes": 2413,
+        "jsDecodedBytes": 515878,
+        "scriptRequests": 11,
+        "fetchRequests": 4,
+        "externalHosts": []
+      },
+      "warmSamples": [
+        {
+          "ttfbMs": 4.100000023841858,
+          "responseEndMs": 16.100000023841858,
+          "domContentLoadedMs": 24.299999952316284,
+          "loadMs": 25.600000023841858,
+          "fcpMs": 44,
+          "lcpMs": 92,
+          "cls": 0.0119375,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 515878,
+          "scriptRequests": 11,
+          "fetchRequests": 4,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 3.600000023841858,
+          "responseEndMs": 14.800000071525574,
+          "domContentLoadedMs": 23.800000071525574,
+          "loadMs": 24.90000009536743,
+          "fcpMs": 48,
+          "lcpMs": 92,
+          "cls": 0.0119375,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 515878,
+          "scriptRequests": 11,
+          "fetchRequests": 4,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 5.199999928474426,
+          "responseEndMs": 17.299999952316284,
+          "domContentLoadedMs": 26,
+          "loadMs": 27.399999976158142,
+          "fcpMs": 48,
+          "lcpMs": 92,
+          "cls": 0.0119375,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 515878,
+          "scriptRequests": 11,
+          "fetchRequests": 4,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 3.700000047683716,
+          "responseEndMs": 25.5,
+          "domContentLoadedMs": 38.700000047683716,
+          "loadMs": 40.300000071525574,
+          "fcpMs": 48,
+          "lcpMs": 80,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 515878,
+          "scriptRequests": 11,
+          "fetchRequests": 4,
+          "externalHosts": []
+        }
+      ],
+      "warm": {
+        "ttfbMs": {
+          "n": 4,
+          "min": 3.6,
+          "median": 3.9,
+          "p95": 5.2,
+          "max": 5.2
+        },
+        "responseEndMs": {
+          "n": 4,
+          "min": 14.8,
+          "median": 16.7,
+          "p95": 25.5,
+          "max": 25.5
+        },
+        "loadMs": {
+          "n": 4,
+          "min": 24.9,
+          "median": 26.5,
+          "p95": 40.3,
+          "max": 40.3
+        },
+        "fcpMs": {
+          "n": 4,
+          "min": 44,
+          "median": 48,
+          "p95": 48,
+          "max": 48
+        },
+        "lcpMs": {
+          "n": 4,
+          "min": 80,
+          "median": 92,
+          "p95": 92,
+          "max": 92
+        },
+        "cls": {
+          "n": 4,
+          "min": 0,
+          "median": 0.01,
+          "p95": 0.01,
+          "max": 0.01
+        },
+        "jsDecodedBytes": {
+          "n": 4,
+          "min": 515878,
+          "median": 515878,
+          "p95": 515878,
+          "max": 515878
+        }
+      }
+    },
+    "checkout": {
+      "coldBrowser": {
+        "ttfbMs": 3.600000023841858,
+        "responseEndMs": 97.89999997615814,
+        "domContentLoadedMs": 98.69999992847443,
+        "loadMs": 98.69999992847443,
+        "fcpMs": 36,
+        "lcpMs": 352,
+        "cls": 0.011404166666666665,
+        "jsTransferBytes": 138660,
+        "jsDecodedBytes": 1072435,
+        "scriptRequests": 12,
+        "fetchRequests": 4,
+        "externalHosts": []
+      },
+      "warmSamples": [
+        {
+          "ttfbMs": 3.700000047683716,
+          "responseEndMs": 51.10000002384186,
+          "domContentLoadedMs": 55.90000009536743,
+          "loadMs": 56.700000047683716,
+          "fcpMs": 36,
+          "lcpMs": 356,
+          "cls": 0.011404166666666665,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 1072435,
+          "scriptRequests": 12,
+          "fetchRequests": 4,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 4,
+          "responseEndMs": 36.799999952316284,
+          "domContentLoadedMs": 41,
+          "loadMs": 41.89999997615814,
+          "fcpMs": 36,
+          "lcpMs": 352,
+          "cls": 0.011404166666666665,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 1072435,
+          "scriptRequests": 12,
+          "fetchRequests": 4,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 4.700000047683716,
+          "responseEndMs": 39.700000047683716,
+          "domContentLoadedMs": 43.799999952316284,
+          "loadMs": 44.5,
+          "fcpMs": 36,
+          "lcpMs": 352,
+          "cls": 0.011404166666666665,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 1072435,
+          "scriptRequests": 12,
+          "fetchRequests": 4,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 4,
+          "responseEndMs": 41.800000071525574,
+          "domContentLoadedMs": 47.5,
+          "loadMs": 48.5,
+          "fcpMs": 36,
+          "lcpMs": 352,
+          "cls": 0.011404166666666665,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 1072435,
+          "scriptRequests": 12,
+          "fetchRequests": 4,
+          "externalHosts": []
+        }
+      ],
+      "warm": {
+        "ttfbMs": {
+          "n": 4,
+          "min": 3.7,
+          "median": 4,
+          "p95": 4.7,
+          "max": 4.7
+        },
+        "responseEndMs": {
+          "n": 4,
+          "min": 36.8,
+          "median": 40.75,
+          "p95": 51.1,
+          "max": 51.1
+        },
+        "loadMs": {
+          "n": 4,
+          "min": 41.9,
+          "median": 46.5,
+          "p95": 56.7,
+          "max": 56.7
+        },
+        "fcpMs": {
+          "n": 4,
+          "min": 36,
+          "median": 36,
+          "p95": 36,
+          "max": 36
+        },
+        "lcpMs": {
+          "n": 4,
+          "min": 352,
+          "median": 352,
+          "p95": 356,
+          "max": 356
+        },
+        "cls": {
+          "n": 4,
+          "min": 0.01,
+          "median": 0.01,
+          "p95": 0.01,
+          "max": 0.01
+        },
+        "jsDecodedBytes": {
+          "n": 4,
+          "min": 1072435,
+          "median": 1072435,
+          "p95": 1072435,
+          "max": 1072435
+        }
+      }
+    },
+    "login-page": {
+      "coldBrowser": {
+        "ttfbMs": 4.100000023841858,
+        "responseEndMs": 13.5,
+        "domContentLoadedMs": 19.800000071525574,
+        "loadMs": 33.800000071525574,
+        "fcpMs": 36,
+        "lcpMs": 36,
+        "cls": 0,
+        "jsTransferBytes": 14487,
+        "jsDecodedBytes": 496282,
+        "scriptRequests": 10,
+        "fetchRequests": 0,
+        "externalHosts": []
+      },
+      "warmSamples": [
+        {
+          "ttfbMs": 3.899999976158142,
+          "responseEndMs": 25.300000071525574,
+          "domContentLoadedMs": 33.39999997615814,
+          "loadMs": 34,
+          "fcpMs": 44,
+          "lcpMs": 44,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 496282,
+          "scriptRequests": 10,
+          "fetchRequests": 0,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 4.100000023841858,
+          "responseEndMs": 25,
+          "domContentLoadedMs": 32.200000047683716,
+          "loadMs": 33,
+          "fcpMs": 40,
+          "lcpMs": 40,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 496282,
+          "scriptRequests": 10,
+          "fetchRequests": 0,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 3.6999999284744263,
+          "responseEndMs": 13,
+          "domContentLoadedMs": 21,
+          "loadMs": 21.09999990463257,
+          "fcpMs": 20,
+          "lcpMs": 20,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 496282,
+          "scriptRequests": 10,
+          "fetchRequests": 0,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 3.899999976158142,
+          "responseEndMs": 12.600000023841858,
+          "domContentLoadedMs": 20.5,
+          "loadMs": 20.5,
+          "fcpMs": 20,
+          "lcpMs": 20,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 496282,
+          "scriptRequests": 10,
+          "fetchRequests": 0,
+          "externalHosts": []
+        }
+      ],
+      "warm": {
+        "ttfbMs": {
+          "n": 4,
+          "min": 3.7,
+          "median": 3.9,
+          "p95": 4.1,
+          "max": 4.1
+        },
+        "responseEndMs": {
+          "n": 4,
+          "min": 12.6,
+          "median": 19,
+          "p95": 25.3,
+          "max": 25.3
+        },
+        "loadMs": {
+          "n": 4,
+          "min": 20.5,
+          "median": 27.05,
+          "p95": 34,
+          "max": 34
+        },
+        "fcpMs": {
+          "n": 4,
+          "min": 20,
+          "median": 30,
+          "p95": 44,
+          "max": 44
+        },
+        "lcpMs": {
+          "n": 4,
+          "min": 20,
+          "median": 30,
+          "p95": 44,
+          "max": 44
+        },
+        "cls": {
+          "n": 4,
+          "min": 0,
+          "median": 0,
+          "p95": 0,
+          "max": 0
+        },
+        "jsDecodedBytes": {
+          "n": 4,
+          "min": 496282,
+          "median": 496282,
+          "p95": 496282,
+          "max": 496282
+        }
+      }
+    },
+    "dashboard": {
+      "coldBrowser": {
+        "ttfbMs": 4.100000023841858,
+        "responseEndMs": 366.2000000476837,
+        "domContentLoadedMs": 367.10000002384186,
+        "loadMs": 367.2000000476837,
+        "fcpMs": 200,
+        "lcpMs": 512,
+        "cls": 0,
+        "jsTransferBytes": 7797,
+        "jsDecodedBytes": 562880,
+        "scriptRequests": 15,
+        "fetchRequests": 11,
+        "externalHosts": []
+      },
+      "warmSamples": [
+        {
+          "ttfbMs": 3.6999999284744263,
+          "responseEndMs": 24.399999976158142,
+          "domContentLoadedMs": 36.60000002384186,
+          "loadMs": 36.699999928474426,
+          "fcpMs": 36,
+          "lcpMs": 360,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 562880,
+          "scriptRequests": 15,
+          "fetchRequests": 11,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 3.799999952316284,
+          "responseEndMs": 23.700000047683716,
+          "domContentLoadedMs": 34.60000002384186,
+          "loadMs": 36.39999997615814,
+          "fcpMs": 36,
+          "lcpMs": 36,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 562880,
+          "scriptRequests": 15,
+          "fetchRequests": 11,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 4.200000047683716,
+          "responseEndMs": 38,
+          "domContentLoadedMs": 45.800000071525574,
+          "loadMs": 45.90000009536743,
+          "fcpMs": 52,
+          "lcpMs": 364,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 562880,
+          "scriptRequests": 15,
+          "fetchRequests": 11,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 3.600000023841858,
+          "responseEndMs": 23.100000023841858,
+          "domContentLoadedMs": 33.5,
+          "loadMs": 35.5,
+          "fcpMs": 36,
+          "lcpMs": 36,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 562880,
+          "scriptRequests": 15,
+          "fetchRequests": 11,
+          "externalHosts": []
+        }
+      ],
+      "warm": {
+        "ttfbMs": {
+          "n": 4,
+          "min": 3.6,
+          "median": 3.75,
+          "p95": 4.2,
+          "max": 4.2
+        },
+        "responseEndMs": {
+          "n": 4,
+          "min": 23.1,
+          "median": 24.05,
+          "p95": 38,
+          "max": 38
+        },
+        "loadMs": {
+          "n": 4,
+          "min": 35.5,
+          "median": 36.55,
+          "p95": 45.9,
+          "max": 45.9
+        },
+        "fcpMs": {
+          "n": 4,
+          "min": 36,
+          "median": 36,
+          "p95": 52,
+          "max": 52
+        },
+        "lcpMs": {
+          "n": 4,
+          "min": 36,
+          "median": 198,
+          "p95": 364,
+          "max": 364
+        },
+        "cls": {
+          "n": 4,
+          "min": 0,
+          "median": 0,
+          "p95": 0,
+          "max": 0
+        },
+        "jsDecodedBytes": {
+          "n": 4,
+          "min": 562880,
+          "median": 562880,
+          "p95": 562880,
+          "max": 562880
+        }
+      }
+    },
+    "orders": {
+      "coldBrowser": {
+        "ttfbMs": 4.5,
+        "responseEndMs": 33.10000002384186,
+        "domContentLoadedMs": 37.5,
+        "loadMs": 38.799999952316284,
+        "fcpMs": 64,
+        "lcpMs": 64,
+        "cls": 0,
+        "jsTransferBytes": 0,
+        "jsDecodedBytes": 562880,
+        "scriptRequests": 15,
+        "fetchRequests": 11,
+        "externalHosts": [
+          ""
+        ]
+      },
+      "warmSamples": [
+        {
+          "ttfbMs": 3.8000000715255737,
+          "responseEndMs": 27.800000071525574,
+          "domContentLoadedMs": 39.90000009536743,
+          "loadMs": 42.60000002384186,
+          "fcpMs": 40,
+          "lcpMs": 344,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 562880,
+          "scriptRequests": 15,
+          "fetchRequests": 11,
+          "externalHosts": [
+            ""
+          ]
+        },
+        {
+          "ttfbMs": 3.6999999284744263,
+          "responseEndMs": 25.5,
+          "domContentLoadedMs": 30.899999976158142,
+          "loadMs": 33.5,
+          "fcpMs": 52,
+          "lcpMs": 52,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 562880,
+          "scriptRequests": 15,
+          "fetchRequests": 11,
+          "externalHosts": [
+            ""
+          ]
+        },
+        {
+          "ttfbMs": 5,
+          "responseEndMs": 33.199999928474426,
+          "domContentLoadedMs": 42.5,
+          "loadMs": 45.699999928474426,
+          "fcpMs": 48,
+          "lcpMs": 368,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 562880,
+          "scriptRequests": 15,
+          "fetchRequests": 11,
+          "externalHosts": [
+            ""
+          ]
+        },
+        {
+          "ttfbMs": 3.600000023841858,
+          "responseEndMs": 40,
+          "domContentLoadedMs": 51,
+          "loadMs": 53.10000002384186,
+          "fcpMs": 56,
+          "lcpMs": 364,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 562880,
+          "scriptRequests": 15,
+          "fetchRequests": 11,
+          "externalHosts": [
+            ""
+          ]
+        }
+      ],
+      "warm": {
+        "ttfbMs": {
+          "n": 4,
+          "min": 3.6,
+          "median": 3.75,
+          "p95": 5,
+          "max": 5
+        },
+        "responseEndMs": {
+          "n": 4,
+          "min": 25.5,
+          "median": 30.5,
+          "p95": 40,
+          "max": 40
+        },
+        "loadMs": {
+          "n": 4,
+          "min": 33.5,
+          "median": 44.15,
+          "p95": 53.1,
+          "max": 53.1
+        },
+        "fcpMs": {
+          "n": 4,
+          "min": 40,
+          "median": 50,
+          "p95": 56,
+          "max": 56
+        },
+        "lcpMs": {
+          "n": 4,
+          "min": 52,
+          "median": 354,
+          "p95": 368,
+          "max": 368
+        },
+        "cls": {
+          "n": 4,
+          "min": 0,
+          "median": 0,
+          "p95": 0,
+          "max": 0
+        },
+        "jsDecodedBytes": {
+          "n": 4,
+          "min": 562880,
+          "median": 562880,
+          "p95": 562880,
+          "max": 562880
+        }
+      }
+    },
+    "order-detail": {
+      "coldBrowser": {
+        "ttfbMs": 5.300000071525574,
+        "responseEndMs": 52.300000071525574,
+        "domContentLoadedMs": 62.300000071525574,
+        "loadMs": 63,
+        "fcpMs": 72,
+        "lcpMs": 392,
+        "cls": 0,
+        "jsTransferBytes": 2864,
+        "jsDecodedBytes": 568736,
+        "scriptRequests": 15,
+        "fetchRequests": 13,
+        "externalHosts": []
+      },
+      "warmSamples": [
+        {
+          "ttfbMs": 5.200000047683716,
+          "responseEndMs": 25.200000047683716,
+          "domContentLoadedMs": 33.5,
+          "loadMs": 38.800000071525574,
+          "fcpMs": 52,
+          "lcpMs": 52,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 568736,
+          "scriptRequests": 15,
+          "fetchRequests": 13,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 5.399999976158142,
+          "responseEndMs": 30.200000047683716,
+          "domContentLoadedMs": 44.799999952316284,
+          "loadMs": 46.89999997615814,
+          "fcpMs": 48,
+          "lcpMs": 48,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 568736,
+          "scriptRequests": 15,
+          "fetchRequests": 13,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 4.400000095367432,
+          "responseEndMs": 24.40000009536743,
+          "domContentLoadedMs": 36.800000071525574,
+          "loadMs": 39.200000047683716,
+          "fcpMs": 40,
+          "lcpMs": 352,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 568736,
+          "scriptRequests": 15,
+          "fetchRequests": 13,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 4.700000047683716,
+          "responseEndMs": 23.700000047683716,
+          "domContentLoadedMs": 35.89999997615814,
+          "loadMs": 37.89999997615814,
+          "fcpMs": 40,
+          "lcpMs": 348,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 568736,
+          "scriptRequests": 15,
+          "fetchRequests": 13,
+          "externalHosts": []
+        }
+      ],
+      "warm": {
+        "ttfbMs": {
+          "n": 4,
+          "min": 4.4,
+          "median": 4.95,
+          "p95": 5.4,
+          "max": 5.4
+        },
+        "responseEndMs": {
+          "n": 4,
+          "min": 23.7,
+          "median": 24.8,
+          "p95": 30.2,
+          "max": 30.2
+        },
+        "loadMs": {
+          "n": 4,
+          "min": 37.9,
+          "median": 39,
+          "p95": 46.9,
+          "max": 46.9
+        },
+        "fcpMs": {
+          "n": 4,
+          "min": 40,
+          "median": 44,
+          "p95": 52,
+          "max": 52
+        },
+        "lcpMs": {
+          "n": 4,
+          "min": 48,
+          "median": 200,
+          "p95": 352,
+          "max": 352
+        },
+        "cls": {
+          "n": 4,
+          "min": 0,
+          "median": 0,
+          "p95": 0,
+          "max": 0
+        },
+        "jsDecodedBytes": {
+          "n": 4,
+          "min": 568736,
+          "median": 568736,
+          "p95": 568736,
+          "max": 568736
+        }
+      }
+    },
+    "products": {
+      "coldBrowser": {
+        "ttfbMs": 3.799999952316284,
+        "responseEndMs": 36.89999997615814,
+        "domContentLoadedMs": 42.799999952316284,
+        "loadMs": 43,
+        "fcpMs": 52,
+        "lcpMs": 376,
+        "cls": 0,
+        "jsTransferBytes": 6850,
+        "jsDecodedBytes": 578323,
+        "scriptRequests": 15,
+        "fetchRequests": 21,
+        "externalHosts": []
+      },
+      "warmSamples": [
+        {
+          "ttfbMs": 3.799999952316284,
+          "responseEndMs": 26.899999976158142,
+          "domContentLoadedMs": 38.299999952316284,
+          "loadMs": 40.5,
+          "fcpMs": 40,
+          "lcpMs": 364,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 578323,
+          "scriptRequests": 15,
+          "fetchRequests": 21,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 3.8000000715255737,
+          "responseEndMs": 28.700000047683716,
+          "domContentLoadedMs": 40.800000071525574,
+          "loadMs": 44,
+          "fcpMs": 44,
+          "lcpMs": 368,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 578323,
+          "scriptRequests": 15,
+          "fetchRequests": 21,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 3.799999952316284,
+          "responseEndMs": 29.899999976158142,
+          "domContentLoadedMs": 41.699999928474426,
+          "loadMs": 43.799999952316284,
+          "fcpMs": 44,
+          "lcpMs": 368,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 578323,
+          "scriptRequests": 15,
+          "fetchRequests": 21,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 4,
+          "responseEndMs": 26,
+          "domContentLoadedMs": 39.10000002384186,
+          "loadMs": 41.10000002384186,
+          "fcpMs": 40,
+          "lcpMs": 368,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 578323,
+          "scriptRequests": 15,
+          "fetchRequests": 21,
+          "externalHosts": []
+        }
+      ],
+      "warm": {
+        "ttfbMs": {
+          "n": 4,
+          "min": 3.8,
+          "median": 3.8,
+          "p95": 4,
+          "max": 4
+        },
+        "responseEndMs": {
+          "n": 4,
+          "min": 26,
+          "median": 27.8,
+          "p95": 29.9,
+          "max": 29.9
+        },
+        "loadMs": {
+          "n": 4,
+          "min": 40.5,
+          "median": 42.45,
+          "p95": 44,
+          "max": 44
+        },
+        "fcpMs": {
+          "n": 4,
+          "min": 40,
+          "median": 42,
+          "p95": 44,
+          "max": 44
+        },
+        "lcpMs": {
+          "n": 4,
+          "min": 364,
+          "median": 368,
+          "p95": 368,
+          "max": 368
+        },
+        "cls": {
+          "n": 4,
+          "min": 0,
+          "median": 0,
+          "p95": 0,
+          "max": 0
+        },
+        "jsDecodedBytes": {
+          "n": 4,
+          "min": 578323,
+          "median": 578323,
+          "p95": 578323,
+          "max": 578323
+        }
+      }
+    },
+    "categories": {
+      "coldBrowser": {
+        "ttfbMs": 3.799999952316284,
+        "responseEndMs": 20.600000023841858,
+        "domContentLoadedMs": 32.5,
+        "loadMs": 34.299999952316284,
+        "fcpMs": 36,
+        "lcpMs": 36,
+        "cls": 0,
+        "jsTransferBytes": 2396,
+        "jsDecodedBytes": 567272,
+        "scriptRequests": 15,
+        "fetchRequests": 21,
+        "externalHosts": []
+      },
+      "warmSamples": [
+        {
+          "ttfbMs": 3.6999999284744263,
+          "responseEndMs": 22.600000023841858,
+          "domContentLoadedMs": 29.399999976158142,
+          "loadMs": 32.699999928474426,
+          "fcpMs": 48,
+          "lcpMs": 48,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 567272,
+          "scriptRequests": 15,
+          "fetchRequests": 21,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 3.6999999284744263,
+          "responseEndMs": 21.299999952316284,
+          "domContentLoadedMs": 33.39999997615814,
+          "loadMs": 35,
+          "fcpMs": 36,
+          "lcpMs": 36,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 567272,
+          "scriptRequests": 15,
+          "fetchRequests": 21,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 3.600000023841858,
+          "responseEndMs": 22.800000071525574,
+          "domContentLoadedMs": 33.89999997615814,
+          "loadMs": 35.700000047683716,
+          "fcpMs": 36,
+          "lcpMs": 36,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 567272,
+          "scriptRequests": 15,
+          "fetchRequests": 21,
+          "externalHosts": []
+        },
+        {
+          "ttfbMs": 4.5,
+          "responseEndMs": 32.700000047683716,
+          "domContentLoadedMs": 46.700000047683716,
+          "loadMs": 48.60000002384186,
+          "fcpMs": 48,
+          "lcpMs": 48,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 567272,
+          "scriptRequests": 15,
+          "fetchRequests": 21,
+          "externalHosts": []
+        }
+      ],
+      "warm": {
+        "ttfbMs": {
+          "n": 4,
+          "min": 3.6,
+          "median": 3.7,
+          "p95": 4.5,
+          "max": 4.5
+        },
+        "responseEndMs": {
+          "n": 4,
+          "min": 21.3,
+          "median": 22.7,
+          "p95": 32.7,
+          "max": 32.7
+        },
+        "loadMs": {
+          "n": 4,
+          "min": 32.7,
+          "median": 35.35,
+          "p95": 48.6,
+          "max": 48.6
+        },
+        "fcpMs": {
+          "n": 4,
+          "min": 36,
+          "median": 42,
+          "p95": 48,
+          "max": 48
+        },
+        "lcpMs": {
+          "n": 4,
+          "min": 36,
+          "median": 42,
+          "p95": 48,
+          "max": 48
+        },
+        "cls": {
+          "n": 4,
+          "min": 0,
+          "median": 0,
+          "p95": 0,
+          "max": 0
+        },
+        "jsDecodedBytes": {
+          "n": 4,
+          "min": 567272,
+          "median": 567272,
+          "p95": 567272,
+          "max": 567272
+        }
+      }
+    },
+    "settings": {
+      "coldBrowser": {
+        "ttfbMs": 3.899999976158142,
+        "responseEndMs": 24.399999976158142,
+        "domContentLoadedMs": 40.39999997615814,
+        "loadMs": 42.10000002384186,
+        "fcpMs": 44,
+        "lcpMs": 356,
+        "cls": 0,
+        "jsTransferBytes": 4353,
+        "jsDecodedBytes": 575946,
+        "scriptRequests": 15,
+        "fetchRequests": 11,
+        "externalHosts": [
+          ""
+        ]
+      },
+      "warmSamples": [
+        {
+          "ttfbMs": 3.5999999046325684,
+          "responseEndMs": 25.199999928474426,
+          "domContentLoadedMs": 33.699999928474426,
+          "loadMs": 36.89999997615814,
+          "fcpMs": 56,
+          "lcpMs": 56,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 575946,
+          "scriptRequests": 15,
+          "fetchRequests": 11,
+          "externalHosts": [
+            ""
+          ]
+        },
+        {
+          "ttfbMs": 4,
+          "responseEndMs": 25.199999928474426,
+          "domContentLoadedMs": 40.39999997615814,
+          "loadMs": 42.5,
+          "fcpMs": 48,
+          "lcpMs": 48,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 575946,
+          "scriptRequests": 15,
+          "fetchRequests": 11,
+          "externalHosts": [
+            ""
+          ]
+        },
+        {
+          "ttfbMs": 4,
+          "responseEndMs": 22.799999952316284,
+          "domContentLoadedMs": 38.799999952316284,
+          "loadMs": 40.799999952316284,
+          "fcpMs": 44,
+          "lcpMs": 44,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 575946,
+          "scriptRequests": 15,
+          "fetchRequests": 11,
+          "externalHosts": [
+            ""
+          ]
+        },
+        {
+          "ttfbMs": 3.5,
+          "responseEndMs": 23.200000047683716,
+          "domContentLoadedMs": 31.300000071525574,
+          "loadMs": 34.700000047683716,
+          "fcpMs": 60,
+          "lcpMs": 60,
+          "cls": 0,
+          "jsTransferBytes": 0,
+          "jsDecodedBytes": 575946,
+          "scriptRequests": 15,
+          "fetchRequests": 11,
+          "externalHosts": [
+            ""
+          ]
+        }
+      ],
+      "warm": {
+        "ttfbMs": {
+          "n": 4,
+          "min": 3.5,
+          "median": 3.8,
+          "p95": 4,
+          "max": 4
+        },
+        "responseEndMs": {
+          "n": 4,
+          "min": 22.8,
+          "median": 24.2,
+          "p95": 25.2,
+          "max": 25.2
+        },
+        "loadMs": {
+          "n": 4,
+          "min": 34.7,
+          "median": 38.85,
+          "p95": 42.5,
+          "max": 42.5
+        },
+        "fcpMs": {
+          "n": 4,
+          "min": 44,
+          "median": 52,
+          "p95": 60,
+          "max": 60
+        },
+        "lcpMs": {
+          "n": 4,
+          "min": 44,
+          "median": 52,
+          "p95": 60,
+          "max": 60
+        },
+        "cls": {
+          "n": 4,
+          "min": 0,
+          "median": 0,
+          "p95": 0,
+          "max": 0
+        },
+        "jsDecodedBytes": {
+          "n": 4,
+          "min": 575946,
+          "median": 575946,
+          "p95": 575946,
+          "max": 575946
+        }
+      }
+    },
+    "interaction": {
+      "observedEventDurationsMs": [
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24,
+        24
+      ],
+      "note": "Single lab click. EventTiming is not field INP; empty means no event exceeded 16ms."
+    },
+    "errors": 0
+  }
+}

@@ -73,9 +73,12 @@ const runtimeEnvSchema = z
     const issue = (key: string, message: string) =>
       context.addIssue({ code: 'custom', path: [key], message });
     if (value.NODE_ENV === 'production') {
-      const localProduction = isLocalProductionRuntime(value as NodeJS.ProcessEnv);
+      const localProduction = isLocalProductionRuntime(value);
       if (value.APP_ENV === 'local-production' && !localProduction)
-        issue('APP_ENV', 'Local production requires the explicit loopback launcher, loopback application/database URLs and no deployment host.');
+        issue(
+          'APP_ENV',
+          'Local production requires the explicit loopback launcher, loopback application/database URLs and no deployment host.',
+        );
       for (const key of [
         'BETTER_AUTH_SECRET',
         'RATE_LIMIT_HMAC_SECRET',
@@ -88,7 +91,8 @@ const runtimeEnvSchema = z
       const app = parsedUrl(value.APP_URL);
       const auth = parsedUrl(value.BETTER_AUTH_URL ?? value.APP_URL);
       if (
-        !localProduction && app &&
+        !localProduction &&
+        app &&
         auth &&
         (app.protocol !== 'https:' || auth.protocol !== 'https:')
       )
@@ -99,7 +103,8 @@ const runtimeEnvSchema = z
           'BETTER_AUTH_URL and APP_URL must use the same origin.',
         );
       if (
-        !localProduction && value.VERCEL !== '1' &&
+        !localProduction &&
+        value.VERCEL !== '1' &&
         (value.TRUSTED_PROXY_MODE !== 'proxy' || !value.TRUSTED_PROXY_HOPS)
       )
         issue(
@@ -134,10 +139,17 @@ const runtimeEnvSchema = z
       issue('SENTRY_DSN', 'SENTRY_DSN must be a valid URL.');
   });
 // Release preflight deliberately never accepts the local runtime exception.
-export const serverEnvSchema = runtimeEnvSchema.superRefine((value, context) => {
-  if (value.APP_ENV === 'local-production')
-    context.addIssue({ code: 'custom', path: ['APP_ENV'], message: 'Deployment preflight rejects local-production. Use start:local only on this computer.' });
-});
+export const serverEnvSchema = runtimeEnvSchema.superRefine(
+  (value, context) => {
+    if (value.APP_ENV === 'local-production')
+      context.addIssue({
+        code: 'custom',
+        path: ['APP_ENV'],
+        message:
+          'Deployment preflight rejects local-production. Use start:local only on this computer.',
+      });
+  },
+);
 export function parseServerEnvironment(
   environment: NodeJS.ProcessEnv = process.env,
   { allowLocalProduction = false }: { allowLocalProduction?: boolean } = {},

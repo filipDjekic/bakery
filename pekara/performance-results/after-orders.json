@@ -1,0 +1,47 @@
+{
+  "isolated": true,
+  "externalIntegrations": false,
+  "samples": [
+    {
+      "ttfbMs": 173.6228000000001,
+      "totalMs": 173.73479999999995
+    },
+    {
+      "ttfbMs": 35.93309999999997,
+      "totalMs": 36.021600000000035
+    },
+    {
+      "ttfbMs": 38.78340000000003,
+      "totalMs": 38.873400000000174
+    },
+    {
+      "ttfbMs": 36.261200000000144,
+      "totalMs": 36.35530000000017
+    },
+    {
+      "ttfbMs": 36.46690000000012,
+      "totalMs": 36.61830000000009
+    }
+  ],
+  "cold": {
+    "ttfbMs": 173.6228000000001,
+    "totalMs": 173.73479999999995
+  },
+  "warm": {
+    "ttfbMs": {
+      "n": 4,
+      "min": 35.93,
+      "median": 36.36,
+      "p95": 38.78,
+      "max": 38.78
+    },
+    "totalMs": {
+      "n": 4,
+      "min": 36.02,
+      "median": 36.49,
+      "p95": 38.87,
+      "max": 38.87
+    }
+  },
+  "idempotentRetries": "5/5 identical order IDs"
+}

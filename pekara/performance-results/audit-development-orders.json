@@ -1,0 +1,62 @@
+{
+  "isolated": true,
+  "externalIntegrations": false,
+  "samples": [
+    {
+      "ttfbMs": 1933.7049,
+      "totalMs": 1933.8129000000001
+    },
+    {
+      "ttfbMs": 48.009000000000015,
+      "totalMs": 48.08840000000009
+    },
+    {
+      "ttfbMs": 75.65079999999989,
+      "totalMs": 75.79539999999997
+    },
+    {
+      "ttfbMs": 35.78929999999946,
+      "totalMs": 35.91659999999956
+    },
+    {
+      "ttfbMs": 35.61729999999989,
+      "totalMs": 35.70789999999943
+    }
+  ],
+  "cold": {
+    "ttfbMs": 1933.7049,
+    "totalMs": 1933.8129000000001
+  },
+  "warm": {
+    "ttfbMs": {
+      "n": 4,
+      "min": 35.62,
+      "median": 41.9,
+      "p95": 75.65,
+      "max": 75.65
+    },
+    "totalMs": {
+      "n": 4,
+      "min": 35.71,
+      "median": 42,
+      "p95": 75.8,
+      "max": 75.8
+    }
+  },
+  "idempotentRetries": "5/5 identical order IDs",
+  "recordedAt": "2026-11-25T13:23:12.463Z",
+  "conditions": {
+    "runtime": "development",
+    "isolatedDatabase": "pekara_valid_performance_test",
+    "databasePort": 25432,
+    "application": "http://localhost:3000",
+    "profiler": false,
+    "concurrency": 1,
+    "keepAlive": true,
+    "firstHit": "First order POST after development server start; pickup API warmed during setup.",
+    "warmSamples": 4,
+    "creations": 5,
+    "retries": 5
+  },
+  "comparisonLimitation": "Supplementary current-state audit measurement. No pre-optimization development order-creation baseline exists; do not compare as a historical before/after pair."
+}

@@ -1,0 +1,7 @@
+{
+  "database": "pekara_valid_performance_test",
+  "syntheticOrders": 10000,
+  "syntheticProducts": 120,
+  "source": "isolated integration database template; no development data copied",
+  "destructiveScope": "new benchmark database only"
+}

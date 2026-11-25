@@ -85,3 +85,4 @@ Thumbs.db
 
 # Local Playwright browser binaries
 /.cache/ms-playwright/
+/.cache/performance/

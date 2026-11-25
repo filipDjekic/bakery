@@ -1,0 +1,7 @@
+{
+  "recordedAt": "2026-11-24T13:28:08.384Z",
+  "phase": "after-development",
+  "freeGB": 0.7844772338867188,
+  "totalGB": 7.746696472167969,
+  "note": "Host memory is not controlled. This observation has no matching baseline snapshot."
+}

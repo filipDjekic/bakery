@@ -3,6 +3,7 @@ node_modules
 coverage
 playwright-report
 test-results
+.cache
 dist
 pnpm-lock.yaml
 src/prisma/

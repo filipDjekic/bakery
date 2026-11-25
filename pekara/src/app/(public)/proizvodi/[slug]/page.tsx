@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 
 import { Container } from '@/components/layout/container';
 import { ProductImagePlaceholder } from '@/features/catalog/components/product-image-placeholder';
@@ -53,9 +54,23 @@ export async function generateMetadata({
   };
 }
 
-export default async function ProductDetailsPage({
-  params,
-}: ProductDetailsPageProps) {
+export default function ProductDetailsPage(props: ProductDetailsPageProps) {
+  return (
+    <Suspense
+      fallback={
+        <Container>
+          <div role="status" className="py-16">
+            Učitavanje proizvoda…
+          </div>
+        </Container>
+      }
+    >
+      <ProductDetailsContent {...props} />
+    </Suspense>
+  );
+}
+
+async function ProductDetailsContent({ params }: ProductDetailsPageProps) {
   const { slug } = await params;
   const [product, settings] = await Promise.all([
     getPublicProductBySlug(slug),

@@ -1,0 +1,195 @@
+{
+  "routes": {
+    "GET /api/pickup-slots 200": {
+      "n": 1,
+      "firstQueryCount": 5,
+      "warmQueryCounts": [],
+      "sqlDurationMs": {
+        "n": 1,
+        "min": 36.48,
+        "median": 36.48,
+        "p95": 36.48,
+        "max": 36.48
+      }
+    },
+    "POST /api/orders 201": {
+      "n": 5,
+      "firstQueryCount": 15,
+      "warmQueryCounts": [
+        15,
+        15,
+        15,
+        15
+      ],
+      "sqlDurationMs": {
+        "n": 5,
+        "min": 11.22,
+        "median": 14.89,
+        "p95": 48.3,
+        "max": 48.3
+      }
+    },
+    "POST /api/orders 200": {
+      "n": 5,
+      "firstQueryCount": 2,
+      "warmQueryCounts": [
+        2,
+        2,
+        2,
+        2
+      ],
+      "sqlDurationMs": {
+        "n": 5,
+        "min": 1.45,
+        "median": 1.89,
+        "p95": 4.78,
+        "max": 4.78
+      }
+    }
+  },
+  "connections": {
+    "n": 2,
+    "min": 27.33,
+    "median": 37.53,
+    "p95": 47.73,
+    "max": 47.73
+  },
+  "queries": [
+    {
+      "sql": "SELECT \"tables\".\"table_schema\" AS \"table_schema\" FROM \"information_schema\".\"tables\" WHERE (\"tables\".\"table_schema\" = $? AND \"tables\".\"table_name\" = $?)",
+      "n": 1,
+      "min": 12.37,
+      "median": 12.37,
+      "p95": 12.37,
+      "max": 12.37
+    },
+    {
+      "sql": "select column_name\n         from information_schema.columns\n        where table_schema = ?\n          and table_name = ?",
+      "n": 1,
+      "min": 14.25,
+      "median": 14.25,
+      "p95": 14.25,
+      "max": 14.25
+    },
+    {
+      "sql": "SELECT \"marker\".\"core_hash\" AS \"core_hash\", \"marker\".\"profile_hash\" AS \"profile_hash\", \"marker\".\"contract_json\" AS \"contract_json\", \"marker\".\"canonical_version\" AS \"canonical_version\", \"marker\".\"updated_at\" AS \"updated_at\", \"marker\".\"app_tag\" AS \"app_tag\", \"marker\".\"meta\" AS \"meta\", \"marker\".\"invariants\" AS \"invariants\" FROM \"prisma_contract\".\"marker\" WHERE \"marker\".\"space\" = $?",
+      "n": 1,
+      "min": 2.88,
+      "median": 2.88,
+      "p95": 2.88,
+      "max": 2.88
+    },
+    {
+      "sql": "SELECT \"bakerySettings\".\"id\" AS \"id\", \"bakerySettings\".\"timezone\" AS \"timezone\", \"bakerySettings\".\"currencyCode\" AS \"currencyCode\", \"bakerySettings\".\"orderAcceptingEnabled\" AS \"orderAcceptingEnabled\", \"bakerySettings\".\"minimumPreparationMinutes\" AS \"minimumPreparationMinutes\", \"bakerySettings\".\"maximumAdvanceDays\" AS \"maximumAdvanceDays\", \"bakerySettings\".\"pickupSlotMinutes\" AS \"pickupSlotMinutes\", \"bakerySettings\".\"bakeryName\" AS \"bakeryName\", \"bakerySettings\".\"phone\" AS \"phone\", \"bakerySettings\".\"address\" AS \"address\", \"bakerySettings\".\"notificationEmail\" AS \"notificationEmail\" FROM \"public\".\"bakerySettings\" WHERE \"bakerySettings\".\"id\" = $? LIMIT ?",
+      "n": 6,
+      "min": 0.58,
+      "median": 0.64,
+      "p95": 2.76,
+      "max": 2.76
+    },
+    {
+      "sql": "SELECT \"businessHours\".\"weekday\" AS \"weekday\", \"businessHours\".\"openMinute\" AS \"openMinute\", \"businessHours\".\"closeMinute\" AS \"closeMinute\" FROM \"public\".\"businessHours\" WHERE (\"businessHours\".\"bakerySettingsId\" = $? AND \"businessHours\".\"weekday\" = $?) ORDER BY \"businessHours\".\"openMinute\" ASC",
+      "n": 6,
+      "min": 0.51,
+      "median": 0.65,
+      "p95": 4.22,
+      "max": 4.22
+    },
+    {
+      "sql": "\n    INSERT INTO \"public\".\"actionRateLimitBucket\"\n      (\"id\", \"keyHash\", \"action\", \"windowStart\", \"windowSeconds\", \"count\", \"expiresAt\")\n    VALUES\n      ($?, $?, $?, $?::timestamptz, $?, ?, $?::timestamptz)\n    ON CONFLICT (\"keyHash\", \"action\", \"windowStart\", \"windowSeconds\")\n    DO UPDATE SET\n      \"count\" = \"actionRateLimitBucket\".\"count\" + ?,\n      \"expiresAt\" = EXCLUDED.\"expiresAt\"\n    RETURNING \"count\", \"expiresAt\"\n  ",
+      "n": 20,
+      "min": 0.79,
+      "median": 1.04,
+      "p95": 4.05,
+      "max": 6.63
+    },
+    {
+      "sql": "SELECT \"order\".\"id\" AS \"id\", \"order\".\"orderNumber\" AS \"orderNumber\", \"order\".\"status\" AS \"status\", \"order\".\"pickupAt\" AS \"pickupAt\", \"order\".\"totalMinor\" AS \"totalMinor\", \"order\".\"currencyCode\" AS \"currencyCode\", \"order\".\"payloadHash\" AS \"payloadHash\" FROM \"public\".\"order\" WHERE \"order\".\"idempotencyKey\" = $?::uuid LIMIT ?",
+      "n": 10,
+      "min": 0.55,
+      "median": 0.65,
+      "p95": 5.64,
+      "max": 5.64
+    },
+    {
+      "sql": "DELETE FROM \"public\".\"actionRateLimitBucket\" WHERE \"actionRateLimitBucket\".\"expiresAt\" <= $? RETURNING \"actionRateLimitBucket\".\"action\", \"actionRateLimitBucket\".\"count\", \"actionRateLimitBucket\".\"expiresAt\", \"actionRateLimitBucket\".\"id\", \"actionRateLimitBucket\".\"keyHash\", \"actionRateLimitBucket\".\"windowSeconds\", \"actionRateLimitBucket\".\"windowStart\"",
+      "n": 5,
+      "min": 0.58,
+      "median": 0.67,
+      "p95": 4.36,
+      "max": 4.36
+    },
+    {
+      "sql": "BEGIN",
+      "n": 5,
+      "min": 0.3,
+      "median": 0.41,
+      "p95": 0.49,
+      "max": 0.49
+    },
+    {
+      "sql": "\n    SELECT \"id\" FROM \"public\".\"bakerySettings\"\n    WHERE \"id\" = ? FOR SHARE\n  ",
+      "n": 5,
+      "min": 0.45,
+      "median": 0.58,
+      "p95": 2.38,
+      "max": 2.38
+    },
+    {
+      "sql": "\n    SELECT p.\"id\" FROM \"public\".\"product\" p\n    JOIN \"public\".\"category\" c ON c.\"id\" = p.\"categoryId\"\n    WHERE p.\"id\" IN (SELECT jsonb_array_elements_text($?::jsonb)::uuid)\n    ORDER BY c.\"id\", p.\"id\" FOR SHARE OF p, c\n  ",
+      "n": 5,
+      "min": 0.64,
+      "median": 0.85,
+      "p95": 10.25,
+      "max": 10.25
+    },
+    {
+      "sql": "SELECT \"product\".\"allergenInfo\" AS \"allergenInfo\", \"product\".\"categoryId\" AS \"categoryId\", \"product\".\"createdAt\" AS \"createdAt\", \"product\".\"description\" AS \"description\", \"product\".\"id\" AS \"id\", \"product\".\"imageHeight\" AS \"imageHeight\", \"product\".\"imagePathname\" AS \"imagePathname\", \"product\".\"imageUrl\" AS \"imageUrl\", \"product\".\"imageWidth\" AS \"imageWidth\", \"product\".\"isActive\" AS \"isActive\", \"product\".\"isAvailable\" AS \"isAvailable\", \"product\".\"name\" AS \"name\", \"product\".\"priceMinor\" AS \"priceMinor\", \"product\".\"slug\" AS \"slug\", \"product\".\"sortOrder\" AS \"sortOrder\", \"product\".\"unitLabel\" AS \"unitLabel\", \"product\".\"updatedAt\" AS \"updatedAt\", (SELECT coalesce(json_agg(json_build_object(?, CAST(\"category__rows\".\"createdAt\" AS text), ?, \"category__rows\".\"description\", ?, \"category__rows\".\"id\", ?, \"category__rows\".\"isActive\", ?, \"category__rows\".\"name\", ?, \"category__rows\".\"slug\", ?, \"category__rows\".\"sortOrder\", ?, CAST(\"category__rows\".\"updatedAt\" AS text))), json_build_array()) AS \"category\" FROM (SELECT \"category\".\"createdAt\" AS \"createdAt\", \"category\".\"description\" AS \"description\", \"category\".\"id\" AS \"id\", \"category\".\"isActive\" AS \"isActive\", \"category\".\"name\" AS \"name\", \"category\".\"slug\" AS \"slug\", \"category\".\"sortOrder\" AS \"sortOrder\", \"category\".\"updatedAt\" AS \"updatedAt\" FROM \"public\".\"category\" WHERE \"category\".\"id\" = \"product\".\"categoryId\") AS \"category__rows\") AS \"category\" FROM \"public\".\"product\" WHERE \"product\".\"id\" IN ($?::uuid)",
+      "n": 5,
+      "min": 0.88,
+      "median": 1.01,
+      "p95": 1.12,
+      "max": 1.12
+    },
+    {
+      "sql": "INSERT INTO \"public\".\"order\" (\"orderNumber\", \"idempotencyKey\", \"payloadHash\", \"status\", \"customerName\", \"customerPhone\", \"customerEmail\", \"note\", \"pickupAt\", \"currencyCode\", \"subtotalMinor\", \"totalMinor\", \"cancellationReason\", \"id\", \"updatedAt\") VALUES ($?, $?::uuid, $?, $?, $?, $?, $?, $?, $?, $?, $?, $?, $?, $?::uuid, $?) RETURNING \"order\".\"id\", \"order\".\"orderNumber\", \"order\".\"status\", \"order\".\"pickupAt\", \"order\".\"totalMinor\", \"order\".\"currencyCode\"",
+      "n": 5,
+      "min": 0.69,
+      "median": 1.01,
+      "p95": 2.18,
+      "max": 2.18
+    },
+    {
+      "sql": "INSERT INTO \"public\".\"orderItem\" (\"orderId\", \"productId\", \"productName\", \"unitPriceMinor\", \"quantity\", \"subtotalMinor\", \"id\") VALUES ($?::uuid, $?::uuid, $?, $?, $?, $?, $?::uuid) RETURNING \"orderItem\".\"createdAt\", \"orderItem\".\"id\", \"orderItem\".\"orderId\", \"orderItem\".\"productId\", \"orderItem\".\"productName\", \"orderItem\".\"quantity\", \"orderItem\".\"subtotalMinor\", \"orderItem\".\"unitPriceMinor\"",
+      "n": 5,
+      "min": 0.82,
+      "median": 0.93,
+      "p95": 8.02,
+      "max": 8.02
+    },
+    {
+      "sql": "INSERT INTO \"public\".\"orderStatusHistory\" (\"orderId\", \"fromStatus\", \"toStatus\", \"changedByUserId\", \"reason\", \"id\") VALUES ($?::uuid, $?, $?, $?, $?, $?::uuid) RETURNING \"orderStatusHistory\".\"changedByUserId\", \"orderStatusHistory\".\"createdAt\", \"orderStatusHistory\".\"fromStatus\", \"orderStatusHistory\".\"id\", \"orderStatusHistory\".\"orderId\", \"orderStatusHistory\".\"reason\", \"orderStatusHistory\".\"toStatus\"",
+      "n": 5,
+      "min": 0.67,
+      "median": 0.97,
+      "p95": 1.89,
+      "max": 1.89
+    },
+    {
+      "sql": "COMMIT",
+      "n": 5,
+      "min": 0.49,
+      "median": 0.58,
+      "p95": 1.03,
+      "max": 1.03
+    },
+    {
+      "sql": "SELECT \"orderNotificationDelivery\".\"attempts\" AS \"attempts\", \"orderNotificationDelivery\".\"createdAt\" AS \"createdAt\", \"orderNotificationDelivery\".\"deliveredAt\" AS \"deliveredAt\", \"orderNotificationDelivery\".\"id\" AS \"id\", \"orderNotificationDelivery\".\"lastErrorCode\" AS \"lastErrorCode\", \"orderNotificationDelivery\".\"leaseUntil\" AS \"leaseUntil\", \"orderNotificationDelivery\".\"orderId\" AS \"orderId\", \"orderNotificationDelivery\".\"recipientType\" AS \"recipientType\", \"orderNotificationDelivery\".\"status\" AS \"status\", \"orderNotificationDelivery\".\"updatedAt\" AS \"updatedAt\" FROM \"public\".\"orderNotificationDelivery\" WHERE \"orderNotificationDelivery\".\"orderId\" = $?::uuid",
+      "n": 5,
+      "min": 2.72,
+      "median": 3.73,
+      "p95": 9.03,
+      "max": 9.03
+    }
+  ]
+}

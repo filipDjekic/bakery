@@ -1,0 +1,53 @@
+{
+  "viewport": "1440x1000",
+  "settleMs": 1500,
+  "listRequests": [
+    {
+      "path": "/admin",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/products",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/categories",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/settings",
+      "prefetch": true
+    },
+    {
+      "path": "/",
+      "prefetch": true
+    },
+    {
+      "path": "/admin",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/products",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/categories",
+      "prefetch": true
+    },
+    {
+      "path": "/admin/settings",
+      "prefetch": true
+    },
+    {
+      "path": "/",
+      "prefetch": true
+    },
+    {
+      "path": "/",
+      "prefetch": true
+    }
+  ],
+  "listPrefetches": 11,
+  "orderDetailPrefetches": 0,
+  "clickToOrderHistoryMs": 880.436999999999
+}

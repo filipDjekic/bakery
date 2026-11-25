@@ -12,7 +12,8 @@ export default function PublicError({
   retry: () => void;
 }) {
   useEffect(() => {
-    captureException(error, { tags: { boundary: 'route' } });
+    if (process.env.NEXT_PUBLIC_SENTRY_ENABLED === 'true')
+      captureException(error, { tags: { boundary: 'route' } });
   }, [error]);
   return (
     <section className="mx-auto flex min-h-[55vh] max-w-2xl items-center px-4 py-16">
