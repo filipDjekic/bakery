@@ -133,9 +133,12 @@ test('keeps both distinct instants for ambiguous local times when DST ends', () 
     businessHours: [hours(7, 60, 240)],
     now: DateTime.fromISO('2026-10-24T00:00:00Z'),
   });
-  const ambiguousSlots = slots.filter((slot) => slot.label === '02:30');
+  const ambiguousSlots = slots.filter((slot) =>
+    slot.label.startsWith('02:30 (UTC'),
+  );
 
   assert.equal(slots.length, 8);
+  assert.equal(new Set(ambiguousSlots.map((slot) => slot.label)).size, 2);
   assert.deepEqual(
     ambiguousSlots.map((slot) => slot.value),
     ['2026-10-25T00:30:00.000Z', '2026-10-25T01:30:00.000Z'],

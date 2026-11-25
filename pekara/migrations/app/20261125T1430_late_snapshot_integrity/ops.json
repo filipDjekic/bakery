@@ -1,0 +1,44 @@
+[
+  {
+    "id": "checkConstraint.order.order_late_snapshot_presence_5c416ba4",
+    "label": "Add check constraint \"order_late_snapshot_presence_5c416ba4\" on \"order\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "order_late_snapshot_presence_5c416ba4",
+        "table": "order"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"order_late_snapshot_presence_5c416ba4\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_late_snapshot_presence_5c416ba4",
+          "public",
+          "\"public\".\"order\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"order_late_snapshot_presence_5c416ba4\"",
+        "sql": "ALTER TABLE \"public\".\"order\" ADD CONSTRAINT \"order_late_snapshot_presence_5c416ba4\" CHECK ((\"lateDiscountAt\" IS NULL) = (\"originalTotalMinor\" IS NULL) AND (\"status\" <> 'LATE' OR \"lateDiscountAt\" IS NOT NULL))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"order_late_snapshot_presence_5c416ba4\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_late_snapshot_presence_5c416ba4",
+          "public",
+          "\"public\".\"order\""
+        ]
+      }
+    ]
+  }
+]

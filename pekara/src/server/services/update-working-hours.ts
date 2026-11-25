@@ -1,4 +1,5 @@
 import 'server-only';
+import { isValidDateTime } from '../../lib/datetime.ts';
 
 import { db } from '../../prisma/db.ts';
 import { workingHoursSchema } from '../../validation/settings.ts';
@@ -19,10 +20,7 @@ export async function updateWorkingHours(
       'Radno vreme nije validno.',
       parsed.error.issues,
     );
-  if (
-    !/^\d{4}-\d{2}-\d{2}T/.test(expectedUpdatedAt) ||
-    !Number.isFinite(Date.parse(expectedUpdatedAt))
-  )
+  if (!isValidDateTime(expectedUpdatedAt))
     throw new SettingsDomainError(
       'VALIDATION_ERROR',
       'Verzija podešavanja nije validna.',

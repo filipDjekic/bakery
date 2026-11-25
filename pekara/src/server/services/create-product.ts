@@ -2,6 +2,8 @@ import 'server-only';
 
 import type { Varchar } from '@prisma/orm-postgres/target/codec-types';
 
+import { slugCandidate } from '../../lib/slug.ts';
+
 import { db } from '../../prisma/db.ts';
 import {
   productMutationSchema,
@@ -53,40 +55,59 @@ export async function createProduct(
       .where({ id: parsed.data.categoryId })
       .first();
     if (!category)
-      throw new ProductDomainError('NOT_FOUND', 'Kategorija ne postoji.');
+      throw new ProductDomainError(
+        'VALIDATION_ERROR',
+        'Kategorija ne postoji.',
+        [
+          {
+            code: 'custom',
+            path: ['categoryId'],
+            message: 'Izaberite postojeću kategoriju.',
+          },
+        ],
+      );
     if (!category.isActive)
       throw new ProductDomainError(
         'INACTIVE_CATEGORY',
         'Nova kategorija proizvoda mora biti aktivna.',
+        [
+          {
+            code: 'custom',
+            path: ['categoryId'],
+            message: 'Izaberite aktivnu kategoriju.',
+          },
+        ],
       );
-    const duplicate = await db.orm.public.Product.select('id')
-      .where({ slug: varchar(parsed.data.slug, 140) })
-      .first();
-    if (duplicate)
-      throw new ProductDomainError(
-        'DUPLICATE_SLUG',
-        'Slug već koristi drugi proizvod.',
-      );
-    return await db.orm.public.Product.select('id', 'slug').create({
-      categoryId: parsed.data.categoryId,
-      name: varchar(parsed.data.name, 120),
-      slug: varchar(parsed.data.slug, 140),
-      description: varchar(parsed.data.description, 1000),
-      priceMinor: parsed.data.priceMinor,
-      unitLabel: parsed.data.unitLabel
-        ? varchar(parsed.data.unitLabel, 40)
-        : null,
-      allergenInfo: parsed.data.allergenInfo
-        ? varchar(parsed.data.allergenInfo, 500)
-        : null,
-      imageUrl: input.image?.url ?? null,
-      imagePathname: input.image?.pathname ?? null,
-      imageWidth: input.image?.width ?? null,
-      imageHeight: input.image?.height ?? null,
-      isActive: parsed.data.isActive,
-      isAvailable: parsed.data.isAvailable,
-      sortOrder: parsed.data.sortOrder,
-    });
+    for (let attempt = 0; attempt < 32; attempt += 1) {
+      try {
+        return await db.orm.public.Product.select('id', 'slug').create({
+          categoryId: parsed.data.categoryId,
+          name: varchar(parsed.data.name, 120),
+          slug: varchar(slugCandidate(parsed.data.name, 140, attempt), 140),
+          description: varchar(parsed.data.description, 1000),
+          priceMinor: parsed.data.priceMinor,
+          unitLabel: parsed.data.unitLabel
+            ? varchar(parsed.data.unitLabel, 40)
+            : null,
+          allergenInfo: parsed.data.allergenInfo
+            ? varchar(parsed.data.allergenInfo, 500)
+            : null,
+          imageUrl: input.image?.url ?? null,
+          imagePathname: input.image?.pathname ?? null,
+          imageWidth: input.image?.width ?? null,
+          imageHeight: input.image?.height ?? null,
+          isActive: parsed.data.isActive,
+          isAvailable: parsed.data.isAvailable,
+          sortOrder: parsed.data.sortOrder,
+        });
+      } catch (error) {
+        if (!isProductSlugConflict(error)) throw error;
+      }
+    }
+    throw new ProductDomainError(
+      'DUPLICATE_SLUG',
+      'Nije moguće dodeliti jedinstven URL. Pokušajte ponovo.',
+    );
   } catch (error) {
     if (input.image) {
       try {

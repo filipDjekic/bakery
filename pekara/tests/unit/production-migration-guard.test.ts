@@ -8,6 +8,7 @@ const env = {
   VERCEL: '1',
   BETTER_AUTH_SECRET: 'a'.repeat(32),
   RATE_LIMIT_HMAC_SECRET: 'b'.repeat(32),
+  CRON_SECRET: 'c'.repeat(32),
 };
 it('requires deliberate confirmation, valid production core config and a non-loopback database', () => {
   expect(() => validateProductionMigration(env)).not.toThrow();

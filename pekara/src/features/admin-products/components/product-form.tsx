@@ -3,6 +3,8 @@ import { usePreservedFormAction } from '@/lib/use-preserved-form-action';
 
 import Image from 'next/image';
 import { Input, Select, Textarea } from '@/components/ui/input';
+import { slugCandidate } from '@/lib/slug';
+import { SALE_UNITS } from '@/config/sale-units';
 import { formatRsdInput } from '@/lib/price-input';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -22,6 +24,8 @@ type ProductFormProps = {
 
 export function ProductForm({ categories, product }: ProductFormProps) {
   const router = useRouter();
+  const [name, setName] = useState(product?.name ?? '');
+  const [active, setActive] = useState(product?.isActive ?? true);
   const [preview, setPreview] = useState<string | null>(null);
   useEffect(
     () => () => {
@@ -33,6 +37,7 @@ export function ProductForm({ categories, product }: ProductFormProps) {
   const [state, formAction, pending] = usePreservedFormAction(
     action,
     initialProductActionState,
+    product ? undefined : 'Proizvod je kreiran.',
   );
   useEffect(() => {
     if (state.status === 'success' && state.message?.startsWith('/'))
@@ -50,7 +55,10 @@ export function ProductForm({ categories, product }: ProductFormProps) {
     (category) => category.isActive || category.id === product?.categoryId,
   );
   return (
-    <form onSubmit={formAction}>
+    <form
+      onSubmit={formAction}
+      className="border-border bg-surface max-w-4xl space-y-5 rounded-xl border p-4 sm:p-6"
+    >
       {product ? <input type="hidden" name="id" value={product.id} /> : null}
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="space-y-2">
@@ -65,7 +73,8 @@ export function ProductForm({ categories, product }: ProductFormProps) {
             aria-invalid={Boolean(error('name'))}
             aria-describedby={error('name') ? 'name-error' : undefined}
             name="name"
-            defaultValue={product?.name}
+            value={name}
+            onChange={(event) => setName(event.target.value)}
           />
           {feedback('name')}
         </label>
@@ -81,16 +90,13 @@ export function ProductForm({ categories, product }: ProductFormProps) {
             aria-invalid={Boolean(error('slug'))}
             aria-describedby={error('slug') ? 'slug-error' : undefined}
             name="slug"
-            defaultValue={product?.slug}
+            value={product?.slug ?? slugCandidate(name, 140)}
+            readOnly
+            className="bg-surface-muted text-muted"
           />
           {feedback('slug')}
         </label>
       </div>
-      {product ? (
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" name="changeSlug" /> Eksplicitno promeni slug
-        </label>
-      ) : null}
       <label className="block space-y-2">
         <span id="description-label" className="font-semibold">
           Opis
@@ -179,21 +185,46 @@ export function ProductForm({ categories, product }: ProductFormProps) {
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="space-y-2">
           <span id="unitLabel-label" className="font-semibold">
-            Jedinica prodaje (opciono)
+            Jedinica prodaje
           </span>
-          <Input
+          <Select
             id="unitLabel"
+            required
             aria-labelledby="unitLabel-label"
             aria-invalid={Boolean(error('unitLabel'))}
             aria-describedby={
               error('unitLabel') ? 'unitLabel-error' : undefined
             }
             name="unitLabel"
-            maxLength={40}
-            placeholder="npr. komad ili 100 g"
-            defaultValue={product?.unitLabel ?? ''}
-          />
+            defaultValue={
+              SALE_UNITS.includes(
+                product?.unitLabel as (typeof SALE_UNITS)[number],
+              )
+                ? product!.unitLabel!
+                : product?.unitLabel
+                  ? ''
+                  : 'komad'
+            }
+          >
+            <option value="" disabled>
+              Izaberite jedinicu
+            </option>
+            {SALE_UNITS.map((unit) => (
+              <option key={unit} value={unit}>
+                {unit}
+              </option>
+            ))}
+          </Select>
           {feedback('unitLabel')}
+          {product?.unitLabel &&
+          !SALE_UNITS.includes(
+            product.unitLabel as (typeof SALE_UNITS)[number],
+          ) ? (
+            <span className="text-muted block text-xs">
+              Postojeća jedinica: {product.unitLabel}. Izaberite odgovarajuću
+              jedinicu pre čuvanja.
+            </span>
+          ) : null}
         </label>
         <label className="space-y-2">
           <span id="allergenInfo-label" className="font-semibold">
@@ -218,13 +249,15 @@ export function ProductForm({ categories, product }: ProductFormProps) {
       </div>
       <label className="block space-y-2">
         <span id="image-label" className="font-semibold">
-          Slika {product ? '(ostavite prazno da ostane postojeća)' : ''}
+          Slika (obavezna za aktivan proizvod){' '}
+          {product ? '(ostavite prazno da ostane postojeća)' : ''}
         </span>
         <Input
           onChange={(event) => {
             const file = event.target.files?.[0];
             setPreview(file ? URL.createObjectURL(file) : null);
           }}
+          required={!product && active}
           type="file"
           id="image"
           aria-labelledby="image-label"
@@ -253,7 +286,8 @@ export function ProductForm({ categories, product }: ProductFormProps) {
           <Input
             type="checkbox"
             name="isActive"
-            defaultChecked={product?.isActive ?? true}
+            checked={active}
+            onChange={(event) => setActive(event.target.checked)}
           />{' '}
           Aktivan
         </label>

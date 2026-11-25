@@ -1,0 +1,734 @@
+[
+  {
+    "id": "dropIndex.category.category_isActive_sortOrder_idx_43c1fe34",
+    "label": "Drop index \"category_isActive_sortOrder_idx_43c1fe34\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "category_isActive_sortOrder_idx_43c1fe34",
+        "table": "category"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"category_isActive_sortOrder_idx_43c1fe34\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"category_isActive_sortOrder_idx_43c1fe34\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop index \"category_isActive_sortOrder_idx_43c1fe34\"",
+        "sql": "DROP INDEX \"public\".\"category_isActive_sortOrder_idx_43c1fe34\"",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"category_isActive_sortOrder_idx_43c1fe34\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"category_isActive_sortOrder_idx_43c1fe34\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropCheckConstraint.order.order_status_check_ca95f5cd",
+    "label": "Drop check constraint \"order_status_check_ca95f5cd\" on \"order\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "order_status_check_ca95f5cd",
+        "table": "order"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"order_status_check_ca95f5cd\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_status_check_ca95f5cd",
+          "public",
+          "\"public\".\"order\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop check constraint \"order_status_check_ca95f5cd\"",
+        "sql": "ALTER TABLE \"public\".\"order\" DROP CONSTRAINT \"order_status_check_ca95f5cd\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"order_status_check_ca95f5cd\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_status_check_ca95f5cd",
+          "public",
+          "\"public\".\"order\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropIndex.order.order_createdAt_idx_9575dbd7",
+    "label": "Drop index \"order_createdAt_idx_9575dbd7\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "order_createdAt_idx_9575dbd7",
+        "table": "order"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"order_createdAt_idx_9575dbd7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"order_createdAt_idx_9575dbd7\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop index \"order_createdAt_idx_9575dbd7\"",
+        "sql": "DROP INDEX \"public\".\"order_createdAt_idx_9575dbd7\"",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"order_createdAt_idx_9575dbd7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"order_createdAt_idx_9575dbd7\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropIndex.order.order_status_createdAt_idx_58610442",
+    "label": "Drop index \"order_status_createdAt_idx_58610442\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "order_status_createdAt_idx_58610442",
+        "table": "order"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"order_status_createdAt_idx_58610442\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"order_status_createdAt_idx_58610442\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop index \"order_status_createdAt_idx_58610442\"",
+        "sql": "DROP INDEX \"public\".\"order_status_createdAt_idx_58610442\"",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"order_status_createdAt_idx_58610442\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"order_status_createdAt_idx_58610442\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropCheckConstraint.orderStatusHistory.orderStatusHistory_fromStatus_check_860a7e10",
+    "label": "Drop check constraint \"orderStatusHistory_fromStatus_check_860a7e10\" on \"orderStatusHistory\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "orderStatusHistory_fromStatus_check_860a7e10",
+        "table": "orderStatusHistory"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"orderStatusHistory_fromStatus_check_860a7e10\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "orderStatusHistory_fromStatus_check_860a7e10",
+          "public",
+          "\"public\".\"orderStatusHistory\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop check constraint \"orderStatusHistory_fromStatus_check_860a7e10\"",
+        "sql": "ALTER TABLE \"public\".\"orderStatusHistory\" DROP CONSTRAINT \"orderStatusHistory_fromStatus_check_860a7e10\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"orderStatusHistory_fromStatus_check_860a7e10\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "orderStatusHistory_fromStatus_check_860a7e10",
+          "public",
+          "\"public\".\"orderStatusHistory\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropCheckConstraint.orderStatusHistory.orderStatusHistory_toStatus_check_199b8070",
+    "label": "Drop check constraint \"orderStatusHistory_toStatus_check_199b8070\" on \"orderStatusHistory\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "orderStatusHistory_toStatus_check_199b8070",
+        "table": "orderStatusHistory"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"orderStatusHistory_toStatus_check_199b8070\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "orderStatusHistory_toStatus_check_199b8070",
+          "public",
+          "\"public\".\"orderStatusHistory\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop check constraint \"orderStatusHistory_toStatus_check_199b8070\"",
+        "sql": "ALTER TABLE \"public\".\"orderStatusHistory\" DROP CONSTRAINT \"orderStatusHistory_toStatus_check_199b8070\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"orderStatusHistory_toStatus_check_199b8070\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "orderStatusHistory_toStatus_check_199b8070",
+          "public",
+          "\"public\".\"orderStatusHistory\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.order.discountMinor",
+    "label": "Add column \"discountMinor\" to \"order\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "discountMinor",
+        "table": "order"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"discountMinor\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "order",
+          "discountMinor"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"discountMinor\"",
+        "sql": "ALTER TABLE \"public\".\"order\" ADD COLUMN \"discountMinor\" int4 DEFAULT 0 NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"discountMinor\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "order",
+          "discountMinor"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.order.lateDiscountAt",
+    "label": "Add column \"lateDiscountAt\" to \"order\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "lateDiscountAt",
+        "table": "order"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"lateDiscountAt\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "order",
+          "lateDiscountAt"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"lateDiscountAt\"",
+        "sql": "ALTER TABLE \"public\".\"order\" ADD COLUMN \"lateDiscountAt\" timestamptz"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"lateDiscountAt\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "order",
+          "lateDiscountAt"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.order.originalTotalMinor",
+    "label": "Add column \"originalTotalMinor\" to \"order\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "originalTotalMinor",
+        "table": "order"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"originalTotalMinor\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "order",
+          "originalTotalMinor"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"originalTotalMinor\"",
+        "sql": "ALTER TABLE \"public\".\"order\" ADD COLUMN \"originalTotalMinor\" int4"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"originalTotalMinor\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "order",
+          "originalTotalMinor"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.order.order_late_discount_integrity_22b58ef9",
+    "label": "Add check constraint \"order_late_discount_integrity_22b58ef9\" on \"order\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "order_late_discount_integrity_22b58ef9",
+        "table": "order"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"order_late_discount_integrity_22b58ef9\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_late_discount_integrity_22b58ef9",
+          "public",
+          "\"public\".\"order\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"order_late_discount_integrity_22b58ef9\"",
+        "sql": "ALTER TABLE \"public\".\"order\" ADD CONSTRAINT \"order_late_discount_integrity_22b58ef9\" CHECK ((\"originalTotalMinor\" IS NULL AND \"discountMinor\" = 0 AND \"lateDiscountAt\" IS NULL) OR (\"originalTotalMinor\" >= 0 AND \"lateDiscountAt\" IS NOT NULL AND \"discountMinor\" = ((\"originalTotalMinor\"::bigint * 15 + 50) / 100) AND \"totalMinor\" = \"originalTotalMinor\" - \"discountMinor\"))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"order_late_discount_integrity_22b58ef9\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_late_discount_integrity_22b58ef9",
+          "public",
+          "\"public\".\"order\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.order.order_status_check_c7ed790c",
+    "label": "Add check constraint \"order_status_check_c7ed790c\" on \"order\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "order_status_check_c7ed790c",
+        "table": "order"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"order_status_check_c7ed790c\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_status_check_c7ed790c",
+          "public",
+          "\"public\".\"order\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"order_status_check_c7ed790c\"",
+        "sql": "ALTER TABLE \"public\".\"order\" ADD CONSTRAINT \"order_status_check_c7ed790c\" CHECK (\"status\" IN ('NEW', 'ACCEPTED', 'IN_PREPARATION', 'READY', 'LATE', 'COMPLETED', 'CANCELLED'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"order_status_check_c7ed790c\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_status_check_c7ed790c",
+          "public",
+          "\"public\".\"order\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.orderStatusHistory.orderStatusHistory_fromStatus_check_da99fd3c",
+    "label": "Add check constraint \"orderStatusHistory_fromStatus_check_da99fd3c\" on \"orderStatusHistory\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "orderStatusHistory_fromStatus_check_da99fd3c",
+        "table": "orderStatusHistory"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"orderStatusHistory_fromStatus_check_da99fd3c\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "orderStatusHistory_fromStatus_check_da99fd3c",
+          "public",
+          "\"public\".\"orderStatusHistory\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"orderStatusHistory_fromStatus_check_da99fd3c\"",
+        "sql": "ALTER TABLE \"public\".\"orderStatusHistory\" ADD CONSTRAINT \"orderStatusHistory_fromStatus_check_da99fd3c\" CHECK (\"fromStatus\" IN ('NEW', 'ACCEPTED', 'IN_PREPARATION', 'READY', 'LATE', 'COMPLETED', 'CANCELLED'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"orderStatusHistory_fromStatus_check_da99fd3c\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "orderStatusHistory_fromStatus_check_da99fd3c",
+          "public",
+          "\"public\".\"orderStatusHistory\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.orderStatusHistory.orderStatusHistory_toStatus_check_dbbe39c9",
+    "label": "Add check constraint \"orderStatusHistory_toStatus_check_dbbe39c9\" on \"orderStatusHistory\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "orderStatusHistory_toStatus_check_dbbe39c9",
+        "table": "orderStatusHistory"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"orderStatusHistory_toStatus_check_dbbe39c9\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "orderStatusHistory_toStatus_check_dbbe39c9",
+          "public",
+          "\"public\".\"orderStatusHistory\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"orderStatusHistory_toStatus_check_dbbe39c9\"",
+        "sql": "ALTER TABLE \"public\".\"orderStatusHistory\" ADD CONSTRAINT \"orderStatusHistory_toStatus_check_dbbe39c9\" CHECK (\"toStatus\" IN ('NEW', 'ACCEPTED', 'IN_PREPARATION', 'READY', 'LATE', 'COMPLETED', 'CANCELLED'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"orderStatusHistory_toStatus_check_dbbe39c9\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "orderStatusHistory_toStatus_check_dbbe39c9",
+          "public",
+          "\"public\".\"orderStatusHistory\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.category.category_isActive_sortOrder_name_id_idx_a42675e4",
+    "label": "Create index \"category_isActive_sortOrder_name_id_idx_a42675e4\" on \"category\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "category_isActive_sortOrder_name_id_idx_a42675e4",
+        "table": "category"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"category_isActive_sortOrder_name_id_idx_a42675e4\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"category_isActive_sortOrder_name_id_idx_a42675e4\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"category_isActive_sortOrder_name_id_idx_a42675e4\"",
+        "sql": "CREATE INDEX \"category_isActive_sortOrder_name_id_idx_a42675e4\" ON \"public\".\"category\" (\"isActive\", \"sortOrder\", \"name\", \"id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"category_isActive_sortOrder_name_id_idx_a42675e4\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"category_isActive_sortOrder_name_id_idx_a42675e4\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.order.order_createdAt_id_idx_3855cff1",
+    "label": "Create index \"order_createdAt_id_idx_3855cff1\" on \"order\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "order_createdAt_id_idx_3855cff1",
+        "table": "order"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"order_createdAt_id_idx_3855cff1\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"order_createdAt_id_idx_3855cff1\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"order_createdAt_id_idx_3855cff1\"",
+        "sql": "CREATE INDEX \"order_createdAt_id_idx_3855cff1\" ON \"public\".\"order\" (\"createdAt\", \"id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"order_createdAt_id_idx_3855cff1\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"order_createdAt_id_idx_3855cff1\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.order.order_status_createdAt_id_idx_ffb42ad8",
+    "label": "Create index \"order_status_createdAt_id_idx_ffb42ad8\" on \"order\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "order_status_createdAt_id_idx_ffb42ad8",
+        "table": "order"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"order_status_createdAt_id_idx_ffb42ad8\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"order_status_createdAt_id_idx_ffb42ad8\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"order_status_createdAt_id_idx_ffb42ad8\"",
+        "sql": "CREATE INDEX \"order_status_createdAt_id_idx_ffb42ad8\" ON \"public\".\"order\" (\"status\", \"createdAt\", \"id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"order_status_createdAt_id_idx_ffb42ad8\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"order_status_createdAt_id_idx_ffb42ad8\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.order.order_status_pickupAt_createdAt_id_idx_541b1116",
+    "label": "Create index \"order_status_pickupAt_createdAt_id_idx_541b1116\" on \"order\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "order_status_pickupAt_createdAt_id_idx_541b1116",
+        "table": "order"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"order_status_pickupAt_createdAt_id_idx_541b1116\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"order_status_pickupAt_createdAt_id_idx_541b1116\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"order_status_pickupAt_createdAt_id_idx_541b1116\"",
+        "sql": "CREATE INDEX \"order_status_pickupAt_createdAt_id_idx_541b1116\" ON \"public\".\"order\" (\"status\", \"pickupAt\", \"createdAt\", \"id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"order_status_pickupAt_createdAt_id_idx_541b1116\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"order_status_pickupAt_createdAt_id_idx_541b1116\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.product.product_updatedAt_id_idx_88868a1d",
+    "label": "Create index \"product_updatedAt_id_idx_88868a1d\" on \"product\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "product_updatedAt_id_idx_88868a1d",
+        "table": "product"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"product_updatedAt_id_idx_88868a1d\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"product_updatedAt_id_idx_88868a1d\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"product_updatedAt_id_idx_88868a1d\"",
+        "sql": "CREATE INDEX \"product_updatedAt_id_idx_88868a1d\" ON \"public\".\"product\" (\"updatedAt\", \"id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"product_updatedAt_id_idx_88868a1d\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"product_updatedAt_id_idx_88868a1d\""
+        ]
+      }
+    ]
+  }
+]

@@ -16,7 +16,9 @@ test('admin logs in, updates a new order and sees persisted status after reload'
     new RegExp(`/admin/orders/${seed.orderId}\\?returnTo=`),
   );
   await page.getByRole('button', { name: 'Prihvati porudžbinu' }).click();
-  await expect(page.getByRole('status')).toHaveText('Status je sačuvan.');
+  await expect(page.locator('main').getByRole('status')).toHaveText(
+    'Status je sačuvan.',
+  );
   await page.reload();
   await expect(
     page.getByRole('button', { name: 'Započni pripremu' }),
@@ -83,7 +85,6 @@ test('mobile admin uses active queue cards and keeps history filters', async ({
     page.getByRole('link', { name: 'Sve porudžbine' }),
   ).toHaveAttribute('aria-current', 'page');
   await page.getByLabel('Status').selectOption('NEW');
-  await page.getByRole('button', { name: 'Primeni' }).click();
   await expect(page).toHaveURL(/status=NEW/);
   await expect(page.getByText(seed.orderNumber).first()).toBeVisible();
 });

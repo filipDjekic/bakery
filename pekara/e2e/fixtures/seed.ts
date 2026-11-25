@@ -44,6 +44,7 @@ try {
         'ACCEPTED',
         'IN_PREPARATION',
         'READY',
+        'LATE',
         'COMPLETED',
         'CANCELLED',
       ]),

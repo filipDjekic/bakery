@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { toast } from '@/lib/toast';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -219,6 +220,7 @@ export function CheckoutForm({
 
       idempotency.complete();
       clearCart();
+      toast.success('Porudžbina je uspešno kreirana.');
       router.push(`/porudzbina/${confirmation.orderId}`);
     } catch (error) {
       if (
@@ -238,6 +240,7 @@ export function CheckoutForm({
       setError('root', {
         message,
       });
+      toast.error(message);
       setSubmitMessage('Korpa je sačuvana i možete pokušati ponovo.');
     }
   }

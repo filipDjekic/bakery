@@ -1,3 +1,4 @@
+import { containsPattern, searchText } from '../../lib/list-query.ts';
 import 'server-only';
 
 import { DateTime } from 'luxon';
@@ -10,11 +11,12 @@ import { requireStaff } from '../auth/authorization.ts';
 import { getPickupBakerySettings } from '../repositories/bakery-settings.ts';
 
 export const ADMIN_ORDERS_PAGE_SIZE = 25;
-export const ACTIVE_ADMIN_ORDERS_LIMIT = 100;
+export const ACTIVE_ADMIN_ORDERS_LIMIT = 10;
 const ADMIN_ORDERS_MAX_PAGE = 100_000;
 
 const filterSchema = z
   .object({
+    q: z.preprocess(searchText, z.string()),
     page: z.coerce
       .number()
       .int()
@@ -27,6 +29,7 @@ const filterSchema = z
         'ACCEPTED',
         'IN_PREPARATION',
         'READY',
+        'LATE',
         'COMPLETED',
         'CANCELLED',
       ])
@@ -57,6 +60,7 @@ const filterSchema = z
 
 export type AdminOrderFiltersInput = {
   page?: string | number;
+  q?: string;
   status?: string;
   from?: string;
   to?: string;
@@ -70,10 +74,13 @@ export type AdminOrdersResult = {
     customerName: string;
     pickupAt: string;
     totalMinor: number;
+    originalTotalMinor?: number | null;
+    discountMinor?: number;
     currencyCode: string;
     createdAt: string;
   }>;
   filters: {
+    q?: string;
     status?: PublicOrderStatus;
     from?: string;
     to?: string;
@@ -142,12 +149,16 @@ export async function getAdminOrders(
   const validTo = toDate?.isValid ? toDate.toUTC().toISO() : undefined;
   const normalizedFrom = validFrom ? parsed.from : undefined;
   const normalizedTo = validTo ? parsed.to : undefined;
-  const filteredOrders = addFilters(
+  let filteredOrders = addFilters(
     baseOrderQuery(),
     parsed.status,
     validFrom ?? undefined,
     validTo ?? undefined,
   );
+  if (parsed.q)
+    filteredOrders = filteredOrders.where((order) =>
+      order.orderNumber.ilike(containsPattern(parsed.q)),
+    );
   const count = await filteredOrders.aggregate((aggregate) => ({
     count: aggregate.count(),
   }));
@@ -164,6 +175,8 @@ export async function getAdminOrders(
       'customerName',
       'pickupAt',
       'totalMinor',
+      'originalTotalMinor',
+      'discountMinor',
       'currencyCode',
       'createdAt',
     )
@@ -179,6 +192,7 @@ export async function getAdminOrders(
       createdAt: new Date(order.createdAt).toISOString(),
     })),
     filters: {
+      q: parsed.q,
       status: parsed.status,
       from: normalizedFrom,
       to: normalizedTo,
@@ -217,6 +231,8 @@ export async function getActiveAdminOrders(
     'customerName',
     'pickupAt',
     'totalMinor',
+    'originalTotalMinor',
+    'discountMinor',
     'currencyCode',
     'createdAt',
   )

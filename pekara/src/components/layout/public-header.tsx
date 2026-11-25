@@ -1,5 +1,6 @@
 import { Wheat } from 'lucide-react';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
 import { focusRingClassName } from '@/components/ui/focus';
 import { CartTrigger } from '@/features/cart/components/cart-trigger';
@@ -32,11 +33,15 @@ export async function PublicHeader() {
             </span>
           </Link>
 
-          <PublicNav />
+          <Suspense>
+            <PublicNav />
+          </Suspense>
 
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <CartTrigger />
-            <MobileNav />
+            <Suspense>
+              <MobileNav />
+            </Suspense>
           </div>
         </div>
       </Container>

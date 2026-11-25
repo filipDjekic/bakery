@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from '@/lib/toast';
 
 import { authClient } from '@/server/auth/auth-client';
 
@@ -13,9 +14,13 @@ export function LogoutButton() {
     setIsPending(true);
 
     try {
-      await authClient.signOut();
+      const result = await authClient.signOut();
+      if (result.error) throw new Error('Logout failed');
+      toast.success('Uspešno ste odjavljeni.');
       router.replace('/admin/login');
       router.refresh();
+    } catch {
+      toast.error('Odjava nije uspela. Pokušajte ponovo.');
     } finally {
       setIsPending(false);
     }

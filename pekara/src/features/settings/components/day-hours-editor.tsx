@@ -1,15 +1,62 @@
+import { useState } from 'react';
+import { minutesToTimeString, timeStringToMinutes } from '@/lib/datetime';
+import { workingHoursSchema } from '@/validation/settings';
 export type EditableInterval = {
   weekday: number;
   openMinute: number;
   closeMinute: number;
 };
 
-function toTime(minutes: number) {
-  return `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
-}
-function toMinute(value: string) {
-  const [hours, minutes] = value.split(':').map(Number);
-  return (hours ?? 0) * 60 + (minutes ?? 0);
+function TimeInput({
+  value,
+  onChange,
+  end,
+  label,
+}: {
+  value: number;
+  onChange: (minute: number) => void;
+  end?: boolean;
+  label: string;
+}) {
+  const [text, setText] = useState(() => minutesToTimeString(value, end));
+  const [previousValue, setPreviousValue] = useState(value);
+  if (previousValue !== value) {
+    setPreviousValue(value);
+    setText(minutesToTimeString(value, end));
+  }
+  const valid =
+    /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(text) ||
+    Boolean(end && text === '24:00');
+  return (
+    <>
+      <input
+        aria-label={label}
+        required
+        type="text"
+        inputMode="numeric"
+        placeholder="HH:mm"
+        pattern={
+          end
+            ? '(?:(?:[01]\\d|2[0-3]):[0-5]\\d|24:00)'
+            : '(?:[01]\\d|2[0-3]):[0-5]\\d'
+        }
+        value={text}
+        aria-invalid={!valid}
+        onChange={(event) => {
+          setText(event.target.value);
+          try {
+            onChange(timeStringToMinutes(event.target.value, end));
+          } catch {
+            /* Keep the draft until the wall time is complete. */
+          }
+        }}
+        className="border-border block w-28 rounded-md border px-3 py-2"
+      />
+      {!valid ? (
+        <span className="block text-xs text-red-800">Unesite HH:mm.</span>
+      ) : null}
+    </>
+  );
 }
 
 export function DayHoursEditor({
@@ -24,6 +71,7 @@ export function DayHoursEditor({
   onChange: (intervals: EditableInterval[]) => void;
 }) {
   const closed = intervals.length === 0;
+  const validation = workingHoursSchema.safeParse(intervals);
   return (
     <fieldset className="border-border rounded-lg border p-4">
       <legend className="px-2 font-semibold">{label}</legend>
@@ -41,54 +89,42 @@ export function DayHoursEditor({
         />{' '}
         Zatvoreno
       </label>
+      {!validation.success ? (
+        <p role="alert" className="mt-2 text-sm text-red-800">
+          {validation.error.issues[0]?.message}
+        </p>
+      ) : null}
       {!closed ? (
         <div className="mt-4 space-y-3">
           {intervals.map((interval, index) => (
             <div key={index} className="flex flex-wrap items-end gap-3">
               <label className="space-y-1">
                 <span className="text-xs">Od</span>
-                <input
-                  aria-label={`${label} od ${index + 1}`}
-                  type="text"
-                  inputMode="numeric"
-                  pattern="(?:[01]\\d|2[0-3]):[0-5]\\d"
-                  value={toTime(interval.openMinute)}
-                  onChange={(event) =>
+                <TimeInput
+                  label={`${label} od ${index + 1}`}
+                  value={interval.openMinute}
+                  onChange={(minute) =>
                     onChange(
-                      intervals.map((item, itemIndex) =>
-                        itemIndex === index
-                          ? {
-                              ...item,
-                              openMinute: toMinute(event.target.value),
-                            }
-                          : item,
+                      intervals.map((item, i) =>
+                        i === index ? { ...item, openMinute: minute } : item,
                       ),
                     )
                   }
-                  className="border-border block rounded-md border px-3 py-2"
                 />
               </label>
               <label className="space-y-1">
                 <span className="text-xs">Do</span>
-                <input
-                  aria-label={`${label} do ${index + 1}`}
-                  type="text"
-                  inputMode="numeric"
-                  pattern="(?:(?:[01]\\d|2[0-3]):[0-5]\\d|24:00)"
-                  value={toTime(interval.closeMinute)}
-                  onChange={(event) =>
+                <TimeInput
+                  end
+                  label={`${label} do ${index + 1}`}
+                  value={interval.closeMinute}
+                  onChange={(minute) =>
                     onChange(
-                      intervals.map((item, itemIndex) =>
-                        itemIndex === index
-                          ? {
-                              ...item,
-                              closeMinute: toMinute(event.target.value),
-                            }
-                          : item,
+                      intervals.map((item, i) =>
+                        i === index ? { ...item, closeMinute: minute } : item,
                       ),
                     )
                   }
-                  className="border-border block rounded-md border px-3 py-2"
                 />
               </label>
               <button

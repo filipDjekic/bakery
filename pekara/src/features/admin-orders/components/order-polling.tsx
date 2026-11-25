@@ -1,4 +1,5 @@
 'use client';
+import { formatTime } from '@/lib/datetime';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
@@ -83,7 +84,7 @@ export function OrderPolling({
           : stale
             ? 'Podaci nisu osveženi. Pokušajte ručno.'
             : refreshedAt
-              ? `Podaci učitani u ${new Date(refreshedAt).toLocaleTimeString('sr-Latn-RS', { timeZone: timezone })}. Automatsko osvežavanje: 15 s.`
+              ? `Podaci učitani u ${formatTime(refreshedAt, timezone)}. Automatsko osvežavanje: 15 s.`
               : 'Automatsko osvežavanje: 15 s.'}
       </p>
     </div>

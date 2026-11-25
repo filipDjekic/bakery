@@ -33,7 +33,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'4f67248e1dcb99d56a8be933c0ef5d8498a6308a317f3f6fc8dfd301b1076792'>;
+  StorageHashBase<'0ac919db64d2b4147a64590cff79641695f03357dc43d5870b7191ee90813647'>;
 export type ExecutionHash =
   ExecutionHashBase<'e4be86e61b2bcc9642b805e0317f350ffa37d0b687b3f8e9a0151c1b4efe0e79'>;
 export type ProfileHash =
@@ -304,7 +304,8 @@ export type FieldOutputTypes = {
       readonly orderNumber: Varchar<32>;
       readonly idempotencyKey: CodecTypes['pg/uuid@1']['output'];
       readonly payloadHash: CodecTypes['pg/text@1']['output'];
-      readonly status: 'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'COMPLETED' | 'CANCELLED';
+      readonly status:
+        'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'LATE' | 'COMPLETED' | 'CANCELLED';
       readonly customerName: Varchar<100>;
       readonly customerPhone: Varchar<20>;
       readonly customerEmail: Varchar<254> | null;
@@ -313,6 +314,9 @@ export type FieldOutputTypes = {
       readonly currencyCode: Varchar<3>;
       readonly subtotalMinor: CodecTypes['pg/int4@1']['output'];
       readonly totalMinor: CodecTypes['pg/int4@1']['output'];
+      readonly originalTotalMinor: CodecTypes['pg/int4@1']['output'] | null;
+      readonly discountMinor: CodecTypes['pg/int4@1']['output'];
+      readonly lateDiscountAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly cancellationReason: Varchar<300> | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -343,9 +347,9 @@ export type FieldOutputTypes = {
       readonly id: CodecTypes['pg/uuid@1']['output'];
       readonly orderId: CodecTypes['pg/uuid@1']['output'];
       readonly fromStatus:
-        'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'COMPLETED' | 'CANCELLED' | null;
+        'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'LATE' | 'COMPLETED' | 'CANCELLED' | null;
       readonly toStatus:
-        'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'COMPLETED' | 'CANCELLED';
+        'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'LATE' | 'COMPLETED' | 'CANCELLED';
       readonly changedByUserId: CodecTypes['pg/text@1']['output'] | null;
       readonly reason: Varchar<300> | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -471,7 +475,8 @@ export type FieldInputTypes = {
       readonly orderNumber: CodecTypes['sql/varchar@1']['input'];
       readonly idempotencyKey: CodecTypes['pg/uuid@1']['input'];
       readonly payloadHash: CodecTypes['pg/text@1']['input'];
-      readonly status: 'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'COMPLETED' | 'CANCELLED';
+      readonly status:
+        'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'LATE' | 'COMPLETED' | 'CANCELLED';
       readonly customerName: CodecTypes['sql/varchar@1']['input'];
       readonly customerPhone: CodecTypes['sql/varchar@1']['input'];
       readonly customerEmail: CodecTypes['sql/varchar@1']['input'] | null;
@@ -480,6 +485,9 @@ export type FieldInputTypes = {
       readonly currencyCode: CodecTypes['sql/varchar@1']['input'];
       readonly subtotalMinor: CodecTypes['pg/int4@1']['input'];
       readonly totalMinor: CodecTypes['pg/int4@1']['input'];
+      readonly originalTotalMinor: CodecTypes['pg/int4@1']['input'] | null;
+      readonly discountMinor: CodecTypes['pg/int4@1']['input'];
+      readonly lateDiscountAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly cancellationReason: CodecTypes['sql/varchar@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -510,9 +518,9 @@ export type FieldInputTypes = {
       readonly id: CodecTypes['pg/uuid@1']['input'];
       readonly orderId: CodecTypes['pg/uuid@1']['input'];
       readonly fromStatus:
-        'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'COMPLETED' | 'CANCELLED' | null;
+        'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'LATE' | 'COMPLETED' | 'CANCELLED' | null;
       readonly toStatus:
-        'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'COMPLETED' | 'CANCELLED';
+        'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'LATE' | 'COMPLETED' | 'CANCELLED';
       readonly changedByUserId: CodecTypes['pg/text@1']['input'] | null;
       readonly reason: CodecTypes['sql/varchar@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -640,13 +648,17 @@ export type StorageColumnTypes = {
       readonly customerEmail: Varchar<254> | null;
       readonly customerName: Varchar<100>;
       readonly customerPhone: Varchar<20>;
+      readonly discountMinor: CodecTypes['pg/int4@1']['output'];
       readonly id: CodecTypes['pg/uuid@1']['output'];
       readonly idempotencyKey: CodecTypes['pg/uuid@1']['output'];
+      readonly lateDiscountAt: CodecTypes['pg/timestamptz-string@1']['output'] | null;
       readonly note: Varchar<500> | null;
       readonly orderNumber: Varchar<32>;
+      readonly originalTotalMinor: CodecTypes['pg/int4@1']['output'] | null;
       readonly payloadHash: CodecTypes['pg/text@1']['output'];
       readonly pickupAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly status: 'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'COMPLETED' | 'CANCELLED';
+      readonly status:
+        'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'LATE' | 'COMPLETED' | 'CANCELLED';
       readonly subtotalMinor: CodecTypes['pg/int4@1']['output'];
       readonly totalMinor: CodecTypes['pg/int4@1']['output'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
@@ -677,12 +689,12 @@ export type StorageColumnTypes = {
       readonly changedByUserId: CodecTypes['pg/text@1']['output'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
       readonly fromStatus:
-        'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'COMPLETED' | 'CANCELLED' | null;
+        'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'LATE' | 'COMPLETED' | 'CANCELLED' | null;
       readonly id: CodecTypes['pg/uuid@1']['output'];
       readonly orderId: CodecTypes['pg/uuid@1']['output'];
       readonly reason: Varchar<300> | null;
       readonly toStatus:
-        'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'COMPLETED' | 'CANCELLED';
+        'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'LATE' | 'COMPLETED' | 'CANCELLED';
     };
     readonly product: {
       readonly allergenInfo: Varchar<500> | null;
@@ -807,13 +819,17 @@ export type StorageColumnInputTypes = {
       readonly customerEmail: CodecTypes['sql/varchar@1']['input'] | null;
       readonly customerName: CodecTypes['sql/varchar@1']['input'];
       readonly customerPhone: CodecTypes['sql/varchar@1']['input'];
+      readonly discountMinor: CodecTypes['pg/int4@1']['input'];
       readonly id: CodecTypes['pg/uuid@1']['input'];
       readonly idempotencyKey: CodecTypes['pg/uuid@1']['input'];
+      readonly lateDiscountAt: CodecTypes['pg/timestamptz-string@1']['input'] | null;
       readonly note: CodecTypes['sql/varchar@1']['input'] | null;
       readonly orderNumber: CodecTypes['sql/varchar@1']['input'];
+      readonly originalTotalMinor: CodecTypes['pg/int4@1']['input'] | null;
       readonly payloadHash: CodecTypes['pg/text@1']['input'];
       readonly pickupAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly status: 'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'COMPLETED' | 'CANCELLED';
+      readonly status:
+        'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'LATE' | 'COMPLETED' | 'CANCELLED';
       readonly subtotalMinor: CodecTypes['pg/int4@1']['input'];
       readonly totalMinor: CodecTypes['pg/int4@1']['input'];
       readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
@@ -844,12 +860,12 @@ export type StorageColumnInputTypes = {
       readonly changedByUserId: CodecTypes['pg/text@1']['input'] | null;
       readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
       readonly fromStatus:
-        'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'COMPLETED' | 'CANCELLED' | null;
+        'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'LATE' | 'COMPLETED' | 'CANCELLED' | null;
       readonly id: CodecTypes['pg/uuid@1']['input'];
       readonly orderId: CodecTypes['pg/uuid@1']['input'];
       readonly reason: CodecTypes['sql/varchar@1']['input'] | null;
       readonly toStatus:
-        'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'COMPLETED' | 'CANCELLED';
+        'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'LATE' | 'COMPLETED' | 'CANCELLED';
     };
     readonly product: {
       readonly allergenInfo: CodecTypes['sql/varchar@1']['input'] | null;
@@ -1318,9 +1334,9 @@ type ContractBase = Omit<
               uniques: readonly [{ readonly columns: readonly ['slug'] }];
               indexes: readonly [
                 {
-                  readonly name: 'category_isActive_sortOrder_idx_43c1fe34';
-                  readonly prefix: 'category_isActive_sortOrder_idx';
-                  readonly columns: readonly ['isActive', 'sortOrder'];
+                  readonly name: 'category_isActive_sortOrder_name_id_idx_a42675e4';
+                  readonly prefix: 'category_isActive_sortOrder_name_id_idx';
+                  readonly columns: readonly ['isActive', 'sortOrder', 'name', 'id'];
                   readonly unique: false;
                 },
               ];
@@ -1403,6 +1419,25 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/int4@1';
                   readonly nullable: false;
                 };
+                readonly originalTotalMinor: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                };
+                readonly discountMinor: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/int4@1', 0>;
+                  };
+                };
+                readonly lateDiscountAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly nullable: true;
+                };
                 readonly cancellationReason: {
                   readonly nativeType: 'character varying';
                   readonly codecId: 'sql/varchar@1';
@@ -1428,15 +1463,21 @@ type ContractBase = Omit<
               ];
               indexes: readonly [
                 {
-                  readonly name: 'order_status_createdAt_idx_58610442';
-                  readonly prefix: 'order_status_createdAt_idx';
-                  readonly columns: readonly ['status', 'createdAt'];
+                  readonly name: 'order_status_createdAt_id_idx_ffb42ad8';
+                  readonly prefix: 'order_status_createdAt_id_idx';
+                  readonly columns: readonly ['status', 'createdAt', 'id'];
                   readonly unique: false;
                 },
                 {
-                  readonly name: 'order_createdAt_idx_9575dbd7';
-                  readonly prefix: 'order_createdAt_idx';
-                  readonly columns: readonly ['createdAt'];
+                  readonly name: 'order_status_pickupAt_createdAt_id_idx_541b1116';
+                  readonly prefix: 'order_status_pickupAt_createdAt_id_idx';
+                  readonly columns: readonly ['status', 'pickupAt', 'createdAt', 'id'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'order_createdAt_id_idx_3855cff1';
+                  readonly prefix: 'order_createdAt_id_idx';
+                  readonly columns: readonly ['createdAt', 'id'];
                   readonly unique: false;
                 },
                 {
@@ -1818,6 +1859,12 @@ type ContractBase = Omit<
                   readonly unique: false;
                 },
                 {
+                  readonly name: 'product_updatedAt_id_idx_88868a1d';
+                  readonly prefix: 'product_updatedAt_id_idx';
+                  readonly columns: readonly ['updatedAt', 'id'];
+                  readonly unique: false;
+                },
+                {
                   readonly name: 'product_categoryId_idx_15c304f2';
                   readonly prefix: 'product_categoryId_idx';
                   readonly columns: readonly ['categoryId'];
@@ -2061,6 +2108,7 @@ type ContractBase = Omit<
                 'ACCEPTED',
                 'IN_PREPARATION',
                 'READY',
+                'LATE',
                 'COMPLETED',
                 'CANCELLED',
               ];
@@ -2612,6 +2660,21 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
+              readonly originalTotalMinor: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly discountMinor: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly lateDiscountAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-string@1';
+                };
+              };
               readonly cancellationReason: {
                 readonly nullable: true;
                 readonly type: {
@@ -2687,6 +2750,9 @@ type ContractBase = Omit<
                 readonly currencyCode: { readonly column: 'currencyCode' };
                 readonly subtotalMinor: { readonly column: 'subtotalMinor' };
                 readonly totalMinor: { readonly column: 'totalMinor' };
+                readonly originalTotalMinor: { readonly column: 'originalTotalMinor' };
+                readonly discountMinor: { readonly column: 'discountMinor' };
+                readonly lateDiscountAt: { readonly column: 'lateDiscountAt' };
                 readonly cancellationReason: { readonly column: 'cancellationReason' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
@@ -3321,6 +3387,7 @@ type ContractBase = Omit<
               { readonly name: 'ACCEPTED'; readonly value: 'ACCEPTED' },
               { readonly name: 'IN_PREPARATION'; readonly value: 'IN_PREPARATION' },
               { readonly name: 'READY'; readonly value: 'READY' },
+              { readonly name: 'LATE'; readonly value: 'LATE' },
               { readonly name: 'COMPLETED'; readonly value: 'COMPLETED' },
               { readonly name: 'CANCELLED'; readonly value: 'CANCELLED' },
             ];

@@ -6,7 +6,7 @@ import { cn } from '@/lib/cn';
 import { getPublicChromeSettings } from '@/server/queries/public-settings';
 
 import { Container } from './container';
-import { publicNavigation } from './public-nav';
+import { publicNavigation } from './public-navigation';
 
 const weekdayNames = [
   'Ponedeljak',

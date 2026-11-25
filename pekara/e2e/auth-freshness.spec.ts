@@ -11,7 +11,11 @@ test('request memoization never shares an admin session or retains a disabled us
 }) => {
   const env = parse(readFileSync('.env.test'));
   const client = new Client({
-    connectionString: getIntegrationDatabaseUrl({ ...env, NODE_ENV: 'test' }),
+    connectionString: getIntegrationDatabaseUrl({
+      ...env,
+      ...process.env,
+      NODE_ENV: 'test',
+    }),
   });
   await client.connect();
   const anonymous = await browser.newContext();

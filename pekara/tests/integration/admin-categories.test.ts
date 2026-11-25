@@ -70,12 +70,10 @@ test('creates, lists and edits a category without changing its slug', async () =
   assert.equal(details?.sortOrder, 5);
 });
 
-test('rejects duplicate slugs', async () => {
-  await assert.rejects(
-    () => createCategory(input({ name: 'Duplikat' }), authorize),
-    (error: unknown) =>
-      error instanceof CategoryDomainError && error.code === 'DUPLICATE_SLUG',
-  );
+test('allocates a unique generated slug and ignores a client override', async () => {
+  const created = await createCategory(input({ slug: 'ignored' }), authorize);
+  categoryIds.push(created.id);
+  assert.equal(created.slug, `category-${run}-2`);
 });
 
 test('requires confirmation before hiding a category with active products from public catalog', async () => {

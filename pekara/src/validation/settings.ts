@@ -46,7 +46,7 @@ export const businessHoursIntervalSchema = z
     closeMinute: z.number().int().min(1).max(1440),
   })
   .refine(({ openMinute, closeMinute }) => openMinute < closeMinute, {
-    message: 'closeMinute mora biti veći od openMinute',
+    message: 'Početak intervala mora biti pre završetka.',
     path: ['closeMinute'],
   });
 

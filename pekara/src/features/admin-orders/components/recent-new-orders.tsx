@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import { formatDateTime } from '@/lib/datetime';
 
 import { formatRsd } from '@/lib/money';
 import type { AdminDashboardData } from '@/server/queries/admin-dashboard';
@@ -9,10 +9,7 @@ type RecentNewOrdersProps = {
 };
 
 function localTime(value: string, timezone: string): string {
-  return DateTime.fromISO(value, { zone: 'utc' })
-    .setZone(timezone)
-    .setLocale('sr-Latn')
-    .toFormat('dd. LLL yyyy. HH:mm');
+  return formatDateTime(value, timezone);
 }
 
 export function RecentNewOrders({ orders, timezone }: RecentNewOrdersProps) {

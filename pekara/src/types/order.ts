@@ -1,5 +1,11 @@
 export type PublicOrderStatus =
-  'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'COMPLETED' | 'CANCELLED';
+  | 'NEW'
+  | 'ACCEPTED'
+  | 'IN_PREPARATION'
+  | 'READY'
+  | 'LATE'
+  | 'COMPLETED'
+  | 'CANCELLED';
 
 export type OrderConfirmationDto = {
   orderId: string;

@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 
 import { PublicFooter } from '@/components/layout/public-footer';
 import { PublicHeader } from '@/components/layout/public-header';
+import { PublicBreadcrumbs } from '@/components/layout/public-breadcrumbs';
 import { CartDrawer } from '@/features/cart/components/cart-drawer';
 import { MobileCartBar } from '@/features/cart/components/mobile-cart-bar';
 
@@ -21,6 +22,9 @@ export default function PublicLayout({ children }: PublicLayoutProps) {
       </a>
       <PublicHeader />
       <main id="main-content" tabIndex={-1} className="flex-1">
+        <Suspense>
+          <PublicBreadcrumbs />
+        </Suspense>
         {children}
       </main>
       <Suspense fallback={null}>

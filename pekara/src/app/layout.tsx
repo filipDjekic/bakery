@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
-import type { ReactNode } from 'react';
+import { Suspense, type ReactNode } from 'react';
 
 import { buildRootMetadata } from '@/lib/site-metadata';
 import { getPublicChromeContent } from '@/server/queries/public-settings';
 
 import './globals.css';
+import { ToastProvider } from '@/components/ui/toast-provider';
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getPublicChromeContent();
@@ -19,6 +20,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="sr-Latn">
       <body className="bg-background text-foreground min-h-screen antialiased">
         {children}
+        <Suspense>
+          <ToastProvider />
+        </Suspense>
       </body>
     </html>
   );

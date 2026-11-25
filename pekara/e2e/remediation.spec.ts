@@ -28,17 +28,21 @@ test('admin saves exact RSD and verified metadata; failed validation retains inp
   const price = page.getByLabel('Cena (RSD)', { exact: true });
   await expect(price).toHaveValue('125,00');
   await price.fill('180,50');
-  await page.getByLabel('Jedinica prodaje (opciono)').fill('100 g');
+  await page
+    .getByLabel('Jedinica prodaje', { exact: true })
+    .selectOption('gram');
   await page
     .getByLabel('Podaci o alergenima (opciono)')
     .fill('Test podatak: gluten.');
   await page.getByRole('button', { name: 'Sačuvaj izmene' }).click();
-  await expect(page.getByRole('status')).toContainText(/sačuvan/i);
+  await expect(page.locator('main').getByRole('status')).toContainText(
+    /sačuvan/i,
+  );
   await page.reload();
   await expect(price).toHaveValue('180,50');
   await accessible(page);
   await page.goto(`/proizvodi/${seed.productSlug}`);
-  await expect(page.getByText('Jedinica prodaje: 100 g')).toBeVisible();
+  await expect(page.getByText('Jedinica prodaje: gram')).toBeVisible();
   await expect(page.getByText('Alergeni: Test podatak: gluten.')).toBeVisible();
   await page.goto(`/admin/products/${seed.productId}`);
   await price.fill('180,501');
@@ -65,12 +69,16 @@ test('admin saves exact RSD and verified metadata; failed validation retains inp
   // Restore through the real action, preserving real cache invalidation.
   await page.reload();
   await price.fill('125,00');
-  await page.getByLabel('Jedinica prodaje (opciono)').fill('komad');
+  await page
+    .getByLabel('Jedinica prodaje', { exact: true })
+    .selectOption('komad');
   await page
     .getByLabel('Podaci o alergenima (opciono)')
     .fill('Test podatak: sadrži gluten.');
   await page.getByRole('button', { name: 'Sačuvaj izmene' }).click();
-  await expect(page.getByRole('status')).toContainText(/sačuvan/i);
+  await expect(page.locator('main').getByRole('status')).toContainText(
+    /sačuvan/i,
+  );
 });
 test('active queue automatically shows a newly committed order and recovers from offline state', async ({
   page,

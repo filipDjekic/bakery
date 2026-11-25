@@ -22,7 +22,7 @@ function varchar<N extends number>(value: string, maxLength: N): Varchar<N> {
 
 type UpdateProductInput = ProductMutationInput & {
   id: string;
-  changeSlug: boolean;
+  changeSlug?: boolean;
   image?: StoredProductImage;
 };
 
@@ -51,7 +51,7 @@ export async function updateProduct(
     throw new ProductDomainError('NOT_FOUND', 'Proizvod ne postoji.');
   const parsed = productMutationSchema.safeParse({
     ...input,
-    slug: input.changeSlug ? input.slug : current.slug,
+    slug: current.slug,
   });
   if (!parsed.success)
     throw new ProductDomainError(
@@ -74,21 +74,11 @@ export async function updateProduct(
       'INACTIVE_CATEGORY',
       'Izabrana kategorija nije aktivna.',
     );
-  if (input.changeSlug && parsed.data.slug !== current.slug) {
-    const duplicate = await db.orm.public.Product.select('id')
-      .where({ slug: varchar(parsed.data.slug, 140) })
-      .first();
-    if (duplicate && duplicate.id !== current.id)
-      throw new ProductDomainError(
-        'DUPLICATE_SLUG',
-        'Slug već koristi drugi proizvod.',
-      );
-  }
   try {
     await db.orm.public.Product.where({ id: current.id }).update({
       categoryId: parsed.data.categoryId,
       name: varchar(parsed.data.name, 120),
-      slug: varchar(parsed.data.slug, 140),
+      slug: current.slug,
       description: varchar(parsed.data.description, 1000),
       priceMinor: parsed.data.priceMinor,
       unitLabel: parsed.data.unitLabel
@@ -119,7 +109,7 @@ export async function updateProduct(
   }
   return {
     id: current.id,
-    slug: parsed.data.slug,
+    slug: current.slug,
     oldImagePathname: current.imagePathname,
   };
 }

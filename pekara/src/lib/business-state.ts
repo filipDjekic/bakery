@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 
-import { localDateAtMinute } from './datetime';
+import { businessIntervalsOnDate, formatTime } from './datetime';
 
 export type WeeklyBusinessInterval = {
   weekday: number;
@@ -27,23 +27,20 @@ export function calculateCurrentBusinessState({
 }): CurrentBusinessState {
   const localNow = now.setZone(timezone);
   if (!localNow.isValid) throw new Error('Bakery current time is invalid.');
-  const minute = localNow.hour * 60 + localNow.minute;
   const today = businessHours
     .filter((hours) => hours.weekday === localNow.weekday)
-    .sort((left, right) => left.openMinute - right.openMinute);
-  const active = today.find(
-    (hours) => minute >= hours.openMinute && minute < hours.closeMinute,
-  );
-
-  if (active) {
-    const close = localDateAtMinute(
-      localNow.startOf('day'),
-      active.closeMinute,
+    .flatMap((hours) =>
+      businessIntervalsOnDate(localNow, hours.openMinute, hours.closeMinute),
     );
+  const active = today.find(
+    (interval) => localNow >= interval.start && localNow < interval.end,
+  );
+  if (active) {
+    const close = active.end;
     return {
       isOpen: true,
       closesAt: close.toUTC().toISO(),
-      closesAtLabel: close.toFormat('HH:mm'),
+      closesAtLabel: formatTime(close.toUTC().toISO()!, timezone),
       opensAtNext: null,
       opensAtNextLabel: null,
     };
@@ -54,8 +51,17 @@ export function calculateCurrentBusinessState({
     const intervals = businessHours
       .filter((hours) => hours.weekday === date.weekday)
       .sort((left, right) => left.openMinute - right.openMinute);
-    for (const interval of intervals) {
-      const opening = localDateAtMinute(date, interval.openMinute);
+    const openings = intervals
+      .flatMap((interval) =>
+        businessIntervalsOnDate(
+          date,
+          interval.openMinute,
+          interval.closeMinute,
+        ),
+      )
+      .sort((a, b) => a.start.toMillis() - b.start.toMillis());
+    for (const interval of openings) {
+      const opening = interval.start;
       if (opening <= localNow) continue;
       const dayLabel =
         offset === 0
@@ -68,7 +74,7 @@ export function calculateCurrentBusinessState({
         closesAt: null,
         closesAtLabel: null,
         opensAtNext: opening.toUTC().toISO(),
-        opensAtNextLabel: `${dayLabel} u ${opening.toFormat('HH:mm')}`,
+        opensAtNextLabel: `${dayLabel} u ${formatTime(opening.toUTC().toISO()!, timezone)}`,
       };
     }
   }

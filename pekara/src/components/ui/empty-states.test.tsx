@@ -10,20 +10,24 @@ describe('actionable administrative empty states', () => {
   it('offers the first product action', () => {
     render(<ProductsTable products={[]} />);
     expect(
-      screen.getByRole('heading', { name: 'Još nema proizvoda' }),
+      screen.getByRole('heading', {
+        name: 'Nema proizvoda za izabrane filtere',
+      }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: 'Dodaj prvi proizvod' }),
+      screen.getByRole('link', { name: 'Dodaj proizvod' }),
     ).toHaveAttribute('href', '/admin/products/new');
   });
 
   it('offers the first category action', () => {
     render(<CategoriesTable categories={[]} />);
     expect(
-      screen.getByRole('heading', { name: 'Još nema kategorija' }),
+      screen.getByRole('heading', {
+        name: 'Nema kategorija za izabrane filtere',
+      }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: 'Dodaj prvu kategoriju' }),
+      screen.getByRole('link', { name: 'Dodaj kategoriju' }),
     ).toHaveAttribute('href', '/admin/categories/new');
   });
 });

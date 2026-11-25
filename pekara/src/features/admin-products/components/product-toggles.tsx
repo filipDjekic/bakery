@@ -1,6 +1,7 @@
 'use client';
 
 import { useId, useRef, useState, useTransition } from 'react';
+import { toast } from '@/lib/toast';
 
 import { setProductActive } from '../actions/set-product-active';
 import { setProductAvailable } from '../actions/set-product-available';
@@ -29,11 +30,18 @@ export function ProductToggles({
         if (kind === 'active') {
           await setProductActive(id, value);
           setActive(value);
+          toast.success(
+            value ? 'Proizvod je aktiviran.' : 'Proizvod je deaktiviran.',
+          );
         } else {
           await setProductAvailable(id, value);
           setAvailable(value);
+          toast.success(
+            value ? 'Proizvod je dostupan.' : 'Proizvod nije dostupan.',
+          );
         }
       } catch {
+        toast.error('Promena nije sačuvana. Pokušajte ponovo.');
         setError('Promena nije sačuvana. Osvežite podatke i pokušajte ponovo.');
       }
     });

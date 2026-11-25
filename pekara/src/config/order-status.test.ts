@@ -17,6 +17,7 @@ test('UI metadata covers every order status with a visible label', () => {
     'ACCEPTED',
     'IN_PREPARATION',
     'READY',
+    'LATE',
     'COMPLETED',
     'CANCELLED',
   ];
@@ -34,6 +35,7 @@ test('active queue statuses contain every non-terminal workflow state', () => {
     'ACCEPTED',
     'IN_PREPARATION',
     'READY',
+    'LATE',
   ]);
   assert.equal(isActiveOrderStatus('NEW'), true);
   assert.equal(isActiveOrderStatus('ACCEPTED'), true);
@@ -65,4 +67,10 @@ test('completed and cancelled statuses are terminal', () => {
       assert.equal(canTransitionOrderStatus(status, target), false);
     }
   }
+});
+
+test('late orders can only be completed or cancelled by staff', () => {
+  assert.deepEqual(ORDER_STATUS_TRANSITIONS.LATE, ['COMPLETED', 'CANCELLED']);
+  assert.equal(canTransitionOrderStatus('NEW', 'LATE'), false);
+  assert.equal(canTransitionOrderStatus('LATE', 'NEW'), false);
 });

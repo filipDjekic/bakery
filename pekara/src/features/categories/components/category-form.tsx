@@ -1,8 +1,9 @@
 'use client';
+import { slugCandidate } from '@/lib/slug';
 import { usePreservedFormAction } from '@/lib/use-preserved-form-action';
 
 import { Input, Textarea } from '@/components/ui/input';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import type { AdminCategoryDetails } from '../../../server/queries/admin-categories';
@@ -16,10 +17,12 @@ export function CategoryForm({
   category?: AdminCategoryDetails;
 }) {
   const router = useRouter();
+  const [name, setName] = useState(category?.name ?? '');
   const action = category ? updateCategoryAction : createCategoryAction;
   const [state, formAction, pending] = usePreservedFormAction(
     action,
     initialCategoryActionState,
+    category ? undefined : 'Kategorija je kreirana.',
   );
   useEffect(() => {
     if (state.status === 'success' && state.message?.startsWith('/'))
@@ -46,7 +49,8 @@ export function CategoryForm({
               state.fieldErrors?.name ? 'name-error' : undefined
             }
             name="name"
-            defaultValue={category?.name}
+            value={name}
+            onChange={(event) => setName(event.target.value)}
           />
           {state.fieldErrors?.name ? (
             <span id="name-error" className="block text-sm text-red-800">
@@ -68,8 +72,9 @@ export function CategoryForm({
               state.fieldErrors?.slug ? 'slug-error' : undefined
             }
             name="slug"
-            defaultValue={category?.slug}
-            readOnly={Boolean(category)}
+            value={category?.slug ?? slugCandidate(name, 100)}
+            className="bg-surface-muted text-muted"
+            readOnly
           />
           {state.fieldErrors?.slug ? (
             <span id="slug-error" className="block text-sm text-red-800">

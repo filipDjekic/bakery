@@ -1,3 +1,4 @@
+import { formatCalendarDate } from '../../lib/datetime.ts';
 import 'server-only';
 
 import { DateTime } from 'luxon';
@@ -172,7 +173,7 @@ export function calculateHomepageOperationalState(
       nextPickupLabel =
         dayOffset === 0
           ? firstSlot.label
-          : `${date.setLocale('sr-Latn').toFormat('dd. LLL')} u ${firstSlot.label}`;
+          : `${formatCalendarDate(dateIso, settings.timezone)} u ${firstSlot.label}`;
       break;
     }
   }

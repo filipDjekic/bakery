@@ -2,7 +2,8 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { safeOrderReturn } from '@/features/admin-orders/lib/order-return';
 import { RetryNotificationButton } from '@/features/admin-orders/components/retry-notification-button';
-import { DateTime } from 'luxon';
+import { formatDateTime as localTime } from '@/lib/datetime';
+import { OrderPrice } from '@/features/orders/components/order-price';
 import { notFound } from 'next/navigation';
 
 import { OrderStatusActions } from '@/features/admin-orders/components/order-status-actions';
@@ -12,18 +13,6 @@ import { getAdminOrder } from '@/server/queries/admin-order';
 import { getPickupBakerySettings } from '@/server/repositories/bakery-settings';
 
 export const instant = false;
-
-function localTime(value: Date | string, timezone: string): string {
-  const dateTime =
-    value instanceof Date
-      ? DateTime.fromJSDate(value, { zone: 'utc' })
-      : DateTime.fromISO(value, { zone: 'utc' });
-
-  return dateTime
-    .setZone(timezone)
-    .setLocale('sr-Latn')
-    .toFormat('dd. LLLL yyyy. HH:mm');
-}
 
 export default async function AdminOrderPage({
   params,
@@ -80,11 +69,7 @@ export default async function AdminOrderPage({
           label="Preuzimanje"
           value={localTime(order.pickupAt, settings.timezone)}
         />
-        <SummaryItem
-          label="Ukupno"
-          value={formatRsd(order.totalMinor)}
-          strong
-        />
+        <SummaryItem label="Ukupno" value={<OrderPrice {...order} />} strong />
       </dl>
 
       <section className="border-border bg-surface overflow-hidden rounded-xl border shadow-sm">
@@ -126,7 +111,7 @@ export default async function AdminOrderPage({
         <div className="border-border bg-surface-muted flex items-center justify-between border-t px-5 py-4 sm:px-6">
           <span className="font-semibold">Ukupno porudžbine</span>
           <span className="text-lg font-bold tabular-nums">
-            {formatRsd(order.totalMinor)}
+            <OrderPrice {...order} />
           </span>
         </div>
       </section>
@@ -199,6 +184,7 @@ export default async function AdminOrderPage({
             IN_PREPARATION:
               'Označite porudžbinu kao spremnu kada završite pripremu.',
             READY: 'Po preuzimanju označite porudžbinu kao završenu.',
+            LATE: 'Porudžbina kasni i ima popust od 15%. Završite je po preuzimanju ili je otkažite.',
             COMPLETED: 'Porudžbina je završena; status se više ne menja.',
             CANCELLED: 'Porudžbina je otkazana; status se više ne menja.',
           }[order.status]

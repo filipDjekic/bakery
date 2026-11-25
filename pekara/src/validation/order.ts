@@ -5,6 +5,7 @@ const status = z.enum([
   'ACCEPTED',
   'IN_PREPARATION',
   'READY',
+  'LATE',
   'COMPLETED',
   'CANCELLED',
 ]);

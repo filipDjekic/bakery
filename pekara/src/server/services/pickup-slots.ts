@@ -4,6 +4,8 @@ import { DateTime } from 'luxon';
 
 import {
   localDateAtMinute,
+  formatTime,
+  formatCalendarDate,
   parseLocalDate,
   toUtcIso,
 } from '../../lib/datetime.ts';
@@ -110,23 +112,30 @@ export function generatePickupSlots({
       continue;
     }
 
-    const intervalStart = localDateAtMinute(localDate, hours.openMinute);
-    const intervalEnd = localDateAtMinute(localDate, hours.closeMinute);
-
+    // Iterate wall-clock minutes, then enumerate real instants. DST gaps are
+    // skipped and repeated times keep separate, offset-bearing identities.
     for (
-      let slot = intervalStart;
-      slot < intervalEnd;
-      slot = slot.plus({ minutes: settings.pickupSlotMinutes })
+      let minute = hours.openMinute;
+      minute < hours.closeMinute;
+      minute += settings.pickupSlotMinutes
     ) {
-      if (slot <= now || slot < earliestPickup) {
+      const local = localDateAtMinute(localDate, minute);
+      if (
+        local.toISODate() !== date ||
+        local.hour * 60 + local.minute !== minute
+      )
         continue;
+      const candidates = local.getPossibleOffsets();
+      for (const slot of candidates) {
+        if (slot <= now || slot < earliestPickup) continue;
+        const value = toUtcIso(slot);
+        uniqueSlots.set(value, {
+          value,
+          label:
+            formatTime(value, settings.timezone) +
+            (candidates.length > 1 ? ` (UTC${slot.toFormat('ZZ')})` : ''),
+        });
       }
-
-      const value = toUtcIso(slot);
-      uniqueSlots.set(value, {
-        value,
-        label: slot.setLocale('sr-Latn').toFormat('HH:mm'),
-      });
     }
   }
 
@@ -181,7 +190,7 @@ export async function getPickupAvailability(
     dates.push({
       date: dateIso,
       label,
-      shortDateLabel: date.setLocale('sr-Latn').toFormat('dd. LLL'),
+      shortDateLabel: formatCalendarDate(dateIso, settings.timezone),
     });
     if (!earliestSlot && slots[0]) {
       earliestSlot = { ...slots[0], date: dateIso, dateLabel: label };

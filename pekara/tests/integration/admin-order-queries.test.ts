@@ -149,8 +149,10 @@ test('active queue includes only operational statuses and is pickup-first with s
     'createdAt',
     'currencyCode',
     'customerName',
+    'discountMinor',
     'id',
     'orderNumber',
+    'originalTotalMinor',
     'pickupAt',
     'status',
     'totalMinor',
@@ -203,7 +205,7 @@ test('invalid filters normalize safely and an empty result remains page one', as
   });
 });
 
-test('active pagination exposes every order beyond the first hundred without overlap', async () => {
+test('active pagination exposes every order in pages of ten without overlap', async () => {
   const rows = await db.orm.public.Order.select('id').createAll(
     Array.from({ length: 103 }, (_, index) => ({
       orderNumber: varchar(`${orderNumberPrefix}-X${index}`, 32),
@@ -220,14 +222,14 @@ test('active pagination exposes every order beyond the first hundred without ove
   );
   orderIds.push(...rows.map((row) => row.id));
   const first = await getActiveAdminOrders(authorize, 1);
-  const second = await getActiveAdminOrders(authorize, 2);
-  assert.equal(first.orders.length, 100);
-  assert.equal(second.page, 2);
-  assert.ok(second.orders.length > 0);
-  assert.equal(first.totalPages, 2);
-  const ids = new Set([...first.orders, ...second.orders].map((row) => row.id));
+  assert.equal(first.orders.length, 10);
+  const pages = [first];
+  for (let page = 2; page <= first.totalPages!; page++)
+    pages.push(await getActiveAdminOrders(authorize, page));
+  const rowsFromPages = pages.flatMap((result) => result.orders);
+  const ids = new Set(rowsFromPages.map((row) => row.id));
   assert.equal(ids.size, first.totalItems);
-  assert.equal(ids.size, first.orders.length + second.orders.length);
+  assert.equal(ids.size, rowsFromPages.length);
 });
 test('protected order detail resolves employee and cancellation history and rejects malformed UUIDs', async () => {
   const id = crypto.randomUUID();

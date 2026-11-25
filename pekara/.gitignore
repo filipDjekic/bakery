@@ -86,3 +86,5 @@ Thumbs.db
 # Local Playwright browser binaries
 /.cache/ms-playwright/
 /.cache/performance/
+/.cache/admin-test-postgres/
+/.cache/admin-*.json

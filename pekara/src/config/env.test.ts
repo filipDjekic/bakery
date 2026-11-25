@@ -10,6 +10,7 @@ const productionEnvironment = {
   BETTER_AUTH_URL: 'https://pekara.example.test',
   BETTER_AUTH_SECRET: 'a'.repeat(32),
   RATE_LIMIT_HMAC_SECRET: 'b'.repeat(32),
+  CRON_SECRET: 'e'.repeat(32),
   BLOB_READ_WRITE_TOKEN: 'c'.repeat(32),
   RESEND_API_KEY: 're_'.padEnd(32, 'd'),
   EMAIL_FROM: 'Pekara <porudzbine@pekara.example.test>',

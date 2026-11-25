@@ -1,11 +1,4 @@
-function formatMinuteOfDay(minutes: number): string {
-  const hours = Math.floor(minutes / 60);
-  const remainingMinutes = minutes % 60;
-
-  return `${hours.toString().padStart(2, '0')}:${remainingMinutes
-    .toString()
-    .padStart(2, '0')}`;
-}
+import { minutesToTimeString } from './datetime';
 
 type BusinessHoursInterval = {
   openMinute: number;
@@ -22,9 +15,7 @@ export function formatBusinessHours(
   return intervals
     .map(
       (interval) =>
-        `${formatMinuteOfDay(interval.openMinute)}–${formatMinuteOfDay(
-          interval.closeMinute,
-        )}`,
+        `${minutesToTimeString(interval.openMinute)}–${minutesToTimeString(interval.closeMinute, true)}`,
     )
     .join(', ');
 }

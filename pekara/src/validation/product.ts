@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+import { normalizeSlug } from '../lib/slug.ts';
+import { SALE_UNITS } from '../config/sale-units.ts';
+
 import { PRODUCT_LIMITS } from '../config/limits.ts';
 
 const plainText = z
@@ -9,39 +12,27 @@ const plainText = z
   .max(PRODUCT_LIMITS.description, 'Opis je predugačak.')
   .refine((value) => !/[<>]/.test(value), 'Opis mora biti običan tekst.');
 
-export function normalizeProductSlug(value: string): string {
-  return value
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
+export { normalizeSlug as normalizeProductSlug } from '../lib/slug.ts';
 
 export const productMutationSchema = z.object({
   name: z
     .string()
     .trim()
     .min(1, 'Naziv je obavezan.')
-    .max(PRODUCT_LIMITS.name, 'Naziv je predugačak.'),
-  slug: z
-    .string()
-    .transform(normalizeProductSlug)
-    .pipe(
-      z
-        .string()
-        .min(1, 'Slug je obavezan.')
-        .max(PRODUCT_LIMITS.slug, 'Slug je predugačak.')
-        .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug nije validan.'),
+    .max(PRODUCT_LIMITS.name, 'Naziv je predugačak.')
+    .refine(
+      (name) => normalizeSlug(name).length > 0,
+      'Naziv mora sadržati slova ili brojeve za URL.',
     ),
+  // Client slug is ignored by services; published slugs never change.
+  slug: z
+    .unknown()
+    .optional()
+    .transform(() => undefined),
   description: plainText,
   unitLabel: z
-    .string()
-    .trim()
-    .max(40)
-    .refine((v) => !/[<>]/.test(v), 'Unesite običan tekst.')
-    .optional(),
+    .enum(SALE_UNITS, { error: 'Izaberite jedinicu prodaje.' })
+    .default('komad'),
   allergenInfo: z
     .string()
     .trim()

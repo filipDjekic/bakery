@@ -16,7 +16,7 @@ const valid = {
 
 test('normalizes a product slug and trims shared fields', () => {
   const result = productMutationSchema.parse(valid);
-  assert.equal(result.slug, 'cokoladni-kroasan');
+  assert.equal(result.slug, undefined);
   assert.equal(normalizeProductSlug('  Hleb & Pecivo  '), 'hleb-pecivo');
 });
 
@@ -40,6 +40,23 @@ test('rejects malformed categories and markup descriptions', () => {
   assert.equal(
     productMutationSchema.safeParse({ ...valid, description: '<b>Opis</b>' })
       .success,
+    false,
+  );
+});
+
+test('uses a controlled sale unit, defaults to a piece and rejects unsupported units', () => {
+  assert.equal(productMutationSchema.parse(valid).unitLabel, 'komad');
+  assert.equal(
+    productMutationSchema.safeParse({ ...valid, unitLabel: '100 g' }).success,
+    false,
+  );
+  assert.equal(
+    productMutationSchema.safeParse({ ...valid, unitLabel: 'kilogram' })
+      .success,
+    true,
+  );
+  assert.equal(
+    productMutationSchema.safeParse({ ...valid, name: '!!!' }).success,
     false,
   );
 });

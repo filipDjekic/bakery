@@ -57,6 +57,7 @@ const runtimeEnvSchema = z
     BETTER_AUTH_URL: origin('BETTER_AUTH_URL').optional(),
     BETTER_AUTH_SECRET: optionalSecret('BETTER_AUTH_SECRET'),
     RATE_LIMIT_HMAC_SECRET: optionalSecret('RATE_LIMIT_HMAC_SECRET'),
+    CRON_SECRET: optionalSecret('CRON_SECRET'),
     BLOB_READ_WRITE_TOKEN: optionalSecret('BLOB_READ_WRITE_TOKEN'),
     RESEND_API_KEY: optionalSecret('RESEND_API_KEY'),
     EMAIL_FROM: optionalSecret('EMAIL_FROM'),
@@ -74,6 +75,14 @@ const runtimeEnvSchema = z
       context.addIssue({ code: 'custom', path: [key], message });
     if (value.NODE_ENV === 'production') {
       const localProduction = isLocalProductionRuntime(value);
+      if (
+        value.VERCEL === '1' &&
+        (!value.CRON_SECRET || value.CRON_SECRET.length < 32)
+      )
+        issue(
+          'CRON_SECRET',
+          'CRON_SECRET must contain at least 32 characters for scheduled order processing.',
+        );
       if (value.APP_ENV === 'local-production' && !localProduction)
         issue(
           'APP_ENV',

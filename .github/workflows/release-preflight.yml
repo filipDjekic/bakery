@@ -16,6 +16,7 @@ jobs:
       BETTER_AUTH_URL: ${{ vars.BETTER_AUTH_URL }}
       BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
       RATE_LIMIT_HMAC_SECRET: ${{ secrets.RATE_LIMIT_HMAC_SECRET }}
+      CRON_SECRET: ${{ secrets.CRON_SECRET }}
       VERCEL: ${{ vars.VERCEL }}
       TRUSTED_PROXY_MODE: ${{ vars.TRUSTED_PROXY_MODE }}
       TRUSTED_PROXY_HOPS: ${{ vars.TRUSTED_PROXY_HOPS }}

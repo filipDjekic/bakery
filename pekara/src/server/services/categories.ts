@@ -3,6 +3,8 @@ import 'server-only';
 import type { Varchar } from '@prisma/orm-postgres/target/codec-types';
 import type { ZodIssue } from 'zod';
 
+import { slugCandidate } from '../../lib/slug.ts';
+
 import { db } from '../../prisma/db.ts';
 import {
   categoryMutationSchema,
@@ -55,32 +57,25 @@ export async function createCategory(
       'Podaci kategorije nisu validni.',
       parsed.error.issues,
     );
-  const duplicate = await db.orm.public.Category.select('id')
-    .where({ slug: varchar(parsed.data.slug, 100) })
-    .first();
-  if (duplicate)
-    throw new CategoryDomainError(
-      'DUPLICATE_SLUG',
-      'Slug već koristi druga kategorija.',
-    );
-  try {
-    return await db.orm.public.Category.select('id', 'slug').create({
-      name: varchar(parsed.data.name, 80),
-      slug: varchar(parsed.data.slug, 100),
-      description: parsed.data.description
-        ? varchar(parsed.data.description, 300)
-        : null,
-      sortOrder: parsed.data.sortOrder,
-      isActive: parsed.data.isActive,
-    });
-  } catch (error) {
-    if (isSlugConflict(error))
-      throw new CategoryDomainError(
-        'DUPLICATE_SLUG',
-        'Slug već koristi druga kategorija.',
-      );
-    throw error;
+  for (let attempt = 0; attempt < 32; attempt += 1) {
+    try {
+      return await db.orm.public.Category.select('id', 'slug').create({
+        name: varchar(parsed.data.name, 80),
+        slug: varchar(slugCandidate(parsed.data.name, 100, attempt), 100),
+        description: parsed.data.description
+          ? varchar(parsed.data.description, 300)
+          : null,
+        sortOrder: parsed.data.sortOrder,
+        isActive: parsed.data.isActive,
+      });
+    } catch (error) {
+      if (!isSlugConflict(error)) throw error;
+    }
   }
+  throw new CategoryDomainError(
+    'DUPLICATE_SLUG',
+    'Nije moguće dodeliti jedinstven URL. Pokušajte ponovo.',
+  );
 }
 
 export async function updateCategory(

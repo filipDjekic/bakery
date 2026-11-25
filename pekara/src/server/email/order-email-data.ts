@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { DateTime } from 'luxon';
+import { formatDateTime } from '../../lib/datetime.ts';
 
 import type { OrderItemSnapshot } from '../repositories/orders.ts';
 
@@ -33,8 +33,5 @@ export function formatOrderMoney(
 }
 
 export function formatOrderPickup(pickupAt: string, timezone: string): string {
-  return DateTime.fromISO(pickupAt, { zone: 'utc' })
-    .setZone(timezone)
-    .setLocale('sr-Latn')
-    .toFormat('dd. LLLL yyyy. HH:mm');
+  return formatDateTime(pickupAt, timezone);
 }

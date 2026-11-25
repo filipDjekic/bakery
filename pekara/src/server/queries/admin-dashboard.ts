@@ -16,6 +16,7 @@ export type AdminDashboardData = {
     ACCEPTED: number;
     IN_PREPARATION: number;
     READY: number;
+    LATE?: number;
     todayCompleted: number;
   };
   todayRevenueMinor: number;
@@ -37,7 +38,7 @@ type AdminDashboardOptions = {
 };
 
 async function countByStatus(
-  status: 'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY',
+  status: 'NEW' | 'ACCEPTED' | 'IN_PREPARATION' | 'READY' | 'LATE',
 ) {
   return db.orm.public.Order.where({ status }).aggregate((aggregate) => ({
     count: aggregate.count(),
@@ -69,6 +70,7 @@ export async function getAdminDashboard({
     acceptedCount,
     preparationCount,
     readyCount,
+    lateCount,
     completed,
     recent,
   ] = await Promise.all([
@@ -76,12 +78,14 @@ export async function getAdminDashboard({
     countByStatus('ACCEPTED'),
     countByStatus('IN_PREPARATION'),
     countByStatus('READY'),
+    countByStatus('LATE'),
     db.orm.public.Order.where({ status: 'COMPLETED' })
       .where((order) => order.updatedAt.gte(todayStart))
       .where((order) => order.updatedAt.lt(tomorrowStart))
-      .aggregate((aggregate) => ({ 
-        count: aggregate.count(), 
-        revenueMinor: aggregate.sum('totalMinor') })),
+      .aggregate((aggregate) => ({
+        count: aggregate.count(),
+        revenueMinor: aggregate.sum('totalMinor'),
+      })),
     db.orm.public.Order.select(
       'id',
       'orderNumber',
@@ -103,6 +107,7 @@ export async function getAdminDashboard({
       ACCEPTED: acceptedCount.count,
       IN_PREPARATION: preparationCount.count,
       READY: readyCount.count,
+      LATE: lateCount.count,
       todayCompleted: completed.count,
     },
     todayRevenueMinor: completed.revenueMinor ?? 0,

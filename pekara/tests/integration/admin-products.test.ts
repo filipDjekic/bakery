@@ -138,19 +138,13 @@ test('rejects inactive categories, duplicate slugs and active products without i
     (error: unknown) =>
       error instanceof ProductDomainError && error.code === 'IMAGE_REQUIRED',
   );
-  await assert.rejects(
-    () =>
-      createProduct(
-        {
-          ...input(),
-          image: { ...image, pathname: `products/duplicate-${run}.png` },
-        },
-        { authorize, storage: cleanupStorage },
-      ),
-    (error: unknown) =>
-      error instanceof ProductDomainError && error.code === 'DUPLICATE_SLUG',
+  const duplicate = await createProduct(
+    { ...input(), slug: 'client-ignored' },
+    { authorize, storage: cleanupStorage },
   );
-  assert.ok(deleted.includes(`products/duplicate-${run}.png`));
+  productIds.push(duplicate.id);
+  assert.equal(duplicate.slug, `product-${run}-2`);
+  assert.deepEqual(deleted, [image.pathname]);
 });
 
 test('updates price without changing slug or historical order item snapshots', async () => {
@@ -183,7 +177,7 @@ test('updates price without changing slug or historical order item snapshots', a
       ...input({ id: undefined, image: undefined }),
       id: productId,
       slug: 'ignored-new-slug',
-      changeSlug: false,
+      changeSlug: true,
       priceMinor: 30000,
     },
     authorize,

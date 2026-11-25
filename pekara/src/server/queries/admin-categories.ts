@@ -1,3 +1,9 @@
+import {
+  containsPattern,
+  listFilters,
+  paginationFor,
+  type SearchParams,
+} from '../../lib/list-query.ts';
 import 'server-only';
 
 import { db } from '../../prisma/db.ts';
@@ -46,15 +52,34 @@ function toRow(category: {
 export async function getAdminCategories(
   authorize: AdminAuthorizer = requireAdmin,
 ): Promise<AdminCategoryRow[]> {
+  return (await getAdminCategoriesPage({}, authorize)).items;
+}
+
+export async function getAdminCategoriesPage(
+  input: SearchParams,
+  authorize: AdminAuthorizer = requireAdmin,
+) {
   await authorize();
-  const rows = await db.orm.public.Category.include('products', (products) =>
-    products.select('isActive'),
-  )
+  const filters = listFilters(input);
+  let query = db.orm.public.Category;
+  if (filters.q)
+    query = query.where((c) => c.name.ilike(containsPattern(filters.q)));
+  if (filters.active)
+    query = query.where({ isActive: filters.active === 'true' });
+  const count = await query.aggregate((a) => ({ count: a.count() }));
+  const pagination = paginationFor(
+    count.count,
+    Array.isArray(input.page) ? input.page[0] : input.page,
+  );
+  const rows = await query
+    .include('products', (products) => products.select('isActive'))
     .orderBy((category) => category.sortOrder.asc())
     .orderBy((category) => category.name.asc())
     .orderBy((category) => category.id.asc())
+    .offset((pagination.page - 1) * pagination.pageSize)
+    .limit(pagination.pageSize)
     .all();
-  return rows.map(toRow);
+  return { items: rows.map(toRow), pagination, filters };
 }
 
 export async function getAdminCategory(

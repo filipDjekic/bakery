@@ -11,6 +11,8 @@ export type PublicOrderConfirmation = {
   status: PublicOrderStatus;
   pickupAt: string;
   totalMinor: number;
+  originalTotalMinor?: number | null;
+  discountMinor?: number;
   currencyCode: string;
   items: Array<{
     id: string;
@@ -60,6 +62,8 @@ export async function getPublicOrderConfirmation(
     status: order.status,
     pickupAt: new Date(order.pickupAt).toISOString(),
     totalMinor: order.totalMinor,
+    originalTotalMinor: order.originalTotalMinor,
+    discountMinor: order.discountMinor,
     currencyCode: order.currencyCode,
     items: order.items.map((item) => ({
       id: item.id,

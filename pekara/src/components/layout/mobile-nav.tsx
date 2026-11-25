@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
@@ -8,9 +9,10 @@ import { Button } from '@/components/ui/button';
 import { focusRingInsetClassName } from '@/components/ui/focus';
 import { cn } from '@/lib/cn';
 
-import { publicNavigation } from './public-nav';
+import { publicNavigation } from './public-navigation';
 
 export function MobileNav() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -55,9 +57,13 @@ export function MobileNav() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
+                    aria-current={pathname === item.href ? 'page' : undefined}
                     onClick={() => setIsOpen(false)}
                     className={cn(
-                      'text-foreground hover:bg-surface-muted block min-h-11 rounded-lg px-3 py-3 font-semibold transition-colors',
+                      pathname === item.href
+                        ? 'bg-surface-muted text-primary'
+                        : 'text-foreground',
+                      'hover:bg-surface-muted block min-h-11 rounded-lg px-3 py-3 font-semibold transition-colors',
                       focusRingInsetClassName,
                     )}
                   >

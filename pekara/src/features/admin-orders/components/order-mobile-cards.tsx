@@ -2,7 +2,7 @@ import { DateTime } from 'luxon';
 import Link from 'next/link';
 
 import { isActiveOrderStatus } from '@/config/order-status';
-import { formatRsd } from '@/lib/money';
+import { OrderPrice } from '@/features/orders/components/order-price';
 import type { AdminOrdersResult } from '@/server/queries/admin-orders';
 
 import {
@@ -56,7 +56,7 @@ export function OrderMobileCards({
                   Ukupno
                 </dt>
                 <dd className="mt-1 font-bold tabular-nums">
-                  {formatRsd(order.totalMinor)}
+                  <OrderPrice {...order} />
                 </dd>
               </div>
               <div>

@@ -1,7 +1,7 @@
-import { DateTime } from 'luxon';
+import { formatDateTime } from '@/lib/datetime';
 import Link from 'next/link';
 
-import { formatRsd } from '@/lib/money';
+import { OrderPrice } from '@/features/orders/components/order-price';
 import type { AdminOrdersResult } from '@/server/queries/admin-orders';
 
 import { OrderStatusBadge } from './order-status-badge';
@@ -13,10 +13,7 @@ type OrdersTableProps = {
 };
 
 function localTime(value: string, timezone: string): string {
-  return DateTime.fromISO(value, { zone: 'utc' })
-    .setZone(timezone)
-    .setLocale('sr-Latn')
-    .toFormat('dd. LLL yyyy. HH:mm');
+  return formatDateTime(value, timezone);
 }
 
 export function OrdersTable({
@@ -65,7 +62,7 @@ export function OrdersTable({
               </td>
               <td className="px-4 py-3">{order.customerName}</td>
               <td className="px-4 py-3 text-right font-semibold whitespace-nowrap tabular-nums">
-                {formatRsd(order.totalMinor)}
+                <OrderPrice {...order} />
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
                 <OrderStatusBadge status={order.status} />

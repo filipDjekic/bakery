@@ -32,6 +32,12 @@ export const ORDER_STATUS_META = {
     dotClassName: 'bg-emerald-500',
     actionLabel: 'Označi kao spremnu',
   },
+  LATE: {
+    label: 'Kasni',
+    badgeClassName: 'border-red-400 bg-red-50 text-red-900',
+    dotClassName: 'bg-red-600',
+    actionLabel: 'Kasni',
+  },
   COMPLETED: {
     label: 'Završena',
     badgeClassName: 'border-slate-300 bg-slate-100 text-slate-800',
@@ -55,6 +61,7 @@ export const ORDER_STATUS_TRANSITIONS = {
   ACCEPTED: ['IN_PREPARATION', 'CANCELLED'],
   IN_PREPARATION: ['READY', 'CANCELLED'],
   READY: ['COMPLETED', 'CANCELLED'],
+  LATE: ['COMPLETED', 'CANCELLED'],
   COMPLETED: [],
   CANCELLED: [],
 } as const satisfies Record<PublicOrderStatus, readonly PublicOrderStatus[]>;
@@ -69,6 +76,7 @@ export const ACTIVE_ORDER_STATUSES = [
   'ACCEPTED',
   'IN_PREPARATION',
   'READY',
+  'LATE',
 ] as const satisfies readonly PublicOrderStatus[];
 
 export function isActiveOrderStatus(status: PublicOrderStatus): boolean {

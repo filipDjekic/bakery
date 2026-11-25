@@ -13,7 +13,7 @@ const valid = {
 
 test('normalizes category input and allows an empty optional description', () => {
   const result = categoryMutationSchema.parse({ ...valid, description: ' ' });
-  assert.equal(result.slug, 'slatko-pecivo');
+  assert.equal(result.slug, undefined);
   assert.equal(result.description, null);
 });
 

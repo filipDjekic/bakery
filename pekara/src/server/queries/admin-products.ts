@@ -1,3 +1,9 @@
+import {
+  containsPattern,
+  listFilters,
+  paginationFor,
+  type SearchParams,
+} from '../../lib/list-query.ts';
 import 'server-only';
 
 import { db } from '../../prisma/db.ts';
@@ -46,14 +52,36 @@ export type AdminProductDetails = {
 export async function getAdminProducts(
   authorize: AdminAuthorizer = requireAdmin,
 ): Promise<AdminProductRow[]> {
+  return (await getAdminProductsPage({}, authorize)).items;
+}
+
+export async function getAdminProductsPage(
+  input: SearchParams,
+  authorize: AdminAuthorizer = requireAdmin,
+) {
   await authorize();
-  const rows = await db.orm.public.Product.include('category', (category) =>
-    category.select('name', 'isActive'),
-  )
+  const filters = listFilters(input);
+  let query = db.orm.public.Product;
+  if (filters.q)
+    query = query.where((p) => p.name.ilike(containsPattern(filters.q)));
+  if (filters.active)
+    query = query.where({ isActive: filters.active === 'true' });
+  if (filters.available)
+    query = query.where({ isAvailable: filters.available === 'true' });
+  if (filters.category) query = query.where({ categoryId: filters.category });
+  const count = await query.aggregate((a) => ({ count: a.count() }));
+  const pagination = paginationFor(
+    count.count,
+    Array.isArray(input.page) ? input.page[0] : input.page,
+  );
+  const rows = await query
+    .include('category', (category) => category.select('name', 'isActive'))
     .orderBy((product) => product.updatedAt.desc())
     .orderBy((product) => product.id.asc())
+    .offset((pagination.page - 1) * pagination.pageSize)
+    .limit(pagination.pageSize)
     .all();
-  return rows.map((product) => ({
+  const items: AdminProductRow[] = rows.map((product) => ({
     id: product.id,
     name: product.name,
     slug: product.slug,
@@ -67,6 +95,7 @@ export async function getAdminProducts(
     isAvailable: product.isAvailable,
     updatedAt: new Date(product.updatedAt).toISOString(),
   }));
+  return { items, pagination, filters };
 }
 
 export async function getAdminCategoryOptions(

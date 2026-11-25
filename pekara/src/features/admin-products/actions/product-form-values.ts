@@ -14,7 +14,8 @@ export function productValuesFromFormData(
     description: String(formData.get('description') ?? ''),
     priceMinor:
       parseRsdInput(String(formData.get('priceRsd') ?? '')) ?? Number.NaN,
-    unitLabel: String(formData.get('unitLabel') ?? ''),
+    unitLabel: (formData.get('unitLabel') ??
+      'komad') as ProductMutationInput['unitLabel'],
     allergenInfo: String(formData.get('allergenInfo') ?? ''),
     categoryId: String(formData.get('categoryId') ?? ''),
     sortOrder: String(formData.get('sortOrder') ?? ''),

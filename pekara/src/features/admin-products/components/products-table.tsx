@@ -1,3 +1,4 @@
+import { formatDateTime } from '@/lib/datetime';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -7,15 +8,21 @@ import { formatRsd } from '../../../lib/money';
 import type { AdminProductRow } from '../../../server/queries/admin-products';
 import { ProductToggles } from './product-toggles';
 
-export function ProductsTable({ products }: { products: AdminProductRow[] }) {
+export function ProductsTable({
+  products,
+  timezone,
+}: {
+  products: AdminProductRow[];
+  timezone?: string;
+}) {
   if (products.length === 0)
     return (
       <EmptyState
-        title="Još nema proizvoda"
-        description="Dodajte prvi proizvod kako bi se pojavio u katalogu."
+        title="Nema proizvoda za izabrane filtere"
+        description="Promenite pretragu ili filtere, ili dodajte novi proizvod."
         action={
           <Link href="/admin/products/new" className={buttonVariants()}>
-            Dodaj prvi proizvod
+            Dodaj proizvod
           </Link>
         }
       />
@@ -132,10 +139,7 @@ export function ProductsTable({ products }: { products: AdminProductRow[] }) {
                   />
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap">
-                  {new Intl.DateTimeFormat('sr-Latn-RS', {
-                    dateStyle: 'medium',
-                    timeStyle: 'short',
-                  }).format(new Date(product.updatedAt))}
+                  {formatDateTime(product.updatedAt, timezone)}
                 </td>
                 <td className="px-4 py-3">
                   <Link

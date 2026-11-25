@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { CATEGORY_LIMITS } from '../config/limits.ts';
-import { normalizeProductSlug } from './product.ts';
+import { normalizeSlug } from '../lib/slug.ts';
 
 const descriptionSchema = z
   .string()
@@ -15,17 +15,15 @@ export const categoryMutationSchema = z.object({
     .string()
     .trim()
     .min(1, 'Naziv je obavezan.')
-    .max(CATEGORY_LIMITS.name, 'Naziv je predugačak.'),
-  slug: z
-    .string()
-    .transform(normalizeProductSlug)
-    .pipe(
-      z
-        .string()
-        .min(1, 'Slug je obavezan.')
-        .max(CATEGORY_LIMITS.slug, 'Slug je predugačak.')
-        .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'Slug nije validan.'),
+    .max(CATEGORY_LIMITS.name, 'Naziv je predugačak.')
+    .refine(
+      (name) => normalizeSlug(name).length > 0,
+      'Naziv mora sadržati slova ili brojeve za URL.',
     ),
+  slug: z
+    .unknown()
+    .optional()
+    .transform(() => undefined),
   description: descriptionSchema,
   sortOrder: z.coerce
     .number()

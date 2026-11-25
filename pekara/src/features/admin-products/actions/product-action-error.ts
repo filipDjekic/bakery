@@ -40,6 +40,8 @@ export function productActionError(error: unknown): ProductActionState {
                 ? { image: error.message }
                 : {}),
           }
-        : {},
+        : error instanceof ProductImageValidationError
+          ? { image: error.message }
+          : {},
   };
 }

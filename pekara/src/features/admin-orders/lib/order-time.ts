@@ -1,10 +1,13 @@
+import {
+  formatDate,
+  formatDateTime,
+  formatTime,
+  toBakeryLocalTime,
+} from '../../../lib/datetime';
 import { DateTime } from 'luxon';
 
 export function formatAdminOrderTime(value: string, timezone: string): string {
-  return DateTime.fromISO(value, { zone: 'utc' })
-    .setZone(timezone)
-    .setLocale('sr-Latn')
-    .toFormat('dd. LLL yyyy. HH:mm');
+  return formatDateTime(value, timezone);
 }
 
 export function formatPickupDayTime(
@@ -12,16 +15,17 @@ export function formatPickupDayTime(
   timezone: string,
   now: DateTime,
 ): { time: string; label: string } {
-  const pickup = DateTime.fromISO(value, { zone: 'utc' }).setZone(timezone);
+  const pickup = toBakeryLocalTime(value, timezone);
+  if (!pickup.isValid) return { time: '\u2014', label: '\u2014' };
   const localNow = now.setZone(timezone);
   const day = pickup.hasSame(localNow, 'day')
     ? 'Danas'
     : pickup.hasSame(localNow.plus({ days: 1 }), 'day')
       ? 'Sutra'
-      : pickup.setLocale('sr-Latn').toFormat('dd. LLL');
+      : formatDate(value, timezone);
   return {
-    time: pickup.toFormat('HH:mm'),
-    label: `${day} u ${pickup.toFormat('HH:mm')}`,
+    time: formatTime(value, timezone),
+    label: `${day} u ${formatTime(value, timezone)}`,
   };
 }
 
@@ -35,6 +39,7 @@ function durationLabel(minutes: number): string {
 
 export function formatPickupCountdown(value: string, now: DateTime): string {
   const pickup = DateTime.fromISO(value, { zone: 'utc' });
+  if (!pickup.isValid || !now.isValid) return '\u2014';
   const minutes = Math.round(pickup.diff(now.toUTC(), 'minutes').minutes);
   if (minutes < 0) return `Kasni ${durationLabel(minutes)}`;
   if (minutes === 0) return 'Preuzimanje je sada';
@@ -43,6 +48,7 @@ export function formatPickupCountdown(value: string, now: DateTime): string {
 
 export function formatCreatedAge(value: string, now: DateTime): string {
   const created = DateTime.fromISO(value, { zone: 'utc' });
+  if (!created.isValid || !now.isValid) return '\u2014';
   const minutes = Math.max(
     0,
     Math.floor(now.toUTC().diff(created, 'minutes').minutes),

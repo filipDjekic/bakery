@@ -1,6 +1,8 @@
 'use server';
 
 import { revalidatePath, updateTag } from 'next/cache';
+import { redirect } from 'next/navigation';
+import { setSuccessFlash } from '../../../server/http/flash-toast.ts';
 
 import { requireAdmin } from '../../../server/auth/authorization.ts';
 import { PUBLIC_CACHE_TAGS } from '../../../server/cache/tags.ts';
@@ -15,7 +17,7 @@ export async function createCategoryAction(
 ): Promise<CategoryActionState> {
   try {
     await requireAdmin();
-    const category = await createCategory(
+    await createCategory(
       categoryValuesFromFormData(formData),
       async () => undefined,
     );
@@ -24,8 +26,9 @@ export async function createCategoryAction(
     revalidatePath('/');
     revalidatePath('/proizvodi');
     revalidatePath('/admin/categories');
-    return { status: 'success', message: `/admin/categories/${category.id}` };
+    await setSuccessFlash('Kategorija je uspešno kreirana.');
   } catch (error) {
     return categoryActionError(error);
   }
+  redirect('/admin/categories');
 }

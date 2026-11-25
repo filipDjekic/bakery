@@ -1,5 +1,6 @@
 'use client';
 
+import { toast } from '@/lib/toast';
 import { useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
 
@@ -25,6 +26,7 @@ export function LoginForm() {
       const result = await authClient.signIn.email({ email, password });
 
       if (result.error) {
+        toast.error('Prijava nije uspela. Proverite podatke.');
         setErrorMessage(
           result.error.status === 429
             ? 'Previše pokušaja. Sačekajte minut i pokušajte ponovo.'
@@ -33,9 +35,11 @@ export function LoginForm() {
         return;
       }
 
+      toast.success('Prijava je uspela.');
       router.replace('/admin');
       router.refresh();
     } catch {
+      toast.error('Prijava trenutno nije dostupna.');
       setErrorMessage('Prijava trenutno nije dostupna. Pokušajte ponovo.');
     } finally {
       setIsPending(false);

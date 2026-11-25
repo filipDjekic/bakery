@@ -110,6 +110,10 @@
                 "value": "READY"
               },
               {
+                "name": "LATE",
+                "value": "LATE"
+              },
+              {
                 "name": "COMPLETED",
                 "value": "COMPLETED"
               },
@@ -819,6 +823,13 @@
                   }
                 }
               },
+              "discountMinor": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
               "id": {
                 "nullable": false,
                 "type": {
@@ -830,6 +841,13 @@
                 "nullable": false,
                 "type": {
                   "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "lateDiscountAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
                 }
               },
@@ -851,6 +869,13 @@
                   "typeParams": {
                     "length": 32
                   }
+                }
+              },
+              "originalTotalMinor": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
                 }
               },
               "payloadHash": {
@@ -969,17 +994,26 @@
                 "customerPhone": {
                   "column": "customerPhone"
                 },
+                "discountMinor": {
+                  "column": "discountMinor"
+                },
                 "id": {
                   "column": "id"
                 },
                 "idempotencyKey": {
                   "column": "idempotencyKey"
                 },
+                "lateDiscountAt": {
+                  "column": "lateDiscountAt"
+                },
                 "note": {
                   "column": "note"
                 },
                 "orderNumber": {
                   "column": "orderNumber"
+                },
+                "originalTotalMinor": {
+                  "column": "originalTotalMinor"
                 },
                 "payloadHash": {
                   "column": "payloadHash"
@@ -2469,10 +2503,12 @@
                 {
                   "columns": [
                     "isActive",
-                    "sortOrder"
+                    "sortOrder",
+                    "name",
+                    "id"
                   ],
-                  "name": "category_isActive_sortOrder_idx_43c1fe34",
-                  "prefix": "category_isActive_sortOrder_idx",
+                  "name": "category_isActive_sortOrder_name_id_idx_a42675e4",
+                  "prefix": "category_isActive_sortOrder_name_id_idx",
                   "unique": false
                 }
               ],
@@ -2492,8 +2528,18 @@
             "order": {
               "checks": [
                 {
-                  "expression": "\"status\" IN ('NEW', 'ACCEPTED', 'IN_PREPARATION', 'READY', 'COMPLETED', 'CANCELLED')",
-                  "name": "order_status_check_ca95f5cd",
+                  "expression": "(\"lateDiscountAt\" IS NULL AND \"discountMinor\" = 0 AND (\"originalTotalMinor\" IS NULL OR \"originalTotalMinor\" = \"totalMinor\")) OR (\"lateDiscountAt\" IS NOT NULL AND \"originalTotalMinor\" IS NOT NULL AND \"originalTotalMinor\" >= 0 AND \"discountMinor\" = ((\"originalTotalMinor\"::bigint * 15 + 50) / 100) AND \"totalMinor\" = \"originalTotalMinor\" - \"discountMinor\")",
+                  "name": "order_late_discount_integrity_252856c0",
+                  "prefix": "order_late_discount_integrity"
+                },
+                {
+                  "expression": "(\"lateDiscountAt\" IS NULL OR \"originalTotalMinor\" IS NOT NULL) AND (\"status\" <> 'LATE' OR \"lateDiscountAt\" IS NOT NULL)",
+                  "name": "order_late_snapshot_presence_03507d08",
+                  "prefix": "order_late_snapshot_presence"
+                },
+                {
+                  "expression": "\"status\" IN ('NEW', 'ACCEPTED', 'IN_PREPARATION', 'READY', 'LATE', 'COMPLETED', 'CANCELLED')",
+                  "name": "order_status_check_c7ed790c",
                   "prefix": "order_status_check"
                 },
                 {
@@ -2552,6 +2598,15 @@
                     "length": 20
                   }
                 },
+                "discountMinor": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": 0
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
                 "id": {
                   "codecId": "pg/uuid@1",
                   "nativeType": "uuid",
@@ -2561,6 +2616,11 @@
                   "codecId": "pg/uuid@1",
                   "nativeType": "uuid",
                   "nullable": false
+                },
+                "lateDiscountAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
                 },
                 "note": {
                   "codecId": "sql/varchar@1",
@@ -2577,6 +2637,11 @@
                   "typeParams": {
                     "length": 32
                   }
+                },
+                "originalTotalMinor": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
                 },
                 "payloadHash": {
                   "codecId": "pg/text@1",
@@ -2623,10 +2688,11 @@
               "indexes": [
                 {
                   "columns": [
-                    "createdAt"
+                    "createdAt",
+                    "id"
                   ],
-                  "name": "order_createdAt_idx_9575dbd7",
-                  "prefix": "order_createdAt_idx",
+                  "name": "order_createdAt_id_idx_3855cff1",
+                  "prefix": "order_createdAt_id_idx",
                   "unique": false
                 },
                 {
@@ -2640,10 +2706,22 @@
                 {
                   "columns": [
                     "status",
-                    "createdAt"
+                    "createdAt",
+                    "id"
                   ],
-                  "name": "order_status_createdAt_idx_58610442",
-                  "prefix": "order_status_createdAt_idx",
+                  "name": "order_status_createdAt_id_idx_ffb42ad8",
+                  "prefix": "order_status_createdAt_id_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "status",
+                    "pickupAt",
+                    "createdAt",
+                    "id"
+                  ],
+                  "name": "order_status_pickupAt_createdAt_id_idx_541b1116",
+                  "prefix": "order_status_pickupAt_createdAt_id_idx",
                   "unique": false
                 }
               ],
@@ -2937,13 +3015,13 @@
             "orderStatusHistory": {
               "checks": [
                 {
-                  "expression": "\"fromStatus\" IN ('NEW', 'ACCEPTED', 'IN_PREPARATION', 'READY', 'COMPLETED', 'CANCELLED')",
-                  "name": "orderStatusHistory_fromStatus_check_860a7e10",
+                  "expression": "\"fromStatus\" IN ('NEW', 'ACCEPTED', 'IN_PREPARATION', 'READY', 'LATE', 'COMPLETED', 'CANCELLED')",
+                  "name": "orderStatusHistory_fromStatus_check_da99fd3c",
                   "prefix": "orderStatusHistory_fromStatus_check"
                 },
                 {
-                  "expression": "\"toStatus\" IN ('NEW', 'ACCEPTED', 'IN_PREPARATION', 'READY', 'COMPLETED', 'CANCELLED')",
-                  "name": "orderStatusHistory_toStatus_check_199b8070",
+                  "expression": "\"toStatus\" IN ('NEW', 'ACCEPTED', 'IN_PREPARATION', 'READY', 'LATE', 'COMPLETED', 'CANCELLED')",
+                  "name": "orderStatusHistory_toStatus_check_dbbe39c9",
                   "prefix": "orderStatusHistory_toStatus_check"
                 }
               ],
@@ -3215,6 +3293,15 @@
                   ],
                   "name": "product_categoryId_isActive_isAvailable_sortOrder_idx_7aa618ff",
                   "prefix": "product_categoryId_isActive_isAvailable_sortOrder_idx",
+                  "unique": false
+                },
+                {
+                  "columns": [
+                    "updatedAt",
+                    "id"
+                  ],
+                  "name": "product_updatedAt_id_idx_88868a1d",
+                  "prefix": "product_updatedAt_id_idx",
                   "unique": false
                 }
               ],
@@ -3524,6 +3611,7 @@
                 "ACCEPTED",
                 "IN_PREPARATION",
                 "READY",
+                "LATE",
                 "COMPLETED",
                 "CANCELLED"
               ]
@@ -3541,7 +3629,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "4f67248e1dcb99d56a8be933c0ef5d8498a6308a317f3f6fc8dfd301b1076792"
+    "storageHash": "0ac919db64d2b4147a64590cff79641695f03357dc43d5870b7191ee90813647"
   },
   "execution": {
     "executionHash": "e4be86e61b2bcc9642b805e0317f350ffa37d0b687b3f8e9a0151c1b4efe0e79",

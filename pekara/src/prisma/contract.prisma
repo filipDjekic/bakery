@@ -12,7 +12,7 @@ model Category {
 
   products    Product[]
 
-  @@index([isActive, sortOrder])
+  @@index([isActive, sortOrder, name, id])
 }
 
 model Product {
@@ -41,6 +41,7 @@ model Product {
   orderItems    OrderItem[]
 
   @@index([categoryId, isActive, isAvailable, sortOrder])
+  @@index([updatedAt, id])
   @@check(expression: "\"priceMinor\" >= 0", name: "product_price_nonnegative")
   @@check(expression: "(\"imageWidth\" IS NULL OR \"imageWidth\" > 0) AND (\"imageHeight\" IS NULL OR \"imageHeight\" > 0)", name: "product_image_dimensions")
 
@@ -53,6 +54,7 @@ enum OrderStatus {
   ACCEPTED
   IN_PREPARATION
   READY
+  LATE
   COMPLETED
   CANCELLED
 }
@@ -74,6 +76,9 @@ model Order {
   currencyCode       VarChar(3)
   subtotalMinor      Int
   totalMinor         Int
+  originalTotalMinor Int?
+  discountMinor      Int                        @default(0)
+  lateDiscountAt     TimestamptzString?
 
   cancellationReason VarChar(300)?
 
@@ -84,9 +89,12 @@ model Order {
   statusHistory      OrderStatusHistory[]
   notifications      OrderNotificationDelivery[]
 
-  @@index([status, createdAt])
-  @@index([createdAt])
+  @@index([status, createdAt, id])
+  @@index([status, pickupAt, createdAt, id])
+  @@index([createdAt, id])
   @@index([pickupAt])
+  @@check(expression: "(\"lateDiscountAt\" IS NULL OR \"originalTotalMinor\" IS NOT NULL) AND (\"status\" <> 'LATE' OR \"lateDiscountAt\" IS NOT NULL)", name: "order_late_snapshot_presence")
+  @@check(expression: "(\"lateDiscountAt\" IS NULL AND \"discountMinor\" = 0 AND (\"originalTotalMinor\" IS NULL OR \"originalTotalMinor\" = \"totalMinor\")) OR (\"lateDiscountAt\" IS NOT NULL AND \"originalTotalMinor\" IS NOT NULL AND \"originalTotalMinor\" >= 0 AND \"discountMinor\" = ((\"originalTotalMinor\"::bigint * 15 + 50) / 100) AND \"totalMinor\" = \"originalTotalMinor\" - \"discountMinor\")", name: "order_late_discount_integrity")
   @@check(expression: "\"subtotalMinor\" >= 0 AND \"totalMinor\" >= 0", name: "order_totals_nonnegative")
 
 }

@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { DateTime } from 'luxon';
+import { formatDateTime } from '@/lib/datetime';
+import { OrderPrice } from './order-price';
 
 import { formatRsd } from '@/lib/money';
 import type { PublicOrderConfirmation } from '@/server/queries/order-confirmation';
@@ -11,6 +12,7 @@ const statusLabels: Record<PublicOrderConfirmation['status'], string> = {
   ACCEPTED: 'Prihvaćena',
   IN_PREPARATION: 'U pripremi',
   READY: 'Spremna za preuzimanje',
+  LATE: 'Kasni',
   COMPLETED: 'Preuzeta',
   CANCELLED: 'Otkazana',
 };
@@ -42,6 +44,11 @@ const statusMessages: Record<
     title: 'Hvala na poseti',
     description: 'Porudžbina je preuzeta.',
   },
+  LATE: {
+    title: 'Porudžbina kasni',
+    description:
+      'Termin preuzimanja je prošao. Automatski je odobren popust od 15%. Kontaktirajte pekaru za preuzimanje.',
+  },
   CANCELLED: {
     title: 'Porudžbina je otkazana',
     description: 'Preuzimanje nije predviđeno za otkazanu porudžbinu.',
@@ -53,10 +60,6 @@ type OrderConfirmationProps = {
 };
 
 export function OrderConfirmation({ order }: OrderConfirmationProps) {
-  const pickupDate = DateTime.fromISO(order.pickupAt, { zone: 'utc' })
-    .setZone(order.bakery.timezone)
-    .setLocale('sr-Latn');
-
   return (
     <article className="mx-auto max-w-3xl">
       <div className="border-border bg-surface rounded-2xl border p-6 text-center sm:p-10">
@@ -97,7 +100,7 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
           <div>
             <dt className="text-muted text-sm">Termin</dt>
             <dd className="text-foreground mt-1 font-semibold">
-              {pickupDate.toFormat('dd. LLLL yyyy. HH:mm')}
+              {formatDateTime(order.pickupAt, order.bakery.timezone)}
             </dd>
           </div>
           <div>
@@ -138,7 +141,7 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
         <div className="border-border mt-6 flex items-center justify-between gap-4 border-t pt-5">
           <span className="font-semibold">Ukupno</span>
           <span className="text-xl font-bold tabular-nums">
-            {formatRsd(order.totalMinor)}
+            <OrderPrice {...order} />
           </span>
         </div>
       </div>

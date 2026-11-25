@@ -1,6 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
+import { toast } from '../../../lib/toast';
 import { persist } from 'zustand/middleware';
 
 import { CART_LIMITS } from '../../../config/limits.ts';
@@ -22,6 +23,9 @@ const SUCCESS: CartActionResult = { ok: true };
 function failure(
   reason: Extract<CartActionResult, { ok: false }>['reason'],
 ): CartActionResult {
+  toast.warning(
+    'Promena korpe nije moguća. Proverite proizvod i dozvoljenu količinu.',
+  );
   return { ok: false, reason };
 }
 
@@ -98,6 +102,7 @@ export const useCartStore = create<CartState>()(
             : [...items, { ...item, quantity }],
         });
 
+        toast.success(`${item.name} je dodat u korpu.`);
         return SUCCESS;
       },
 
@@ -109,6 +114,7 @@ export const useCartStore = create<CartState>()(
         }
 
         set({ items: items.filter((item) => item.productId !== productId) });
+        toast.info('Proizvod je uklonjen iz korpe.');
         return SUCCESS;
       },
 

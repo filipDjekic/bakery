@@ -1,0 +1,196 @@
+[
+  {
+    "id": "dropCheckConstraint.order.order_late_discount_integrity_22b58ef9",
+    "label": "Drop check constraint \"order_late_discount_integrity_22b58ef9\" on \"order\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "order_late_discount_integrity_22b58ef9",
+        "table": "order"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"order_late_discount_integrity_22b58ef9\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_late_discount_integrity_22b58ef9",
+          "public",
+          "\"public\".\"order\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop check constraint \"order_late_discount_integrity_22b58ef9\"",
+        "sql": "ALTER TABLE \"public\".\"order\" DROP CONSTRAINT \"order_late_discount_integrity_22b58ef9\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"order_late_discount_integrity_22b58ef9\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_late_discount_integrity_22b58ef9",
+          "public",
+          "\"public\".\"order\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dropCheckConstraint.order.order_late_snapshot_presence_5c416ba4",
+    "label": "Drop check constraint \"order_late_snapshot_presence_5c416ba4\" on \"order\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "order_late_snapshot_presence_5c416ba4",
+        "table": "order"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"order_late_snapshot_presence_5c416ba4\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_late_snapshot_presence_5c416ba4",
+          "public",
+          "\"public\".\"order\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop check constraint \"order_late_snapshot_presence_5c416ba4\"",
+        "sql": "ALTER TABLE \"public\".\"order\" DROP CONSTRAINT \"order_late_snapshot_presence_5c416ba4\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"order_late_snapshot_presence_5c416ba4\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_late_snapshot_presence_5c416ba4",
+          "public",
+          "\"public\".\"order\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.order.order_late_discount_integrity_252856c0",
+    "label": "Add check constraint \"order_late_discount_integrity_252856c0\" on \"order\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "order_late_discount_integrity_252856c0",
+        "table": "order"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"order_late_discount_integrity_252856c0\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_late_discount_integrity_252856c0",
+          "public",
+          "\"public\".\"order\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"order_late_discount_integrity_252856c0\"",
+        "sql": "ALTER TABLE \"public\".\"order\" ADD CONSTRAINT \"order_late_discount_integrity_252856c0\" CHECK ((\"lateDiscountAt\" IS NULL AND \"discountMinor\" = 0 AND (\"originalTotalMinor\" IS NULL OR \"originalTotalMinor\" = \"totalMinor\")) OR (\"lateDiscountAt\" IS NOT NULL AND \"originalTotalMinor\" IS NOT NULL AND \"originalTotalMinor\" >= 0 AND \"discountMinor\" = ((\"originalTotalMinor\"::bigint * 15 + 50) / 100) AND \"totalMinor\" = \"originalTotalMinor\" - \"discountMinor\"))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"order_late_discount_integrity_252856c0\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_late_discount_integrity_252856c0",
+          "public",
+          "\"public\".\"order\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.order.order_late_snapshot_presence_03507d08",
+    "label": "Add check constraint \"order_late_snapshot_presence_03507d08\" on \"order\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "order_late_snapshot_presence_03507d08",
+        "table": "order"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"order_late_snapshot_presence_03507d08\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_late_snapshot_presence_03507d08",
+          "public",
+          "\"public\".\"order\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"order_late_snapshot_presence_03507d08\"",
+        "sql": "ALTER TABLE \"public\".\"order\" ADD CONSTRAINT \"order_late_snapshot_presence_03507d08\" CHECK ((\"lateDiscountAt\" IS NULL OR \"originalTotalMinor\" IS NOT NULL) AND (\"status\" <> 'LATE' OR \"lateDiscountAt\" IS NOT NULL))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"order_late_snapshot_presence_03507d08\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "order_late_snapshot_presence_03507d08",
+          "public",
+          "\"public\".\"order\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "data.order.backfillOriginalTotalMinor",
+    "label": "Backfill original totals for existing undiscounted orders",
+    "operationClass": "data",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "order"
+      }
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Initialize missing original totals without applying a discount",
+        "sql": "UPDATE \"public\".\"order\" SET \"originalTotalMinor\" = \"totalMinor\" WHERE \"originalTotalMinor\" IS NULL AND \"discountMinor\" = 0 AND \"lateDiscountAt\" IS NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "Verify all existing undiscounted orders have original totals",
+        "sql": "SELECT NOT EXISTS (SELECT 1 FROM \"public\".\"order\" WHERE \"originalTotalMinor\" IS NULL AND \"discountMinor\" = 0 AND \"lateDiscountAt\" IS NULL) AS \"result\""
+      }
+    ]
+  }
+]

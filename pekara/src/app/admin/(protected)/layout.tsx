@@ -5,6 +5,7 @@ import type { ReactNode } from 'react';
 
 import { AdminHeader } from '@/components/layout/admin-header';
 import { AdminSidebar } from '@/components/layout/admin-sidebar';
+import { AdminBreadcrumbs } from '@/components/layout/admin-breadcrumbs';
 import {
   AuthenticationRequiredError,
   requireStaff,
@@ -38,7 +39,10 @@ export default async function ProtectedAdminLayout({
       <AdminSidebar role={user.role} />
       <div className="min-w-0 flex-1">
         <AdminHeader user={user} />
-        <main className="p-4 sm:p-6 lg:p-8">{children}</main>
+        <main className="p-4 sm:p-6 lg:p-8">
+          <AdminBreadcrumbs />
+          {children}
+        </main>
       </div>
     </div>
   );

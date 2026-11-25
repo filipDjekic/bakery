@@ -74,6 +74,7 @@ export default async function AdminOrdersPage({
   }
 
   const result = await getAdminOrders({
+    q: first(params.q),
     page: first(params.page),
     status: first(params.status),
     from: first(params.from),
@@ -92,12 +93,10 @@ export default async function AdminOrdersPage({
       <OrderFilters filters={result.filters} />
       <div className="mt-6">
         <OrdersHistory result={result} nowIso={nowIso} />
-        {result.orders.length > 0 ? (
-          <OrdersPagination
-            pagination={result.pagination}
-            filters={result.filters}
-          />
-        ) : null}
+        <OrdersPagination
+          pagination={result.pagination}
+          filters={result.filters}
+        />
       </div>
     </div>
   );

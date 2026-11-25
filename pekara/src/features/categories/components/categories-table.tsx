@@ -1,3 +1,4 @@
+import { formatDateTime } from '@/lib/datetime';
 import Link from 'next/link';
 
 import { buttonVariants } from '@/components/ui/button';
@@ -6,17 +7,19 @@ import type { AdminCategoryRow } from '../../../server/queries/admin-categories'
 
 export function CategoriesTable({
   categories,
+  timezone,
 }: {
   categories: AdminCategoryRow[];
+  timezone?: string;
 }) {
   if (categories.length === 0)
     return (
       <EmptyState
-        title="Još nema kategorija"
-        description="Napravite prvu kategoriju pre dodavanja proizvoda."
+        title="Nema kategorija za izabrane filtere"
+        description="Promenite pretragu ili filtere, ili dodajte novu kategoriju."
         action={
           <Link href="/admin/categories/new" className={buttonVariants()}>
-            Dodaj prvu kategoriju
+            Dodaj kategoriju
           </Link>
         }
       />
@@ -64,10 +67,7 @@ export function CategoriesTable({
                 </span>
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
-                {new Intl.DateTimeFormat('sr-Latn-RS', {
-                  dateStyle: 'medium',
-                  timeStyle: 'short',
-                }).format(new Date(category.updatedAt))}
+                {formatDateTime(category.updatedAt, timezone)}
               </td>
               <td className="px-4 py-3">
                 <Link
