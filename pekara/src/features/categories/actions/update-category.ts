@@ -16,10 +16,12 @@ export async function updateCategoryAction(
   try {
     await requireAdmin();
     const id = String(formData.get('id') ?? '');
+    const expectedUpdatedAt = String(formData.get('expectedUpdatedAt') ?? '');
     await updateCategory(
       {
         ...categoryValuesFromFormData(formData),
         id,
+        expectedUpdatedAt,
         confirmDeactivation: formData.get('confirmDeactivation') === 'on',
       },
       async () => undefined,

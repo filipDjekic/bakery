@@ -5,7 +5,9 @@ export type ProductErrorCode =
   | 'NOT_FOUND'
   | 'DUPLICATE_SLUG'
   | 'INACTIVE_CATEGORY'
-  | 'IMAGE_REQUIRED';
+  | 'IMAGE_REQUIRED'
+  | 'CONFLICT';
+// Version conflicts share the existing safe error mapping.
 
 export class ProductDomainError extends Error {
   readonly code: ProductErrorCode;

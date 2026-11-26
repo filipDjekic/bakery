@@ -38,6 +38,75 @@ before(async () => {
   fixture = await createCatalogFixture();
   original = await getAdminSettings(authorize);
 });
+
+test('checkout rechecks the clock after waiting for locked inputs, rejecting a newly expired slot', async () => {
+  const pool = createIntegrationPool();
+  const client = await pool.connect();
+  let current = INTEGRATION_NOW;
+  try {
+    await client.query('BEGIN');
+    await client.query(
+      'SELECT id FROM "bakerySettings" WHERE id=$1 FOR UPDATE',
+      ['default'],
+    );
+    const creating = createOrder(orderRequestFixture(fixture.available.id), {
+      now: () => current,
+    });
+    const outcome = creating.then(
+      (value) => ({ value, error: null }),
+      (error) => ({ value: null, error }),
+    );
+    await delay(30);
+    current = INTEGRATION_NOW.plus({ hours: 2 });
+    await client.query('COMMIT');
+    const result = await outcome;
+    assert.ok(
+      result.error instanceof OrderDomainError &&
+        result.error.code === 'INVALID_PICKUP_SLOT',
+    );
+    assert.equal(result.value, null);
+  } finally {
+    await client.query('ROLLBACK');
+    client.release();
+    await pool.end();
+  }
+});
+
+test('checkout rejects a changed sale unit rather than silently changing the meaning of quantity', async () => {
+  const current = (await db.orm.public.Product.where({
+    id: fixture.available.id,
+  }).first())!;
+  try {
+    await db.orm.public.Product.where({ id: current.id }).updateAll({
+      unitLabel: 'gram' as typeof current.unitLabel,
+    });
+    await assert.rejects(
+      createOrder(
+        orderRequestFixture(current.id, {
+          items: [
+            {
+              productId: current.id,
+              quantity: 1,
+              displayPriceMinor: current.priceMinor,
+              displayUnitLabel: 'komad',
+            },
+          ],
+        }),
+        { now: INTEGRATION_NOW },
+      ),
+      (error) =>
+        error instanceof OrderDomainError &&
+        error.code === 'PRODUCT_UNAVAILABLE' &&
+        Boolean(
+          error.details?.items[0]?.productName?.includes('jedinica prodaje'),
+        ),
+    );
+  } finally {
+    await db.orm.public.Product.where({ id: current.id }).updateAll({
+      unitLabel: current.unitLabel,
+    });
+  }
+});
 after(async () => {
   const current = await getAdminSettings(authorize);
   await updateWorkingHours(
@@ -97,6 +166,7 @@ test('real concurrent conditional status writes produce exactly one transition a
         targetStatus: 'ACCEPTED',
       },
       authorize,
+      INTEGRATION_NOW.toJSDate(),
     ),
     changeOrderStatus(
       {
@@ -106,6 +176,7 @@ test('real concurrent conditional status writes produce exactly one transition a
         cancellationReason: 'Test cancellation',
       },
       authorize,
+      INTEGRATION_NOW.toJSDate(),
     ),
   ]);
   assert.equal(
@@ -126,6 +197,7 @@ test('real concurrent conditional status writes produce exactly one transition a
         targetStatus: 'ACCEPTED',
       },
       authorize,
+      INTEGRATION_NOW.toJSDate(),
     ),
   );
 });

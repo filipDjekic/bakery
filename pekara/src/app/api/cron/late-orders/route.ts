@@ -1,5 +1,6 @@
 import { timingSafeEqual } from 'node:crypto';
 import { processLateOrders } from '@/server/services/process-late-orders';
+import { recoverOrderNotifications } from '@/server/services/recover-order-notifications';
 export const maxDuration = 60;
 export async function GET(request: Request) {
   const secret = process.env.CRON_SECRET;
@@ -13,6 +14,7 @@ export async function GET(request: Request) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   try {
     let processed = 0;
+    let hasMore = false;
     // Bound invocation time; future invocations catch up after interruption.
     const started = Date.now();
     for (
@@ -22,10 +24,16 @@ export async function GET(request: Request) {
     ) {
       const result = await processLateOrders();
       processed += result.processed;
+      hasMore = result.hasMore;
       if (!result.hasMore) break;
     }
+    const notifications = await recoverOrderNotifications(
+      new Date(),
+      undefined,
+      started + 50_000,
+    );
     return Response.json(
-      { processed },
+      { processed, hasMore, notifications },
       { headers: { 'Cache-Control': 'no-store' } },
     );
   } catch {

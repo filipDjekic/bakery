@@ -2,6 +2,7 @@ export type CartItem = {
   productId: string;
   name: string;
   imageUrl: string | null;
+  unitLabel?: string | null;
   displayPriceMinor: number;
   quantity: number;
 };
@@ -31,6 +32,7 @@ export type CartState = {
     displayPriceMinor: number,
   ) => CartActionResult;
   clear: () => CartActionResult;
+  consumeSubmitted: (items: CartItem[]) => CartActionResult;
 };
 
 export type PersistedCartState = Pick<CartState, 'items'>;

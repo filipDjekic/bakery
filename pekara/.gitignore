@@ -88,3 +88,4 @@ Thumbs.db
 /.cache/performance/
 /.cache/admin-test-postgres/
 /.cache/admin-*.json
+/.test-postgres/

@@ -37,7 +37,8 @@ export function CheckoutCartSummary({
                 {item.name}
               </p>
               <p className="text-muted mt-1 text-sm tabular-nums">
-                {item.quantity} × {formatRsd(item.displayPriceMinor)}
+                {item.quantity} {item.unitLabel ?? 'komad'} ×{' '}
+                {formatRsd(item.displayPriceMinor)}
               </p>
             </div>
             <p className="text-foreground shrink-0 font-semibold tabular-nums">

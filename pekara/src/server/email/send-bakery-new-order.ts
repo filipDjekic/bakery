@@ -8,6 +8,7 @@ import { logEvent, OBSERVABILITY_EVENTS } from '../logging/events.ts';
 import type { EmailService } from './email-service.ts';
 import {
   formatOrderMoney,
+  emailTotalLabels,
   formatOrderPickup,
   type OrderEmailData,
 } from './order-email-data.ts';
@@ -22,23 +23,9 @@ export async function sendBakeryNewOrder(
   if (!emailService && process.env.EMAIL_ENABLED === 'false') return 'skipped';
   const requestId = randomUUID();
   try {
-    const appUrl = process.env.APP_URL;
-    if (!appUrl) throw new Error('APP_URL is not configured.');
-    const adminOrderUrl = new URL(
-      `/admin/orders/${encodeURIComponent(order.orderId)}`,
-      appUrl,
-    ).toString();
-    const delivery = await (emailService ?? getEmailService()).send({
-      idempotencyKey: `order/${order.orderId}/bakery/v1`,
-      to: order.bakery.notificationEmail,
-      subject: `Nova porudžbina ${order.orderNumber}`,
-      react: createElement(NewOrderNotificationEmail, {
-        orderNumber: order.orderNumber,
-        pickupLabel: formatOrderPickup(order.pickupAt, order.timezone),
-        totalLabel: formatOrderMoney(order.totalMinor, order.currencyCode),
-        adminOrderUrl,
-      }),
-    });
+    const delivery = await (emailService ?? getEmailService()).send(
+      order.preparedMessage ?? buildBakeryNewOrder(order),
+    );
     logEvent(
       {
         requestId,
@@ -67,4 +54,27 @@ export async function sendBakeryNewOrder(
     );
     return 'failed';
   }
+}
+
+export function buildBakeryNewOrder(order: OrderEmailData) {
+  if (!order.bakery.notificationEmail)
+    throw new Error('Missing bakery recipient');
+  const appUrl = process.env.APP_URL;
+  if (!appUrl) throw new Error('APP_URL is not configured.');
+  const adminOrderUrl = new URL(
+    `/admin/orders/${encodeURIComponent(order.orderId)}`,
+    appUrl,
+  ).toString();
+  return {
+    idempotencyKey: `order/${order.orderId}/bakery/v2`,
+    to: order.bakery.notificationEmail,
+    subject: `Nova porudžbina ${order.orderNumber}`,
+    react: createElement(NewOrderNotificationEmail, {
+      ...emailTotalLabels(order),
+      orderNumber: order.orderNumber,
+      pickupLabel: formatOrderPickup(order.pickupAt, order.timezone),
+      totalLabel: formatOrderMoney(order.totalMinor, order.currencyCode),
+      adminOrderUrl,
+    }),
+  };
 }

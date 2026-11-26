@@ -1,4 +1,5 @@
 import { CreditCard, PackageCheck, ShoppingBasket, Wheat } from 'lucide-react';
+import { notFound } from 'next/navigation';
 
 import { Container } from '@/components/layout/container';
 import { CatalogBrowser } from '@/features/catalog/components/catalog-browser';
@@ -22,8 +23,13 @@ export default async function ProductsPage({
   const categoryParam = params.category;
   const requestedCategorySlug =
     typeof categoryParam === 'string' ? categoryParam : undefined;
-  const { categories, filterCategories, selectedCategorySlug } =
-    await getPublicCatalog(requestedCategorySlug);
+  const {
+    categories,
+    filterCategories,
+    selectedCategorySlug,
+    invalidCategory,
+  } = await getPublicCatalog(requestedCategorySlug);
+  if (invalidCategory) notFound();
   const products = categories.flatMap((category) => category.products);
   const query = typeof params.q === 'string' ? params.q.slice(0, 120) : '';
   const requestedSort = typeof params.sort === 'string' ? params.sort : '';

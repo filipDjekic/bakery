@@ -151,6 +151,7 @@ test('active queue includes only operational statuses and is pickup-first with s
     'customerName',
     'discountMinor',
     'id',
+    'lateDiscountAt',
     'orderNumber',
     'originalTotalMinor',
     'pickupAt',

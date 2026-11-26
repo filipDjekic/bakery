@@ -56,7 +56,10 @@ export function ActiveOrderQueue({
               >
                 <div className="flex items-center justify-between gap-2">
                   <h3 className="truncate font-bold">{order.orderNumber}</h3>
-                  <OrderStatusBadge status={order.status} />
+                  <OrderStatusBadge
+                    status={order.status}
+                    lateDiscountAt={order.lateDiscountAt}
+                  />
                 </div>
                 <p className="mt-2 text-sm font-semibold">{pickup.label}</p>
                 <p

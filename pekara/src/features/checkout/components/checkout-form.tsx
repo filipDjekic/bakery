@@ -3,10 +3,20 @@
 import Link from 'next/link';
 import { toast } from '@/lib/toast';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import {
+  createPendingSubmissionStore,
+  type PendingSubmission,
+} from '../lib/pending-submission';
 import { createCheckoutIdempotency } from '../lib/idempotency-storage';
 
 import { buttonVariants } from '@/components/ui/button';
@@ -58,6 +68,29 @@ const orderErrorMessages: Partial<Record<CreateOrderApiError['code'], string>> =
       'Porudžbinu trenutno nije moguće poslati. Pokušajte ponovo.',
   };
 
+function isAvailability(value: unknown): value is PickupAvailability {
+  if (!value || typeof value !== 'object') return false;
+  const data = value as Partial<PickupAvailability>;
+  return (
+    typeof data.orderAcceptingEnabled === 'boolean' &&
+    typeof data.bakeryTimezone === 'string' &&
+    Array.isArray(data.dates) &&
+    data.dates.every(
+      (date) =>
+        typeof date.date === 'string' &&
+        typeof date.label === 'string' &&
+        typeof date.shortDateLabel === 'string',
+    ) &&
+    (data.earliestSlot === null ||
+      Boolean(
+        data.earliestSlot &&
+        typeof data.earliestSlot.value === 'string' &&
+        typeof data.earliestSlot.dateLabel === 'string' &&
+        typeof data.earliestSlot.label === 'string',
+      ))
+  );
+}
+
 function isPickupSlotsResponse(value: unknown): value is PickupSlotsResponse {
   if (!value || typeof value !== 'object') {
     return false;
@@ -83,13 +116,25 @@ export function CheckoutForm({
 }) {
   const router = useRouter();
   const [idempotency] = useState(createCheckoutIdempotency);
+  const [pendingStore] = useState(createPendingSubmissionStore);
+  const pendingSubmission = useSyncExternalStore(
+    pendingStore.subscribe,
+    pendingStore.getSnapshot,
+    pendingStore.getServerSnapshot,
+  );
+  const setPendingSubmission = pendingStore.set;
+  const [confirmedOrderId, setConfirmedOrderId] = useState<string | null>(null);
+  const [checkingSubmission, setCheckingSubmission] = useState(false);
   const items = useCartStore((state) => state.items);
-  const clearCart = useCartStore((state) => state.clear);
+  const consumeSubmitted = useCartStore((state) => state.consumeSubmitted);
   const removeItem = useCartStore((state) => state.removeItem);
   const updateItemPrice = useCartStore((state) => state.updateItemPrice);
   const hasHydrated = useCartHydration();
   const requestController = useRef<AbortController>(null);
   const submitErrorRef = useRef<HTMLParagraphElement>(null);
+  const submitting = useRef(false);
+  const [availability, setAvailability] = useState(pickupAvailability);
+  const [retryUntil, setRetryUntil] = useState(0);
   const [slots, setSlots] = useState<PickupSlot[]>([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
@@ -130,56 +175,104 @@ export function CheckoutForm({
     if (errors.root?.message) submitErrorRef.current?.focus();
   }, [errors.root?.message]);
 
-  async function loadSlots(date: string) {
-    requestController.current?.abort();
-    setSelectedDate(date);
-    setSelectedTime('');
-    setValue('pickupDate', date, { shouldValidate: true });
-    setValue('pickupAt', '');
-    clearErrors('pickupAt');
-    setSubmitMessage('');
-    setSlots([]);
-    setSlotLoadError(null);
+  const loadSlots = useCallback(
+    async (date: string, preserveTime = '') => {
+      requestController.current?.abort();
+      setSelectedDate(date);
+      setSelectedTime('');
+      setValue('pickupDate', date, { shouldValidate: true });
+      setValue('pickupAt', '');
+      clearErrors('pickupAt');
+      setSubmitMessage('');
+      setSlots([]);
+      setSlotLoadError(null);
 
-    if (!date) {
-      setIsLoadingSlots(false);
-      return;
-    }
+      const controller = new AbortController();
+      requestController.current = controller;
+      setIsLoadingSlots(true);
 
-    const controller = new AbortController();
-    requestController.current = controller;
-    setIsLoadingSlots(true);
+      try {
+        const signal = AbortSignal.any([
+          controller.signal,
+          AbortSignal.timeout(10_000),
+        ]);
+        const [availabilityResponse, response] = await Promise.all([
+          fetch('/api/pickup-availability', { signal, cache: 'no-store' }),
+          date
+            ? fetch(`/api/pickup-slots?date=${encodeURIComponent(date)}`, {
+                signal,
+                cache: 'no-store',
+              })
+            : Promise.resolve(null),
+        ]);
+        const fresh: unknown = await availabilityResponse.json();
+        if (!availabilityResponse.ok || !isAvailability(fresh))
+          throw new Error('Invalid availability');
+        if (requestController.current !== controller) return;
+        setAvailability(fresh);
+        if (!date || !response) return;
+        if (!fresh.dates.some((option) => option.date === date)) {
+          setSelectedDate('');
+          setValue('pickupDate', '');
+          return;
+        }
+        const data: unknown = await response.json();
 
-    try {
-      const response = await fetch(
-        `/api/pickup-slots?date=${encodeURIComponent(date)}`,
-        { signal: controller.signal },
-      );
-      const data: unknown = await response.json();
+        if (!response.ok || !isPickupSlotsResponse(data)) {
+          throw new Error('Pickup slot response is invalid.');
+        }
 
-      if (!response.ok || !isPickupSlotsResponse(data)) {
-        throw new Error('Pickup slot response is invalid.');
+        if (requestController.current !== controller) {
+          return;
+        }
+
+        setSlots(data.slots);
+        if (
+          preserveTime &&
+          data.slots.some((slot) => slot.value === preserveTime)
+        ) {
+          setSelectedTime(preserveTime);
+          setValue('pickupAt', preserveTime);
+        }
+      } catch (error) {
+        if (requestController.current !== controller) return;
+        if (error instanceof DOMException && error.name === 'AbortError') {
+          return;
+        }
+
+        setSlotLoadError(
+          'Termine trenutno nije moguće učitati. Pokušajte ponovo.',
+        );
+      } finally {
+        if (requestController.current === controller) {
+          setIsLoadingSlots(false);
+        }
       }
+    },
+    [setValue, clearErrors],
+  );
 
-      if (requestController.current !== controller) {
-        return;
-      }
+  useEffect(() => {
+    const refresh = () => {
+      if (!submitting.current && document.visibilityState === 'visible')
+        void loadSlots(selectedDate, selectedTime);
+    };
+    window.addEventListener('focus', refresh);
+    const timer = window.setInterval(refresh, 60_000);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener('focus', refresh);
+    };
+  }, [selectedDate, selectedTime, loadSlots]);
 
-      setSlots(data.slots);
-    } catch (error) {
-      if (error instanceof DOMException && error.name === 'AbortError') {
-        return;
-      }
-
-      setSlotLoadError(
-        'Termine trenutno nije moguće učitati. Pokušajte ponovo.',
-      );
-    } finally {
-      if (requestController.current === controller) {
-        setIsLoadingSlots(false);
-      }
-    }
-  }
+  useEffect(() => {
+    if (!retryUntil) return;
+    const timer = window.setTimeout(
+      () => setRetryUntil(0),
+      Math.max(0, retryUntil - Date.now()),
+    );
+    return () => window.clearTimeout(timer);
+  }, [retryUntil]);
 
   function resolveConflict(productId: string) {
     const remaining =
@@ -194,54 +287,100 @@ export function CheckoutForm({
   }
 
   async function submitOrder(values: CheckoutFormValues) {
+    if (submitting.current || pendingSubmission || retryUntil > 0) return;
+    submitting.current = true;
     setSubmitMessage('');
     clearErrors('root');
-
-    const draft = {
-      customerName: values.customerName,
-      customerPhone: values.customerPhone,
-      customerEmail: values.customerEmail,
-      note: values.note,
-      pickupAt: values.pickupAt,
-      items: items.map((item) => ({
-        productId: item.productId,
-        quantity: item.quantity,
-        displayPriceMinor: item.displayPriceMinor,
-      })),
-    };
-    const signature = await createDraftSignature(draft);
-    const idempotencyKey = idempotency.keyFor(signature);
-
+    const submittedItems = items.map((item) => ({ ...item }));
     try {
-      const confirmation = await createOrderRequest({
-        idempotencyKey,
-        ...draft,
-      });
+      const draft = {
+        customerName: values.customerName,
+        customerPhone: values.customerPhone,
+        customerEmail: values.customerEmail,
+        note: values.note,
+        pickupAt: values.pickupAt,
+        items: items.map((item) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          displayPriceMinor: item.displayPriceMinor,
+          displayUnitLabel: item.unitLabel ?? null,
+        })),
+      };
+      const signature = await createDraftSignature(draft);
+      const idempotencyKey = idempotency.keyFor(signature);
 
-      idempotency.complete();
-      clearCart();
-      toast.success('Porudžbina je uspešno kreirana.');
-      router.push(`/porudzbina/${confirmation.orderId}`);
+      const submission: PendingSubmission = {
+        request: { idempotencyKey, ...draft },
+        items: submittedItems,
+        pickupDate: values.pickupDate,
+      };
+      setPendingSubmission(submission);
+      await sendSubmission(submission);
     } catch (error) {
-      if (
-        error instanceof CreateOrderApiError &&
-        (error.code === 'PRICE_CHANGED' ||
-          error.code === 'PRODUCT_UNAVAILABLE') &&
-        error.details
-      ) {
-        setConflict({ code: error.code, details: error.details });
+      showSubmissionError(error);
+    } finally {
+      submitting.current = false;
+    }
+  }
+
+  function showSubmissionError(error: unknown) {
+    const message =
+      error instanceof CreateOrderApiError
+        ? (orderErrorMessages[error.code] ?? error.message)
+        : 'Mrežna greška. Proverite vezu i proverite poslatu porudžbinu.';
+    setError('root', { message });
+    toast.error(message);
+    setSubmitMessage('Korpa je sačuvana.');
+  }
+
+  async function sendSubmission(submission: PendingSubmission) {
+    try {
+      const confirmation = await createOrderRequest(submission.request);
+      idempotency.complete(submission.request.idempotencyKey);
+      setPendingSubmission(null);
+      consumeSubmitted(submission.items);
+      setConfirmedOrderId(confirmation.orderId);
+      toast.success('Porudžbina je uspešno kreirana.');
+      try {
+        router.push(`/porudzbina/${confirmation.orderId}`);
+      } catch {
+        /* A status link remains available if navigation fails. */
       }
+    } catch (error) {
+      if (error instanceof CreateOrderApiError) {
+        if (error.code !== 'INTERNAL_ERROR' && error.code !== 'RATE_LIMITED') {
+          setPendingSubmission(null);
+        }
+        if (
+          error.code === 'INVALID_PICKUP_SLOT' ||
+          error.code === 'ORDERS_DISABLED'
+        )
+          await loadSlots(submission.pickupDate);
+        if (error.code === 'RATE_LIMITED')
+          setRetryUntil(
+            Date.now() + Math.min(3600, error.retryAfterSeconds ?? 60) * 1000,
+          );
+        if (
+          (error.code === 'PRICE_CHANGED' ||
+            error.code === 'PRODUCT_UNAVAILABLE') &&
+          error.details
+        )
+          setConflict({ code: error.code, details: error.details });
+      }
+      showSubmissionError(error);
+    }
+  }
 
-      const message =
-        error instanceof CreateOrderApiError
-          ? (orderErrorMessages[error.code] ?? error.message)
-          : 'Mrežna greška. Proverite vezu i pokušajte ponovo.';
-
-      setError('root', {
-        message,
-      });
-      toast.error(message);
-      setSubmitMessage('Korpa je sačuvana i možete pokušati ponovo.');
+  async function retrySubmission() {
+    if (!pendingSubmission || submitting.current || retryUntil > 0) return;
+    submitting.current = true;
+    clearErrors('root');
+    setCheckingSubmission(true);
+    try {
+      await sendSubmission(pendingSubmission);
+    } finally {
+      submitting.current = false;
+      setCheckingSubmission(false);
     }
   }
 
@@ -254,7 +393,15 @@ export function CheckoutForm({
     );
   }
 
-  if (items.length === 0) {
+  if (confirmedOrderId)
+    return (
+      <div role="status">
+        <p>Porudžbina je uspešno kreirana.</p>
+        <Link href={`/porudzbina/${confirmedOrderId}`}>Prati porudžbinu</Link>
+      </div>
+    );
+
+  if (items.length === 0 && !pendingSubmission) {
     return (
       <div
         className={cardVariants({
@@ -281,9 +428,34 @@ export function CheckoutForm({
 
   return (
     <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,1fr)_24rem]">
+      {pendingSubmission ? (
+        <section
+          className="lg:col-span-2"
+          aria-label="Provera poslate porudžbine"
+        >
+          <p>
+            Odgovor na prethodno slanje nije potvrđen. Proverite poslatu
+            porudžbinu pre novog slanja.
+          </p>
+          <button
+            type="button"
+            disabled={retryUntil > 0 || checkingSubmission || isSubmitting}
+            className={buttonVariants()}
+            onClick={() => {
+              void retrySubmission();
+            }}
+          >
+            {checkingSubmission
+              ? 'Provera je u toku…'
+              : 'Proveri poslatu porudžbinu'}
+          </button>
+        </section>
+      ) : null}
       <form
         noValidate
-        onSubmit={handleSubmit(submitOrder)}
+        onSubmit={(event) => {
+          void handleSubmit(submitOrder)(event);
+        }}
         className="min-w-0 space-y-6"
       >
         <section className={cardVariants({ className: 'p-5 sm:p-7' })}>
@@ -390,7 +562,7 @@ export function CheckoutForm({
         </section>
 
         <PickupSelector
-          availability={pickupAvailability}
+          availability={availability}
           dateRegistration={dateRegistration}
           timeRegistration={timeRegistration}
           dateError={errors.pickupDate}
@@ -400,8 +572,11 @@ export function CheckoutForm({
           selectedTime={selectedTime}
           isLoading={isLoadingSlots}
           loadError={slotLoadError}
-          onDateChange={(date) => void loadSlots(date)}
+          onDateChange={(date) => {
+            if (!submitting.current) void loadSlots(date);
+          }}
           onTimeChange={(value) => {
+            if (submitting.current) return;
             setSelectedTime(value);
             setValue('pickupAt', value, { shouldValidate: true });
             clearErrors('pickupAt');
@@ -463,12 +638,14 @@ export function CheckoutForm({
         </p>
         <CheckoutSubmitButton
           disabled={
+            Boolean(pendingSubmission) ||
             Boolean(conflict?.details.items.length) ||
             isSubmitting ||
             isLoadingSlots ||
             slots.length === 0 ||
             !selectedTime ||
-            !pickupAvailability.orderAcceptingEnabled
+            !availability.orderAcceptingEnabled ||
+            retryUntil > 0
           }
           isSubmitting={isSubmitting}
         />

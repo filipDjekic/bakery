@@ -78,6 +78,7 @@ export function ProductCard({ product }: { product: CatalogProduct }) {
               name: product.name,
               imageUrl: product.imageUrl,
               displayPriceMinor: product.priceMinor,
+              unitLabel: product.unitLabel,
             }}
             isAvailable={product.isAvailable}
           />

@@ -5,6 +5,7 @@ import { db, type DatabaseReader } from '../../prisma/db.ts';
 export type OrderProduct = {
   id: string;
   name: string;
+  unitLabel: string | null;
   priceMinor: number;
   isActive: boolean;
   isAvailable: boolean;
@@ -26,6 +27,7 @@ export async function getProductsForOrder(
   return rows.map((product) => ({
     id: product.id,
     name: product.name,
+    unitLabel: product.unitLabel,
     priceMinor: product.priceMinor,
     isActive: product.isActive,
     isAvailable: product.isAvailable,

@@ -44,10 +44,10 @@ export function createResendEmailService(
   return {
     async send(message) {
       const payload = {
-        from,
+        from: message.from ?? from,
         to: [message.to],
         subject: message.subject,
-        react: message.react,
+        ...(message.html ? { html: message.html } : { react: message.react }),
         ...(message.replyTo ? { replyTo: message.replyTo } : {}),
       };
       const { data, error } = message.idempotencyKey

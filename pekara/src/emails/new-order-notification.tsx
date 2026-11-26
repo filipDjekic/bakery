@@ -13,6 +13,8 @@ export type NewOrderNotificationEmailProps = {
   orderNumber: string;
   pickupLabel: string;
   totalLabel: string;
+  originalTotalLabel?: string;
+  discountLabel?: string;
   adminOrderUrl: string;
 };
 
@@ -20,6 +22,8 @@ export function NewOrderNotificationEmail({
   orderNumber,
   pickupLabel,
   totalLabel,
+  originalTotalLabel,
+  discountLabel,
   adminOrderUrl,
 }: NewOrderNotificationEmailProps) {
   return (
@@ -40,6 +44,13 @@ export function NewOrderNotificationEmail({
           <Button href={adminOrderUrl} style={styles.button}>
             Otvori porudžbinu u admin panelu
           </Button>
+          {discountLabel ? (
+            <Text>
+              Prvobitno: {originalTotalLabel}
+              <br />
+              Popust: −{discountLabel}
+            </Text>
+          ) : null}
           <Text style={styles.muted}>
             Link vodi na zaštićenu admin stranicu i zahteva prijavu.
           </Text>

@@ -69,8 +69,9 @@ test('completed and cancelled statuses are terminal', () => {
   }
 });
 
-test('late orders can only be completed or cancelled by staff', () => {
-  assert.deepEqual(ORDER_STATUS_TRANSITIONS.LATE, ['COMPLETED', 'CANCELLED']);
+test('legacy late status cannot incorrectly complete an unknown preparation stage', () => {
+  assert.deepEqual(ORDER_STATUS_TRANSITIONS.LATE, ['CANCELLED']);
+  assert.equal(canTransitionOrderStatus('LATE', 'COMPLETED'), false);
   assert.equal(canTransitionOrderStatus('NEW', 'LATE'), false);
   assert.equal(canTransitionOrderStatus('LATE', 'NEW'), false);
 });

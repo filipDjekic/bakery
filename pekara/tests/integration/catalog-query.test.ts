@@ -147,7 +147,7 @@ test('keeps a valid empty category selected', async () => {
   assert.deepEqual(catalog.categories[0]?.products, []);
 });
 
-test('falls back to the full catalog for invalid or inactive slugs', async () => {
+test('invalid and inactive slugs return an explicit missing category, never the full catalog', async () => {
   for (const categorySlug of [
     `${slugPrefix}-missing`,
     `${slugPrefix}-hidden`,
@@ -155,10 +155,7 @@ test('falls back to the full catalog for invalid or inactive slugs', async () =>
     const catalog = await getPublicCatalog(categorySlug);
 
     assert.equal(catalog.selectedCategorySlug, null);
-    assert.ok(catalog.categories.length > 1);
-    assert.equal(
-      catalog.categories.some((category) => category.slug === categorySlug),
-      false,
-    );
+    assert.equal(catalog.invalidCategory, true);
+    assert.deepEqual(catalog.categories, []);
   }
 });

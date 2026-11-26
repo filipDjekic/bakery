@@ -91,6 +91,12 @@ export const checkoutItemSchema = z
       .min(CART_LIMITS.minItemQuantity)
       .max(CART_LIMITS.maxItemQuantity),
     displayPriceMinor: z.number().int().nonnegative().optional(),
+    displayUnitLabel: z
+      .string({ error: 'Jedinica prodaje nije validna.' })
+      .min(1, 'Jedinica prodaje nije validna.')
+      .max(40, 'Jedinica prodaje je predugačka.')
+      .nullable()
+      .optional(),
   })
   .strict();
 

@@ -76,6 +76,7 @@ export type AdminOrdersResult = {
     totalMinor: number;
     originalTotalMinor?: number | null;
     discountMinor?: number;
+    lateDiscountAt?: string | null;
     currencyCode: string;
     createdAt: string;
   }>;
@@ -112,7 +113,11 @@ function addFilters<T extends ReturnType<typeof baseOrderQuery>>(
 ) {
   let filtered = query;
 
-  if (status) {
+  if (status === 'LATE') {
+    filtered = filtered
+      .where((order) => order.status.in([...ACTIVE_ORDER_STATUSES]))
+      .where((order) => order.lateDiscountAt.isNotNull()) as T;
+  } else if (status) {
     filtered = filtered.where({ status }) as T;
   }
 
@@ -177,6 +182,7 @@ export async function getAdminOrders(
       'totalMinor',
       'originalTotalMinor',
       'discountMinor',
+      'lateDiscountAt',
       'currencyCode',
       'createdAt',
     )
@@ -233,6 +239,7 @@ export async function getActiveAdminOrders(
     'totalMinor',
     'originalTotalMinor',
     'discountMinor',
+    'lateDiscountAt',
     'currencyCode',
     'createdAt',
   )

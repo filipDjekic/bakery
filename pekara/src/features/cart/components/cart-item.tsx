@@ -40,7 +40,9 @@ export function CartItem({ item }: CartItemProps) {
           </div>
           <div className="flex flex-wrap gap-x-2">
             <dt>Količina:</dt>
-            <dd className="tabular-nums">{item.quantity}</dd>
+            <dd className="tabular-nums">
+              {item.quantity} {item.unitLabel ?? 'komad'}
+            </dd>
           </div>
         </dl>
 

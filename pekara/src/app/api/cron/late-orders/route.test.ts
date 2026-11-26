@@ -1,4 +1,9 @@
 import { afterEach, expect, it, vi } from 'vitest';
+vi.mock('@/server/services/recover-order-notifications', () => ({
+  recoverOrderNotifications: vi
+    .fn()
+    .mockResolvedValue({ recovered: 0, scanned: 0 }),
+}));
 vi.mock('@/server/services/process-late-orders', () => ({
   processLateOrders: vi
     .fn()
@@ -34,6 +39,10 @@ it('processes only authenticated invocations with uncached responses', async () 
       headers: { authorization: 'Bearer test-secret' },
     }),
   );
-  expect(await response.json()).toEqual({ processed: 2 });
+  expect(await response.json()).toEqual({
+    processed: 2,
+    hasMore: false,
+    notifications: { recovered: 0, scanned: 0 },
+  });
   expect(response.headers.get('cache-control')).toBe('no-store');
 });

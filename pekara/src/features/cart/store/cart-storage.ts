@@ -22,6 +22,10 @@ function isValidCartItem(value: unknown): value is CartItem {
     value.productId.length > 0 &&
     typeof value.name === 'string' &&
     value.name.length > 0 &&
+    (value.unitLabel == null ||
+      (typeof value.unitLabel === 'string' &&
+        value.unitLabel.length > 0 &&
+        value.unitLabel.length <= 40)) &&
     (value.imageUrl === null || typeof value.imageUrl === 'string') &&
     typeof value.displayPriceMinor === 'number' &&
     Number.isSafeInteger(value.displayPriceMinor) &&

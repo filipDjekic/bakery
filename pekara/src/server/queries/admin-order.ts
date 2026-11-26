@@ -33,6 +33,12 @@ export async function getAdminOrder(
   const names = new Map(actors.map((actor) => [actor.id, actor.name]));
   return {
     ...order,
+    notifications: order.notifications.map((entry) => ({
+      ...entry,
+      leaseExpired:
+        entry.status === 'SENDING' &&
+        (!entry.leaseUntil || Date.parse(entry.leaseUntil) <= Date.now()),
+    })),
     statusHistory: order.statusHistory.map((entry) => ({
       ...entry,
       actorName: entry.changedByUserId

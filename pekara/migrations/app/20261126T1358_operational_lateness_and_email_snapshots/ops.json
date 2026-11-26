@@ -1,0 +1,138 @@
+[
+  {
+    "id": "column.public.order.readyAt",
+    "label": "Add column \"readyAt\" to \"order\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "readyAt",
+        "table": "order"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"readyAt\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": ["public", "order", "readyAt"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"readyAt\"",
+        "sql": "ALTER TABLE \"public\".\"order\" ADD COLUMN \"readyAt\" timestamptz"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"readyAt\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": ["public", "order", "readyAt"]
+      }
+    ]
+  },
+  {
+    "id": "column.public.orderItem.unitLabel",
+    "label": "Add column \"unitLabel\" to \"orderItem\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "unitLabel",
+        "table": "orderItem"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"unitLabel\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": ["public", "orderItem", "unitLabel"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"unitLabel\"",
+        "sql": "ALTER TABLE \"public\".\"orderItem\" ADD COLUMN \"unitLabel\" character varying(40)"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"unitLabel\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": ["public", "orderItem", "unitLabel"]
+      }
+    ]
+  },
+  {
+    "id": "column.public.orderNotificationDelivery.payload",
+    "label": "Add column \"payload\" to \"orderNotificationDelivery\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "payload",
+        "table": "orderNotificationDelivery"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"payload\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": ["public", "orderNotificationDelivery", "payload"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"payload\"",
+        "sql": "ALTER TABLE \"public\".\"orderNotificationDelivery\" ADD COLUMN \"payload\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"payload\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": ["public", "orderNotificationDelivery", "payload"]
+      }
+    ]
+  },
+  {
+    "id": "data.order.restorePreparationStage",
+    "label": "Restore preparation stages and readiness audit from history",
+    "operationClass": "data",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "order"
+      }
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Recover readiness timestamps only from actual READY history",
+        "sql": "UPDATE \"public\".\"order\" o SET \"readyAt\" = h.ready FROM (SELECT \"orderId\", MIN(\"createdAt\") AS ready FROM \"public\".\"orderStatusHistory\" WHERE \"toStatus\" = 'READY' GROUP BY \"orderId\") h WHERE o.id = h.\"orderId\" AND o.\"readyAt\" IS NULL"
+      },
+      {
+        "description": "Audit and restore active LATE rows; missing history conservatively resumes at NEW",
+        "sql": "WITH stages AS (SELECT o.id, COALESCE((SELECT h.\"fromStatus\" FROM \"public\".\"orderStatusHistory\" h WHERE h.\"orderId\" = o.id AND h.\"toStatus\" = 'LATE' AND h.\"fromStatus\" IN ('NEW','ACCEPTED','IN_PREPARATION','READY') ORDER BY h.\"createdAt\" DESC, h.id DESC LIMIT 1), 'NEW') AS stage, GREATEST(o.\"updatedAt\", (SELECT MAX(h.\"createdAt\") FROM \"public\".\"orderStatusHistory\" h WHERE h.\"orderId\" = o.id)) + interval '1 millisecond' AS at FROM \"public\".\"order\" o WHERE o.status = 'LATE'), audit AS (INSERT INTO \"public\".\"orderStatusHistory\" (id,\"orderId\",\"fromStatus\",\"toStatus\",\"changedByUserId\",reason,\"createdAt\") SELECT gen_random_uuid(), id, 'LATE', stage, NULL, 'Migracija: vraćen prethodni tok pripreme; kašnjenje i popust ostaju zabeleženi.', at FROM stages) UPDATE \"public\".\"order\" o SET status = s.stage FROM stages s WHERE o.id = s.id"
+      },
+      {
+        "description": "Expose legacy deliveries whose original provider payload is unavailable",
+        "sql": "UPDATE \"public\".\"orderNotificationDelivery\" SET status = 'FAILED', \"leaseUntil\" = NULL, \"lastErrorCode\" = 'EMAIL_ORIGINAL_PAYLOAD_UNAVAILABLE' WHERE payload IS NULL AND status IN ('PENDING','FAILED','SENDING')"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "No operational LATE statuses remain",
+        "sql": "SELECT NOT EXISTS (SELECT 1 FROM \"public\".\"order\" WHERE status = 'LATE') AS result"
+      }
+    ]
+  }
+]

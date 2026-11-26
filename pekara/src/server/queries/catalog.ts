@@ -33,6 +33,7 @@ export type CatalogCategoryFilterOption = Pick<
 >;
 
 export type PublicCatalog = {
+  invalidCategory: boolean;
   categories: CatalogCategory[];
   filterCategories: CatalogCategoryFilterOption[];
   selectedCategorySlug: string | null;
@@ -101,7 +102,12 @@ export async function getPublicCatalog(
     : undefined;
 
   return {
-    categories: selectedCategory ? [selectedCategory] : allCategories,
+    invalidCategory: Boolean(requestedCategorySlug && !selectedCategory),
+    categories: selectedCategory
+      ? [selectedCategory]
+      : requestedCategorySlug
+        ? []
+        : allCategories,
     filterCategories: allCategories.map(({ id, name, slug }) => ({
       id,
       name,

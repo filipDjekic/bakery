@@ -892,6 +892,13 @@
                   "kind": "scalar"
                 }
               },
+              "readyAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "kind": "scalar"
+                }
+              },
               "status": {
                 "nullable": false,
                 "type": {
@@ -1021,6 +1028,9 @@
                 "pickupAt": {
                   "column": "pickupAt"
                 },
+                "readyAt": {
+                  "column": "readyAt"
+                },
                 "status": {
                   "column": "status"
                 },
@@ -1092,6 +1102,16 @@
                   "kind": "scalar"
                 }
               },
+              "unitLabel": {
+                "nullable": true,
+                "type": {
+                  "codecId": "sql/varchar@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "length": 40
+                  }
+                }
+              },
               "unitPriceMinor": {
                 "nullable": false,
                 "type": {
@@ -1155,6 +1175,9 @@
                 "subtotalMinor": {
                   "column": "subtotalMinor"
                 },
+                "unitLabel": {
+                  "column": "unitLabel"
+                },
                 "unitPriceMinor": {
                   "column": "unitPriceMinor"
                 }
@@ -1214,6 +1237,13 @@
                 "nullable": false,
                 "type": {
                   "codecId": "pg/uuid@1",
+                  "kind": "scalar"
+                }
+              },
+              "payload": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
                   "kind": "scalar"
                 }
               },
@@ -1287,6 +1317,9 @@
                 },
                 "orderId": {
                   "column": "orderId"
+                },
+                "payload": {
+                  "column": "payload"
                 },
                 "recipientType": {
                   "column": "recipientType"
@@ -2653,6 +2686,11 @@
                   "nativeType": "timestamptz",
                   "nullable": false
                 },
+                "readyAt": {
+                  "codecId": "pg/timestamptz-string@1",
+                  "nativeType": "timestamptz",
+                  "nullable": true
+                },
                 "status": {
                   "codecId": "pg/text@1",
                   "default": {
@@ -2799,6 +2837,14 @@
                   "nativeType": "int4",
                   "nullable": false
                 },
+                "unitLabel": {
+                  "codecId": "sql/varchar@1",
+                  "nativeType": "character varying",
+                  "nullable": true,
+                  "typeParams": {
+                    "length": 40
+                  }
+                },
                 "unitPriceMinor": {
                   "codecId": "pg/int4@1",
                   "nativeType": "int4",
@@ -2930,6 +2976,11 @@
                   "codecId": "pg/uuid@1",
                   "nativeType": "uuid",
                   "nullable": false
+                },
+                "payload": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
                 },
                 "recipientType": {
                   "codecId": "sql/varchar@1",
@@ -3629,7 +3680,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "0ac919db64d2b4147a64590cff79641695f03357dc43d5870b7191ee90813647"
+    "storageHash": "e0c3715567957912b2565406ef28a4d1da1fe6297ceb30450da2b01b4e8a33c4"
   },
   "execution": {
     "executionHash": "e4be86e61b2bcc9642b805e0317f350ffa37d0b687b3f8e9a0151c1b4efe0e79",

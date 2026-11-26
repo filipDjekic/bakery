@@ -1,7 +1,13 @@
 import { getOrderStatusMeta } from '@/config/order-status';
 import type { PublicOrderStatus } from '@/types/order';
 
-export function OrderStatusBadge({ status }: { status: PublicOrderStatus }) {
+export function OrderStatusBadge({
+  status,
+  lateDiscountAt,
+}: {
+  status: PublicOrderStatus;
+  lateDiscountAt?: string | null;
+}) {
   const meta = getOrderStatusMeta(status);
 
   return (
@@ -13,6 +19,9 @@ export function OrderStatusBadge({ status }: { status: PublicOrderStatus }) {
         className={`size-2 rounded-full ${meta.dotClassName}`}
       />
       {meta.label}
+      {lateDiscountAt && !['COMPLETED', 'CANCELLED', 'LATE'].includes(status)
+        ? ' · Kasni'
+        : ''}
     </span>
   );
 }

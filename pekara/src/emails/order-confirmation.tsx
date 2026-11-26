@@ -1,5 +1,6 @@
 import {
   Body,
+  Button,
   Container,
   Head,
   Heading,
@@ -18,9 +19,13 @@ export type OrderConfirmationEmailProps = {
   orderNumber: string;
   pickupLabel: string;
   totalLabel: string;
+  originalTotalLabel?: string;
+  discountLabel?: string;
+  orderStatusUrl: string;
   items: Array<{
     name: string;
     quantity: number;
+    unitLabel: string;
     subtotalLabel: string;
   }>;
 };
@@ -33,6 +38,9 @@ export function OrderConfirmationEmail({
   orderNumber,
   pickupLabel,
   totalLabel,
+  originalTotalLabel,
+  discountLabel,
+  orderStatusUrl,
   items,
 }: OrderConfirmationEmailProps) {
   return (
@@ -50,12 +58,21 @@ export function OrderConfirmationEmail({
           <Section style={styles.items}>
             {items.map((item, index) => (
               <Text key={`${item.name}-${index}`} style={styles.item}>
-                {item.quantity} × {item.name} — {item.subtotalLabel}
+                {item.quantity} {item.unitLabel} × {item.name} —{' '}
+                {item.subtotalLabel}
               </Text>
             ))}
           </Section>
           <Hr style={styles.rule} />
+          {discountLabel ? (
+            <Text>
+              Prvobitno: {originalTotalLabel}
+              <br />
+              Popust: −{discountLabel}
+            </Text>
+          ) : null}
           <Text style={styles.total}>Ukupno: {totalLabel}</Text>
+          <Button href={orderStatusUrl}>Prati porudžbinu</Button>
           <Text style={styles.muted}>
             {bakeryName} · {bakeryAddress} · {bakeryPhone}
           </Text>

@@ -39,4 +39,23 @@ describe('checkout idempotency storage', () => {
     }));
     expect(storage.keyFor('draft')).toBe(storage.keyFor('draft'));
   });
+  it('retains ambiguous drafts when the customer edits and then restores a draft, including refresh', () => {
+    let raw = '';
+    const storage = () => ({
+      getItem: () => raw,
+      setItem: (_: string, value: string) => {
+        raw = value;
+      },
+      removeItem: () => {
+        raw = '';
+      },
+    });
+    const first = createCheckoutIdempotency(storage);
+    const key = first.keyFor('A');
+    expect(first.keyFor('B')).not.toBe(key);
+    expect(first.keyFor('A')).toBe(key);
+    expect(createCheckoutIdempotency(storage).keyFor('A')).toBe(key);
+    first.complete();
+    expect(createCheckoutIdempotency(storage).keyFor('A')).not.toBe(key);
+  });
 });

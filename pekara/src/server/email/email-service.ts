@@ -6,6 +6,8 @@ export type TransactionalEmail = {
   to: string;
   subject: string;
   react: ReactElement;
+  html?: string;
+  from?: string;
   replyTo?: string;
   idempotencyKey?: string;
 };

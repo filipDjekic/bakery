@@ -25,6 +25,7 @@ export async function updateProductAction(
   try {
     await requireAdmin();
     const id = String(formData.get('id') ?? '');
+    const expectedUpdatedAt = String(formData.get('expectedUpdatedAt') ?? '');
     const values = productValuesFromFormData(formData);
     const changeSlug = formData.get('changeSlug') === 'on';
     const file = optionalImageFromFormData(formData);
@@ -33,7 +34,7 @@ export async function updateProductAction(
           upload: () => uploadProductImage(file),
           updateDatabase: async (image) => {
             const updated = await updateProduct(
-              { ...values, id, changeSlug, image },
+              { ...values, id, expectedUpdatedAt, changeSlug, image },
               async () => undefined,
             );
             return { value: updated, oldPathname: updated.oldImagePathname };
@@ -41,7 +42,7 @@ export async function updateProductAction(
           storage: vercelBlobStorage,
         })
       : await updateProduct(
-          { ...values, id, changeSlug },
+          { ...values, id, expectedUpdatedAt, changeSlug },
           async () => undefined,
         );
     updateTag(PUBLIC_CACHE_TAGS.catalog);

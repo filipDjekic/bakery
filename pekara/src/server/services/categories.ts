@@ -5,6 +5,7 @@ import type { ZodIssue } from 'zod';
 
 import { slugCandidate } from '../../lib/slug.ts';
 
+import { nextCatalogVersion, catalogVersionSchema } from './catalog-locks.ts';
 import { db } from '../../prisma/db.ts';
 import {
   categoryMutationSchema,
@@ -17,7 +18,8 @@ export type CategoryErrorCode =
   | 'VALIDATION_ERROR'
   | 'NOT_FOUND'
   | 'DUPLICATE_SLUG'
-  | 'DEACTIVATION_CONFIRMATION_REQUIRED';
+  | 'DEACTIVATION_CONFIRMATION_REQUIRED'
+  | 'CONFLICT';
 
 export class CategoryDomainError extends Error {
   readonly code: CategoryErrorCode;
@@ -79,7 +81,11 @@ export async function createCategory(
 }
 
 export async function updateCategory(
-  input: CategoryMutationInput & { id: string; confirmDeactivation: boolean },
+  input: CategoryMutationInput & {
+    id: string;
+    confirmDeactivation: boolean;
+    expectedUpdatedAt?: string;
+  },
   authorize: () => Promise<unknown> = requireAdmin,
 ): Promise<{ id: string; slug: string }> {
   await authorize();
@@ -90,30 +96,53 @@ export async function updateCategory(
       'Podaci kategorije nisu validni.',
       parsed.error.issues,
     );
-  const current = await db.orm.public.Category.select('id', 'slug', 'isActive')
-    .where({ id: parsed.data.id })
-    .first();
-  if (!current)
-    throw new CategoryDomainError('NOT_FOUND', 'Kategorija ne postoji.');
-  if (current.isActive && !parsed.data.isActive) {
-    const activeProducts = await db.orm.public.Product.where({
-      categoryId: current.id,
-      isActive: true,
-    }).aggregate((aggregate) => ({ count: aggregate.count() }));
-    if (activeProducts.count > 0 && !parsed.data.confirmDeactivation) {
+  return db.transaction(async (tx) => {
+    await tx.query(
+      db.raw
+        .sql`SELECT "id" FROM "public"."category" WHERE "id" = ${parsed.data.id}::uuid FOR UPDATE`
+        .returnsRow({ id: db.sql.public.category.columns.id })
+        .build(),
+    );
+    const current = await tx.orm.public.Category.select(
+      'id',
+      'slug',
+      'isActive',
+      'updatedAt',
+    )
+      .where({ id: parsed.data.id })
+      .first();
+    if (!current)
+      throw new CategoryDomainError('NOT_FOUND', 'Kategorija ne postoji.');
+    if (
+      input.expectedUpdatedAt !== undefined &&
+      (!catalogVersionSchema.safeParse(input.expectedUpdatedAt).success ||
+        Date.parse(input.expectedUpdatedAt) !== Date.parse(current.updatedAt))
+    )
       throw new CategoryDomainError(
-        'DEACTIVATION_CONFIRMATION_REQUIRED',
-        `Kategorija ima ${activeProducts.count} aktivnih proizvoda. Potvrdite deaktivaciju.`,
+        'CONFLICT',
+        'Kategorija je u međuvremenu izmenjena. Osvežite podatke.',
       );
+    if (current.isActive && !parsed.data.isActive) {
+      const activeProducts = await tx.orm.public.Product.where({
+        categoryId: current.id,
+        isActive: true,
+      }).aggregate((aggregate) => ({ count: aggregate.count() }));
+      if (activeProducts.count > 0 && !parsed.data.confirmDeactivation) {
+        throw new CategoryDomainError(
+          'DEACTIVATION_CONFIRMATION_REQUIRED',
+          `Kategorija ima ${activeProducts.count} aktivnih proizvoda. Potvrdite deaktivaciju.`,
+        );
+      }
     }
-  }
-  await db.orm.public.Category.where({ id: current.id }).update({
-    name: varchar(parsed.data.name, 80),
-    description: parsed.data.description
-      ? varchar(parsed.data.description, 300)
-      : null,
-    sortOrder: parsed.data.sortOrder,
-    isActive: parsed.data.isActive,
+    await tx.orm.public.Category.where({ id: current.id }).updateAll({
+      updatedAt: nextCatalogVersion(current.updatedAt),
+      name: varchar(parsed.data.name, 80),
+      description: parsed.data.description
+        ? varchar(parsed.data.description, 300)
+        : null,
+      sortOrder: parsed.data.sortOrder,
+      isActive: parsed.data.isActive,
+    });
+    return { id: current.id, slug: current.slug };
   });
-  return { id: current.id, slug: current.slug };
 }

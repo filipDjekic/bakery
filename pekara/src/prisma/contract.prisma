@@ -72,6 +72,7 @@ model Order {
   note               VarChar(500)?
 
   pickupAt           TimestamptzString
+  readyAt            TimestamptzString?
 
   currencyCode       VarChar(3)
   subtotalMinor      Int
@@ -105,6 +106,7 @@ model OrderItem {
   productId      Uuid?
 
   productName    VarChar(120)
+  unitLabel      VarChar(40)?
   unitPriceMinor Int
   quantity       Int
   subtotalMinor  Int
@@ -289,6 +291,7 @@ model OrderNotificationDelivery {
   status NotificationStatus @default(PENDING)
   attempts Int @default(0)
   lastErrorCode VarChar(80)?
+  payload String?
   leaseUntil TimestamptzString?
   deliveredAt TimestamptzString?
   createdAt temporal.createdAtString()

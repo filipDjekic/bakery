@@ -12,6 +12,7 @@ const eslintConfig = defineConfig([
     'build/**',
     'coverage/**',
     '.cache/**',
+    '.test-postgres/**',
     'performance-results/**',
     'next-env.d.ts',
 

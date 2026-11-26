@@ -8,6 +8,8 @@ import { setProductAvailable } from '../actions/set-product-available';
 
 type ProductTogglesProps = {
   id: string;
+  updatedAt: string;
+  categoryIsActive: boolean;
   isActive: boolean;
   isAvailable: boolean;
 };
@@ -16,7 +18,10 @@ export function ProductToggles({
   id,
   isActive,
   isAvailable,
+  updatedAt,
+  categoryIsActive,
 }: ProductTogglesProps) {
+  const [version, setVersion] = useState(updatedAt);
   const dialogLabel = useId();
   const confirm = useRef<HTMLDialogElement>(null);
   const [active, setActive] = useState(isActive);
@@ -28,13 +33,15 @@ export function ProductToggles({
     startTransition(async () => {
       try {
         if (kind === 'active') {
-          await setProductActive(id, value);
+          const result = await setProductActive(id, value, version);
+          setVersion(result.updatedAt);
           setActive(value);
           toast.success(
             value ? 'Proizvod je aktiviran.' : 'Proizvod je deaktiviran.',
           );
         } else {
-          await setProductAvailable(id, value);
+          const result = await setProductAvailable(id, value, version);
+          setVersion(result.updatedAt);
           setAvailable(value);
           toast.success(
             value ? 'Proizvod je dostupan.' : 'Proizvod nije dostupan.',
@@ -48,11 +55,16 @@ export function ProductToggles({
   }
   return (
     <div className="flex min-w-44 flex-col gap-2">
+      {!categoryIsActive ? (
+        <p className="text-xs text-amber-800">
+          Skriven: kategorija nije aktivna.
+        </p>
+      ) : null}
       <label className="flex items-center gap-2">
         <input
           type="checkbox"
           checked={active}
-          disabled={pending}
+          disabled={pending || (!categoryIsActive && !active)}
           onChange={(event) => {
             if (!event.target.checked) confirm.current?.showModal();
             else change('active', true);
@@ -64,7 +76,7 @@ export function ProductToggles({
         <input
           type="checkbox"
           checked={available}
-          disabled={pending}
+          disabled={pending || (!categoryIsActive && !available)}
           onChange={(event) => change('available', event.target.checked)}
         />{' '}
         Dostupan

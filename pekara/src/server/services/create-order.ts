@@ -57,7 +57,7 @@ export class OrderDomainError extends Error {
 }
 
 type CreateOrderOptions = {
-  now?: DateTime;
+  now?: DateTime | (() => DateTime);
   payloadHash?: string;
   scheduleNotifications?: (callback: () => Promise<void>) => void;
   notifications?: {
@@ -69,7 +69,7 @@ type CreateOrderOptions = {
 export async function createOrder(
   input: unknown,
   {
-    now = DateTime.utc(),
+    now = () => DateTime.utc(),
     payloadHash,
     scheduleNotifications,
     notifications = {
@@ -102,6 +102,8 @@ export async function createOrder(
           tx,
           request.items.map((item) => item.productId),
         );
+        // Validate against the time after lock waits, not request arrival time.
+        const currentTime = typeof now === 'function' ? now() : now;
         const settings = await getPickupBakerySettings(tx);
 
         if (!settings.orderAcceptingEnabled) {
@@ -139,7 +141,7 @@ export async function createOrder(
           date: pickupDate,
           settings,
           businessHours,
-          now,
+          now: currentTime,
         });
         const pickupInstant = pickupAt
           .toUTC()
@@ -168,16 +170,24 @@ export async function createOrder(
 
         for (const item of request.items) {
           const product = productsById.get(item.productId);
+          const unitChanged =
+            product &&
+            item.displayUnitLabel !== undefined &&
+            (item.displayUnitLabel ?? 'komad') !==
+              (product.unitLabel ?? 'komad');
 
           if (
             !product ||
             !product.isActive ||
             !product.isAvailable ||
-            !product.categoryIsActive
+            !product.categoryIsActive ||
+            unitChanged
           ) {
             unavailableItems.push({
               productId: item.productId,
-              productName: product?.name ?? null,
+              productName: unitChanged
+                ? `${product.name} — jedinica prodaje je promenjena; ponovo dodajte proizvod.`
+                : (product?.name ?? null),
             });
             continue;
           }
@@ -199,6 +209,7 @@ export async function createOrder(
           snapshots.push({
             productId: product.id,
             productName: product.name,
+            unitLabel: product.unitLabel,
             unitPriceMinor: product.priceMinor,
             quantity: item.quantity,
             subtotalMinor,
@@ -238,7 +249,7 @@ export async function createOrder(
 
         const confirmation = await persistOrder(
           {
-            orderNumber: generateOrderNumber(now, settings.timezone),
+            orderNumber: generateOrderNumber(currentTime, settings.timezone),
             idempotencyKey: request.idempotencyKey,
             payloadHash: canonicalHash,
             customerName: request.customerName,

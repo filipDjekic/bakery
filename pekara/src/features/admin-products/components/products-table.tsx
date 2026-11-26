@@ -60,6 +60,9 @@ export function ProductsTable({
             <p className="my-3 font-bold">{formatRsd(product.priceMinor)}</p>
             <ProductToggles
               id={product.id}
+              key={`${product.id}-${product.updatedAt}`}
+              updatedAt={product.updatedAt}
+              categoryIsActive={product.categoryIsActive}
               isActive={product.isActive}
               isAvailable={product.isAvailable}
             />
@@ -134,6 +137,9 @@ export function ProductsTable({
                 <td className="px-4 py-3">
                   <ProductToggles
                     id={product.id}
+                    key={`${product.id}-${product.updatedAt}`}
+                    updatedAt={product.updatedAt}
+                    categoryIsActive={product.categoryIsActive}
                     isActive={product.isActive}
                     isAvailable={product.isAvailable}
                   />

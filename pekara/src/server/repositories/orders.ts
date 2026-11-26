@@ -8,6 +8,7 @@ import type { OrderConfirmationDto } from '../../types/order.ts';
 export type OrderItemSnapshot = {
   productId: string;
   productName: string;
+  unitLabel?: string | null;
   unitPriceMinor: number;
   quantity: number;
   subtotalMinor: number;
@@ -105,6 +106,7 @@ export async function persistOrder(
       currencyCode: varchar(input.currencyCode, 3),
       subtotalMinor: input.totalMinor,
       totalMinor: input.totalMinor,
+      originalTotalMinor: input.totalMinor,
       cancellationReason: null,
     });
 
@@ -113,6 +115,7 @@ export async function persistOrder(
         orderId: order.id,
         productId: item.productId,
         productName: varchar(item.productName, 120),
+        unitLabel: item.unitLabel ? varchar(item.unitLabel, 40) : null,
         unitPriceMinor: item.unitPriceMinor,
         quantity: item.quantity,
         subtotalMinor: item.subtotalMinor,

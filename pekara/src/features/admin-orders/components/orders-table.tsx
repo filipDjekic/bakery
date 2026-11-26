@@ -65,7 +65,10 @@ export function OrdersTable({
                 <OrderPrice {...order} />
               </td>
               <td className="px-4 py-3 whitespace-nowrap">
-                <OrderStatusBadge status={order.status} />
+                <OrderStatusBadge
+                  status={order.status}
+                  lateDiscountAt={order.lateDiscountAt}
+                />
               </td>
             </tr>
           ))}

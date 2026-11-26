@@ -9,6 +9,7 @@ import { db } from '../../prisma/db.ts';
 import { orderStatusChangeSchema } from '../../validation/order.ts';
 import { requireStaff } from '../auth/authorization.ts';
 import { AppError } from '../errors/app-error.ts';
+import { applyOrderLateness, lockOrder } from './order-lateness.ts';
 import { reportUnexpectedError } from '../errors/sentry.ts';
 import {
   errorCodeFor,
@@ -25,6 +26,7 @@ function varchar<N extends number>(value: string, maxLength: N): Varchar<N> {
 export async function changeOrderStatus(
   input: unknown,
   authorize: typeof requireStaff = requireStaff,
+  now?: Date,
 ) {
   const requestId = randomUUID();
   const startedAt = performance.now();
@@ -41,13 +43,7 @@ export async function changeOrderStatus(
     orderId = value.orderId;
 
     const targetStatus = await db.transaction(async (tx) => {
-      const order = await tx.orm.public.Order.select(
-        'id',
-        'orderNumber',
-        'status',
-      )
-        .where({ id: value.orderId })
-        .first();
+      const order = await lockOrder(tx, value.orderId);
       if (!order) throw new AppError({ code: 'NOT_FOUND' });
       orderNumber = order.orderNumber;
       if (
@@ -57,11 +53,15 @@ export async function changeOrderStatus(
         throw new AppError({ code: 'CONFLICT' });
       }
 
+      const instant = (now ?? new Date()).toISOString();
+      const markedLate = await applyOrderLateness(tx, order, instant);
       const updated = await tx.orm.public.Order.where({
         id: value.orderId,
         status: value.currentStatus,
       }).updateAll({
         status: value.targetStatus,
+        updatedAt: instant,
+        ...(value.targetStatus === 'READY' ? { readyAt: instant } : {}),
         cancellationReason:
           value.targetStatus === 'CANCELLED'
             ? varchar(value.cancellationReason ?? '', 300)
@@ -73,6 +73,9 @@ export async function changeOrderStatus(
         fromStatus: value.currentStatus,
         toStatus: value.targetStatus,
         changedByUserId: user.id,
+        createdAt: markedLate
+          ? new Date(Date.parse(instant) + 1).toISOString()
+          : instant,
         reason: value.cancellationReason
           ? varchar(value.cancellationReason, 300)
           : null,

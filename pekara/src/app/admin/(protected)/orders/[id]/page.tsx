@@ -46,7 +46,10 @@ export default async function AdminOrderPage({
             Kreirana {localTime(order.createdAt, settings.timezone)}
           </p>
         </div>
-        <OrderStatusBadge status={order.status} />
+        <OrderStatusBadge
+          status={order.status}
+          lateDiscountAt={order.lateDiscountAt}
+        />
       </header>
 
       <dl
@@ -162,6 +165,18 @@ export default async function AdminOrderPage({
                   }[entry.status]
                 }{' '}
                 · pokušaji {entry.attempts}/5
+                {entry.leaseExpired
+                  ? ' · Slanje je prekinuto; čeka oporavak.'
+                  : ''}
+                {entry.lastErrorCode &&
+                [
+                  'EMAIL_REVIEW_REQUIRED',
+                  'EMAIL_ORIGINAL_PAYLOAD_UNAVAILABLE',
+                  'EMAIL_ATTEMPTS_EXHAUSTED',
+                  'EMAIL_SNAPSHOT_FAILED',
+                ].includes(entry.lastErrorCode)
+                  ? ' · Potrebna je ručna provera isporuke.'
+                  : ''}
               </li>
             ))}
           </ul>
@@ -171,7 +186,13 @@ export default async function AdminOrderPage({
         {order.notifications.some(
           (entry) =>
             ['PENDING', 'FAILED', 'SENDING'].includes(entry.status) &&
-            entry.attempts < 5,
+            entry.attempts < 5 &&
+            Boolean(entry.payload) &&
+            ![
+              'EMAIL_REVIEW_REQUIRED',
+              'EMAIL_ORIGINAL_PAYLOAD_UNAVAILABLE',
+              'EMAIL_SNAPSHOT_FAILED',
+            ].includes(entry.lastErrorCode ?? ''),
         ) ? (
           <RetryNotificationButton orderId={order.id} />
         ) : null}
@@ -184,7 +205,7 @@ export default async function AdminOrderPage({
             IN_PREPARATION:
               'Označite porudžbinu kao spremnu kada završite pripremu.',
             READY: 'Po preuzimanju označite porudžbinu kao završenu.',
-            LATE: 'Porudžbina kasni i ima popust od 15%. Završite je po preuzimanju ili je otkažite.',
+            LATE: 'Osvežite podatke da nastavite pripremu ili otkažite porudžbinu.',
             COMPLETED: 'Porudžbina je završena; status se više ne menja.',
             CANCELLED: 'Porudžbina je otkazana; status se više ne menja.',
           }[order.status]

@@ -44,7 +44,10 @@ export function OrderMobileCards({
                   </p>
                 ) : null}
               </div>
-              <OrderStatusBadge status={order.status} />
+              <OrderStatusBadge
+                status={order.status}
+                lateDiscountAt={order.lateDiscountAt}
+              />
             </div>
             <h2 className="mt-5 text-lg font-bold break-words">
               {order.orderNumber}

@@ -23,6 +23,38 @@ beforeEach(() => {
   useCartStore.getState().clear();
 });
 
+test('successful checkout consumes only submitted quantities and preserves newer cart edits', () => {
+  const store = useCartStore.getState();
+  store.addItem(product(1), 2);
+  const submitted = useCartStore.getState().items.map((item) => ({ ...item }));
+  store.addItem(product(1), 1);
+  store.addItem(product(2), 1);
+  store.consumeSubmitted(submitted);
+  assert.deepEqual(
+    useCartStore
+      .getState()
+      .items.map((item) => [item.productId, item.quantity]),
+    [
+      ['product-1', 1],
+      ['product-2', 1],
+    ],
+  );
+  store.updateItemPrice('product-1', 200);
+  store.consumeSubmitted(submitted);
+  assert.equal(useCartStore.getState().items[0]?.displayPriceMinor, 200);
+});
+
+test('cart preserves supported sale units and rejects malformed sale-unit metadata', () => {
+  const store = useCartStore.getState();
+  assert.equal(store.addItem({ ...product(1), unitLabel: 'gram' }).ok, true);
+  assert.equal(useCartStore.getState().items[0]?.unitLabel, 'gram');
+  assert.equal(store.addItem({ ...product(3), unitLabel: 'kg' }).ok, true);
+  assert.equal(
+    store.addItem({ ...product(2), unitLabel: {} as string }).ok,
+    false,
+  );
+});
+
 test('adds, updates and removes cart items', () => {
   assert.deepEqual(useCartStore.getState().addItem(product(1), 2), {
     ok: true,

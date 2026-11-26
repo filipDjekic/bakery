@@ -72,6 +72,12 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
         <p className="text-muted mt-4 leading-7">
           {statusMessages[order.status].description}
         </p>
+        {order.lateDiscountAt ? (
+          <p className="mt-4 font-semibold text-red-800">
+            Termin preuzimanja je prošao. Odobren je popust od 15%; status
+            pripreme je prikazan iznad.
+          </p>
+        ) : null}
 
         <div className="bg-surface-muted border-border mt-7 rounded-xl border px-4 py-6">
           <p className="text-muted text-sm">Broj porudžbine</p>
@@ -129,7 +135,8 @@ export function OrderConfirmation({ order }: OrderConfirmationProps) {
               <div>
                 <p className="font-medium">{item.productName}</p>
                 <p className="text-muted mt-1 text-sm tabular-nums">
-                  {item.quantity} × {formatRsd(item.unitPriceMinor)}
+                  {item.quantity} {item.unitLabel ?? 'komad'} ×{' '}
+                  {formatRsd(item.unitPriceMinor)}
                 </p>
               </div>
               <p className="shrink-0 font-semibold tabular-nums">

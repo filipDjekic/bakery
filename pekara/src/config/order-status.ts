@@ -61,7 +61,8 @@ export const ORDER_STATUS_TRANSITIONS = {
   ACCEPTED: ['IN_PREPARATION', 'CANCELLED'],
   IN_PREPARATION: ['READY', 'CANCELLED'],
   READY: ['COMPLETED', 'CANCELLED'],
-  LATE: ['COMPLETED', 'CANCELLED'],
+  // Historical enum value only. Migration restores its preparation stage.
+  LATE: ['CANCELLED'],
   COMPLETED: [],
   CANCELLED: [],
 } as const satisfies Record<PublicOrderStatus, readonly PublicOrderStatus[]>;

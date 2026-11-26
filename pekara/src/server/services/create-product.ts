@@ -4,6 +4,7 @@ import type { Varchar } from '@prisma/orm-postgres/target/codec-types';
 
 import { slugCandidate } from '../../lib/slug.ts';
 
+import { lockProductCategories } from './catalog-locks.ts';
 import { db } from '../../prisma/db.ts';
 import {
   productMutationSchema,
@@ -51,54 +52,57 @@ export async function createProduct(
         'IMAGE_REQUIRED',
         'Aktivan proizvod mora imati sliku.',
       );
-    const category = await db.orm.public.Category.select('id', 'isActive')
-      .where({ id: parsed.data.categoryId })
-      .first();
-    if (!category)
-      throw new ProductDomainError(
-        'VALIDATION_ERROR',
-        'Kategorija ne postoji.',
-        [
-          {
-            code: 'custom',
-            path: ['categoryId'],
-            message: 'Izaberite postojeću kategoriju.',
-          },
-        ],
-      );
-    if (!category.isActive)
-      throw new ProductDomainError(
-        'INACTIVE_CATEGORY',
-        'Nova kategorija proizvoda mora biti aktivna.',
-        [
-          {
-            code: 'custom',
-            path: ['categoryId'],
-            message: 'Izaberite aktivnu kategoriju.',
-          },
-        ],
-      );
     for (let attempt = 0; attempt < 32; attempt += 1) {
       try {
-        return await db.orm.public.Product.select('id', 'slug').create({
-          categoryId: parsed.data.categoryId,
-          name: varchar(parsed.data.name, 120),
-          slug: varchar(slugCandidate(parsed.data.name, 140, attempt), 140),
-          description: varchar(parsed.data.description, 1000),
-          priceMinor: parsed.data.priceMinor,
-          unitLabel: parsed.data.unitLabel
-            ? varchar(parsed.data.unitLabel, 40)
-            : null,
-          allergenInfo: parsed.data.allergenInfo
-            ? varchar(parsed.data.allergenInfo, 500)
-            : null,
-          imageUrl: input.image?.url ?? null,
-          imagePathname: input.image?.pathname ?? null,
-          imageWidth: input.image?.width ?? null,
-          imageHeight: input.image?.height ?? null,
-          isActive: parsed.data.isActive,
-          isAvailable: parsed.data.isAvailable,
-          sortOrder: parsed.data.sortOrder,
+        return await db.transaction(async (tx) => {
+          await lockProductCategories(tx, [parsed.data.categoryId]);
+          const category = await tx.orm.public.Category.select('id', 'isActive')
+            .where({ id: parsed.data.categoryId })
+            .first();
+          if (!category)
+            throw new ProductDomainError(
+              'VALIDATION_ERROR',
+              'Kategorija ne postoji.',
+              [
+                {
+                  code: 'custom',
+                  path: ['categoryId'],
+                  message: 'Izaberite postojeću kategoriju.',
+                },
+              ],
+            );
+          if (!category.isActive)
+            throw new ProductDomainError(
+              'INACTIVE_CATEGORY',
+              'Nova kategorija proizvoda mora biti aktivna.',
+              [
+                {
+                  code: 'custom',
+                  path: ['categoryId'],
+                  message: 'Izaberite aktivnu kategoriju.',
+                },
+              ],
+            );
+          return tx.orm.public.Product.select('id', 'slug').create({
+            categoryId: parsed.data.categoryId,
+            name: varchar(parsed.data.name, 120),
+            slug: varchar(slugCandidate(parsed.data.name, 140, attempt), 140),
+            description: varchar(parsed.data.description, 1000),
+            priceMinor: parsed.data.priceMinor,
+            unitLabel: parsed.data.unitLabel
+              ? varchar(parsed.data.unitLabel, 40)
+              : null,
+            allergenInfo: parsed.data.allergenInfo
+              ? varchar(parsed.data.allergenInfo, 500)
+              : null,
+            imageUrl: input.image?.url ?? null,
+            imagePathname: input.image?.pathname ?? null,
+            imageWidth: input.image?.width ?? null,
+            imageHeight: input.image?.height ?? null,
+            isActive: parsed.data.isActive,
+            isAvailable: parsed.data.isAvailable,
+            sortOrder: parsed.data.sortOrder,
+          });
         });
       } catch (error) {
         if (!isProductSlugConflict(error)) throw error;

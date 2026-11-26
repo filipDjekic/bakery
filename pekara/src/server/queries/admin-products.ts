@@ -33,6 +33,7 @@ export type AdminCategoryOption = {
 };
 
 export type AdminProductDetails = {
+  updatedAt: string;
   id: string;
   name: string;
   slug: string;
@@ -134,8 +135,11 @@ export async function getAdminProduct(
     'imageHeight',
     'isActive',
     'isAvailable',
+    'updatedAt',
   )
     .where({ id })
     .first();
-  return product ?? null;
+  return product
+    ? { ...product, updatedAt: new Date(product.updatedAt).toISOString() }
+    : null;
 }

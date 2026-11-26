@@ -4,6 +4,7 @@ import { test } from 'vitest';
 import { CART_LIMITS, CHECKOUT_LIMITS } from '../config/limits.ts';
 import { normalizeCustomerPhone } from '../lib/phone.ts';
 import { checkoutRequestSchema } from './checkout.ts';
+import { checkoutFormSchema } from './checkout.ts';
 
 const PRODUCT_ID = '2b5e1eb1-a026-4b90-9f80-b0e189741686';
 
@@ -26,6 +27,38 @@ test('normalizes valid Serbian customer data', () => {
   assert.equal(result.customerPhone, '+381641234567');
   assert.equal(result.customerEmail, 'petar@example.com');
   assert.equal(result.note, 'Bez kese');
+});
+
+test('customer-name boundary is shared by the form and API: 1–100 trimmed characters', () => {
+  for (const length of [0, 1, 100, 101]) {
+    const request = { ...validRequest(), customerName: 'P'.repeat(length) };
+    const valid = length >= 1 && length <= 100;
+    assert.equal(checkoutRequestSchema.safeParse(request).success, valid);
+    assert.equal(
+      checkoutFormSchema.safeParse({ ...request, pickupDate: '2026-09-18' })
+        .success,
+      valid,
+    );
+  }
+});
+
+test('validates sale-unit snapshots while retaining compatibility with older clients', () => {
+  for (const displayUnitLabel of [undefined, null, 'komad', 'gram', 'kg']) {
+    assert.equal(
+      checkoutRequestSchema.safeParse({
+        ...validRequest(),
+        items: [{ productId: PRODUCT_ID, quantity: 1, displayUnitLabel }],
+      }).success,
+      true,
+    );
+  }
+  assert.equal(
+    checkoutRequestSchema.safeParse({
+      ...validRequest(),
+      items: [{ productId: PRODUCT_ID, quantity: 1, displayUnitLabel: {} }],
+    }).success,
+    false,
+  );
 });
 
 test('normalizes blank optional fields to undefined', () => {

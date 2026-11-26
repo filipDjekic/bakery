@@ -13,10 +13,13 @@ export type PublicOrderConfirmation = {
   totalMinor: number;
   originalTotalMinor?: number | null;
   discountMinor?: number;
+  lateDiscountAt?: string | null;
+  readyAt?: string | null;
   currencyCode: string;
   items: Array<{
     id: string;
     productName: string;
+    unitLabel?: string | null;
     unitPriceMinor: number;
     quantity: number;
     subtotalMinor: number;
@@ -64,10 +67,13 @@ export async function getPublicOrderConfirmation(
     totalMinor: order.totalMinor,
     originalTotalMinor: order.originalTotalMinor,
     discountMinor: order.discountMinor,
+    lateDiscountAt: order.lateDiscountAt,
+    readyAt: order.readyAt,
     currencyCode: order.currencyCode,
     items: order.items.map((item) => ({
       id: item.id,
       productName: item.productName,
+      unitLabel: item.unitLabel,
       unitPriceMinor: item.unitPriceMinor,
       quantity: item.quantity,
       subtotalMinor: item.subtotalMinor,

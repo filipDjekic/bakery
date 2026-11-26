@@ -8,6 +8,7 @@ import { logEvent, OBSERVABILITY_EVENTS } from '../logging/events.ts';
 import type { EmailService } from './email-service.ts';
 import {
   formatOrderMoney,
+  emailTotalLabels,
   formatOrderPickup,
   type OrderEmailData,
 } from './order-email-data.ts';
@@ -22,28 +23,9 @@ export async function sendCustomerOrderConfirmation(
   if (!emailService && process.env.EMAIL_ENABLED === 'false') return 'skipped';
   const requestId = randomUUID();
   try {
-    const delivery = await (emailService ?? getEmailService()).send({
-      idempotencyKey: `order/${order.orderId}/customer/v1`,
-      to: order.customerEmail,
-      subject: `Potvrda porudžbine ${order.orderNumber}`,
-      react: createElement(OrderConfirmationEmail, {
-        bakeryName: order.bakery.name,
-        bakeryAddress: order.bakery.address,
-        bakeryPhone: order.bakery.phone,
-        customerName: order.customerName,
-        orderNumber: order.orderNumber,
-        pickupLabel: formatOrderPickup(order.pickupAt, order.timezone),
-        totalLabel: formatOrderMoney(order.totalMinor, order.currencyCode),
-        items: order.items.map((item) => ({
-          name: item.productName,
-          quantity: item.quantity,
-          subtotalLabel: formatOrderMoney(
-            item.subtotalMinor,
-            order.currencyCode,
-          ),
-        })),
-      }),
-    });
+    const delivery = await (emailService ?? getEmailService()).send(
+      order.preparedMessage ?? buildCustomerOrderConfirmation(order),
+    );
     logEvent(
       {
         requestId,
@@ -72,4 +54,33 @@ export async function sendCustomerOrderConfirmation(
     );
     return 'failed';
   }
+}
+
+export function buildCustomerOrderConfirmation(order: OrderEmailData) {
+  if (!order.customerEmail) throw new Error('Missing customer recipient');
+  return {
+    idempotencyKey: `order/${order.orderId}/customer/v2`,
+    to: order.customerEmail,
+    subject: `Potvrda porudžbine ${order.orderNumber}`,
+    react: createElement(OrderConfirmationEmail, {
+      ...emailTotalLabels(order),
+      bakeryName: order.bakery.name,
+      bakeryAddress: order.bakery.address,
+      bakeryPhone: order.bakery.phone,
+      customerName: order.customerName,
+      orderNumber: order.orderNumber,
+      pickupLabel: formatOrderPickup(order.pickupAt, order.timezone),
+      totalLabel: formatOrderMoney(order.totalMinor, order.currencyCode),
+      orderStatusUrl: new URL(
+        `/porudzbina/${encodeURIComponent(order.orderId)}`,
+        process.env.APP_URL ?? 'http://localhost:3000',
+      ).toString(),
+      items: order.items.map((item) => ({
+        name: item.productName,
+        quantity: item.quantity,
+        unitLabel: item.unitLabel ?? 'komad',
+        subtotalLabel: formatOrderMoney(item.subtotalMinor, order.currencyCode),
+      })),
+    }),
+  };
 }

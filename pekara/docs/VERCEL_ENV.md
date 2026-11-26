@@ -16,6 +16,7 @@ Preview must use independent credentials and databases.
 | `BETTER_AUTH_URL`                | same canonical origin   | preview origin       | no              |
 | `BETTER_AUTH_SECRET`             | unique 32+ random bytes | different secret     | no              |
 | `RATE_LIMIT_HMAC_SECRET`         | unique 32+ random bytes | different secret     | no              |
+| `CRON_SECRET`                    | unique 32+ characters   | different secret     | no              |
 | `BLOB_READ_WRITE_TOKEN`          | production store        | preview store/token  | no              |
 | `SENTRY_DSN`                     | production project/DSN  | preview project/DSN  | no              |
 | `NEXT_PUBLIC_SENTRY_DSN`         | browser DSN             | preview browser DSN  | yes             |
@@ -41,6 +42,25 @@ leading/trailing whitespace.
    values automatically.
 
 Do not expose server secrets with `NEXT_PUBLIC_` prefixes.
+
+## Scheduled late orders
+
+`vercel.json` invokes `/api/cron/late-orders` every minute in production. Set
+`CRON_SECRET` before deployment; Vercel sends it in the Bearer authorization
+header. Missing or incorrect credentials return 401, including outside
+production. Production preflight requires this secret on Vercel.
+
+The configured minute interval requires Vercel Pro or Enterprise. Hobby permits
+daily cron jobs, which cannot meet the order-processing requirement. See
+[Vercel's current cron limits](https://vercel.com/docs/schedules/cron-jobs/usage-and-pricing)
+and [cron authentication](https://vercel.com/docs/schedules/cron-jobs/manage-cron-jobs#securing-cron-jobs).
+No paid plan or hosting setting is changed by the repository code.
+
+Apply the reviewed migrations before deploying this application version. A run
+handles bounded batches, uses UTC instants, atomically updates price/status/history,
+and tolerates overlapping or repeated invocations. Missed/failed invocations are
+caught up by a subsequent run. Monitor invocation errors and backlog; this is a
+minute-resolution schedule, not an exact-time timer.
 
 ## Core, optional and release gates
 

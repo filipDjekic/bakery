@@ -14,6 +14,7 @@ function browserStorage(): StorageLike | undefined {
  * requires working sessionStorage; no such guarantee is made when it is blocked. */
 export function createCheckoutIdempotency(getStorage = browserStorage) {
   let memory: RecordValue | undefined;
+  const records = new Map<string, string>();
   function safely<T>(operation: (storage: StorageLike) => T): T | undefined {
     try {
       const storage = getStorage();
@@ -24,10 +25,30 @@ export function createCheckoutIdempotency(getStorage = browserStorage) {
   }
   return {
     keyFor(signature: string): string {
+      if (records.has(signature)) {
+        memory = { signature, idempotencyKey: records.get(signature)! };
+        return memory.idempotencyKey;
+      }
       if (memory?.signature === signature) return memory.idempotencyKey;
       const raw = safely((storage) => storage.getItem(STORAGE_KEY));
       try {
-        const stored: unknown = raw ? JSON.parse(raw) : null;
+        const parsed = raw ? JSON.parse(raw) : null;
+        const values = Array.isArray(parsed?.records)
+          ? parsed.records
+          : [parsed];
+        for (const row of values) {
+          if (
+            typeof row?.signature === 'string' &&
+            typeof row?.idempotencyKey === 'string' &&
+            /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+              row.idempotencyKey,
+            )
+          )
+            records.set(row.signature, row.idempotencyKey);
+        }
+        const stored: unknown = records.has(signature)
+          ? { signature, idempotencyKey: records.get(signature) }
+          : null;
         if (
           stored &&
           typeof stored === 'object' &&
@@ -46,11 +67,41 @@ export function createCheckoutIdempotency(getStorage = browserStorage) {
         /* Malformed data is replaced on the next successful write. */
       }
       memory = { signature, idempotencyKey: crypto.randomUUID() };
-      safely((storage) => storage.setItem(STORAGE_KEY, JSON.stringify(memory)));
+      records.set(signature, memory.idempotencyKey);
+      safely((storage) =>
+        storage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({
+            records: [...records].map(([signature, idempotencyKey]) => ({
+              signature,
+              idempotencyKey,
+            })),
+          }),
+        ),
+      );
       return memory.idempotencyKey;
     },
-    complete() {
-      safely((storage) => storage.removeItem(STORAGE_KEY));
+    complete(completedKey = memory?.idempotencyKey) {
+      safely((storage) => {
+        const raw = storage.getItem(STORAGE_KEY);
+        let parsed;
+        try {
+          parsed = raw ? JSON.parse(raw) : null;
+        } catch {
+          /* Invalid records are replaced. */
+        }
+        const stored = Array.isArray(parsed?.records)
+          ? parsed.records
+          : parsed
+            ? [parsed]
+            : [];
+        const remaining = stored.filter(
+          (row: RecordValue) => row?.idempotencyKey !== completedKey,
+        );
+        if (remaining.length)
+          storage.setItem(STORAGE_KEY, JSON.stringify({ records: remaining }));
+        else storage.removeItem(STORAGE_KEY);
+      });
       // Keep memory until unmount: a failed navigation retry must not create a duplicate.
     },
   };

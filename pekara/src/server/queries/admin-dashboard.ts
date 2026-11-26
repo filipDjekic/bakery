@@ -1,6 +1,7 @@
 import 'server-only';
 
 import { DateTime } from 'luxon';
+import { ACTIVE_ORDER_STATUSES } from '../../config/order-status.ts';
 
 import { db } from '../../prisma/db.ts';
 import { requireStaff } from '../auth/authorization.ts';
@@ -78,7 +79,11 @@ export async function getAdminDashboard({
     countByStatus('ACCEPTED'),
     countByStatus('IN_PREPARATION'),
     countByStatus('READY'),
-    countByStatus('LATE'),
+    db.orm.public.Order.where((order) =>
+      order.status.in([...ACTIVE_ORDER_STATUSES]),
+    )
+      .where((order) => order.lateDiscountAt.isNotNull())
+      .aggregate((aggregate) => ({ count: aggregate.count() })),
     db.orm.public.Order.where({ status: 'COMPLETED' })
       .where((order) => order.updatedAt.gte(todayStart))
       .where((order) => order.updatedAt.lt(tomorrowStart))

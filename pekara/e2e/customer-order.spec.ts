@@ -40,6 +40,97 @@ test('unavailable product cannot be added', async ({ page, seed }) => {
   await expect(card.getByRole('button')).toHaveCount(0);
 });
 
+test('expired checkout selection reloads slots, keeps contact and requires a new selection', async ({
+  page,
+  seed,
+}) => {
+  let requests = 0;
+  await page.route('**/api/orders', async (route) => {
+    requests++;
+    if (requests === 1)
+      await route.fulfill({
+        status: 409,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          requestId: 'e2e-expired',
+          error: {
+            code: 'INVALID_PICKUP_SLOT',
+            message: 'Izabrani termin više nije dostupan.',
+          },
+        }),
+      });
+    else await route.continue();
+  });
+  await page.goto('/proizvodi');
+  await page
+    .getByRole('button', { name: `Dodaj ${seed.availableProductName} u korpu` })
+    .click();
+  await page.goto('/checkout');
+  await page.getByLabel('Ime i prezime').fill('Oporavak kupca');
+  await page.getByLabel('Telefon').fill('064 123 4567');
+  await page.getByRole('button', { name: /Sutra/ }).click();
+  const slot = page
+    .getByRole('group', { name: 'Termin preuzimanja' })
+    .getByRole('button', { name: /^\d{2}:\d{2}$/ })
+    .first();
+  await slot.click();
+  const submit = page.getByRole('button', { name: /pošalji porudžbinu/i });
+  await submit.click();
+  await expect(page.locator('main').getByRole('alert')).toContainText(
+    'Izabrani termin više nije dostupan',
+  );
+  await expect(submit).toBeDisabled();
+  await expect(page.getByLabel('Ime i prezime')).toHaveValue('Oporavak kupca');
+  await expect(slot).toHaveAttribute('aria-pressed', 'false');
+  await slot.click();
+  await submit.click();
+  await expect(page).toHaveURL(/\/porudzbina\/[0-9a-f-]+$/);
+  expect(requests).toBe(2);
+});
+
+test('missing category URLs show the Serbian missing page instead of the complete catalog', async ({
+  page,
+}) => {
+  await page.goto(
+    '/proizvodi?category=missing-category-slug&q=hleb&sort=price-asc',
+  );
+  await expect(
+    page.getByRole('heading', { name: /nije pronađena/i }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: /Dodaj .* u korpu/ }),
+  ).toHaveCount(0);
+});
+
+test('cart quantities synchronize across tabs in the same browser session', async ({
+  page,
+  context,
+  seed,
+}) => {
+  await page.goto('/proizvodi');
+  await page
+    .getByRole('button', { name: `Dodaj ${seed.availableProductName} u korpu` })
+    .click();
+  const second = await context.newPage();
+  await second.goto('/korpa');
+  await expect(
+    second.getByRole('combobox', {
+      name: `Količina proizvoda ${seed.availableProductName}`,
+    }),
+  ).toHaveValue('1');
+  await page
+    .getByRole('button', {
+      name: `Povećaj količinu proizvoda ${seed.availableProductName}`,
+    })
+    .click();
+  await expect(
+    second.getByRole('combobox', {
+      name: `Količina proizvoda ${seed.availableProductName}`,
+    }),
+  ).toHaveValue('2');
+  await second.close();
+});
+
 test('blocked session storage and a lost committed response retry one order with the same key', async ({
   page,
   seed,
@@ -83,7 +174,9 @@ test('blocked session storage and a lost committed response retry one order with
   await expect(page.locator('main').getByRole('alert')).toContainText(
     /Mrežna greška/,
   );
-  await page.getByRole('button', { name: /pošalji porudžbinu/i }).click();
+  await page
+    .getByRole('button', { name: 'Proveri poslatu porudžbinu' })
+    .click();
   await expect(page).toHaveURL(new RegExp(`/porudzbina/${committedId}$`));
   expect(keys).toHaveLength(2);
   expect(keys[0]).toBe(keys[1]);

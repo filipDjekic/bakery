@@ -5,6 +5,10 @@ import type { EmailService, TransactionalEmail } from './email-service';
 import type { OrderEmailData } from './order-email-data';
 import { sendBakeryNewOrder } from './send-bakery-new-order';
 import { sendCustomerOrderConfirmation } from './send-customer-order-confirmation';
+import {
+  serializeNotification,
+  deserializeNotification,
+} from './notification-payload';
 
 const order: OrderEmailData = {
   orderId: '11111111-1111-4111-8111-111111111111',
@@ -44,6 +48,45 @@ function capturingService() {
 }
 
 describe('order email notifications', () => {
+  it('renders discounted totals consistently and includes the unguessable status link', async () => {
+    const captured = capturingService();
+    await expect(
+      sendCustomerOrderConfirmation(
+        {
+          ...order,
+          totalMinor: 1062,
+          originalTotalMinor: 1250,
+          discountMinor: 188,
+        },
+        captured.service,
+      ),
+    ).resolves.toBe('sent');
+    const html = await render(captured.getMessage()!.react);
+    expect(html).toContain('Prvobitno:');
+    expect(html).toContain('Popust:');
+    expect(html).toContain('10,62');
+    expect(html).toContain(`/porudzbina/${order.orderId}`);
+  });
+  it('freezes original HTML, totals, sender, recipient and provider key across settings and price changes', async () => {
+    const payload = await serializeNotification(order, 'customer');
+    const before = deserializeNotification(payload);
+    const captured = capturingService();
+    await sendCustomerOrderConfirmation(before, captured.service);
+    const first = captured.getMessage()!;
+    await sendCustomerOrderConfirmation(
+      {
+        ...before,
+        totalMinor: 0,
+        customerEmail: 'changed@example.test',
+        bakery: { ...before.bakery, name: 'Changed' },
+      },
+      captured.service,
+    );
+    expect(captured.getMessage()).toEqual(first);
+    expect(first.html).toContain('Hleb');
+    expect(first.html).toContain('12,50');
+    expect(first.idempotencyKey).toMatch(/\/v2\/[a-f0-9]{64}$/);
+  });
   it('renders and sends the customer confirmation with order details', async () => {
     const captured = capturingService();
 

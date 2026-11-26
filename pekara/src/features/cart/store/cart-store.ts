@@ -37,6 +37,10 @@ function isValidAddItem(item: AddCartItemInput): boolean {
   return (
     item.productId.length > 0 &&
     item.name.length > 0 &&
+    (item.unitLabel == null ||
+      (typeof item.unitLabel === 'string' &&
+        item.unitLabel.length > 0 &&
+        item.unitLabel.length <= 40)) &&
     (item.imageUrl === null || typeof item.imageUrl === 'string') &&
     Number.isSafeInteger(item.displayPriceMinor) &&
     item.displayPriceMinor >= 0 &&
@@ -186,6 +190,25 @@ export const useCartStore = create<CartState>()(
 
       clear() {
         set({ items: [] });
+        return SUCCESS;
+      },
+      consumeSubmitted(submitted) {
+        set((state) => ({
+          items: state.items.flatMap((item) => {
+            const sent = submitted.find(
+              (row) => row.productId === item.productId,
+            );
+            if (!sent) return [item];
+            // An edited line is retained for review; never clear a newer cart.
+            if (
+              item.displayPriceMinor !== sent.displayPriceMinor ||
+              item.quantity < sent.quantity
+            )
+              return [item];
+            const quantity = item.quantity - sent.quantity;
+            return quantity > 0 ? [{ ...item, quantity }] : [];
+          }),
+        }));
         return SUCCESS;
       },
     }),

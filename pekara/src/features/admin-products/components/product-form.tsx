@@ -60,6 +60,13 @@ export function ProductForm({ categories, product }: ProductFormProps) {
       className="border-border bg-surface max-w-4xl space-y-5 rounded-xl border p-4 sm:p-6"
     >
       {product ? <input type="hidden" name="id" value={product.id} /> : null}
+      {product ? (
+        <input
+          type="hidden"
+          name="expectedUpdatedAt"
+          value={product.updatedAt}
+        />
+      ) : null}
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="space-y-2">
           <span id="name-label" className="font-semibold">

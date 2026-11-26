@@ -19,6 +19,37 @@ async function accessible(page: Page) {
     ),
   ).toEqual([]);
 }
+
+test('concurrent product forms reject a stale save without overwriting the newer price', async ({
+  page,
+  context,
+  seed,
+}) => {
+  await login(page);
+  await page.goto(`/admin/products/${seed.productId}`);
+  const second = await context.newPage();
+  await second.goto(`/admin/products/${seed.productId}`);
+  await page.getByLabel('Cena (RSD)', { exact: true }).fill('130,00');
+  await page.getByRole('button', { name: 'Sačuvaj izmene' }).click();
+  await expect(page.locator('main').getByRole('status')).toContainText(
+    'sačuvan',
+  );
+  await second.getByLabel('Cena (RSD)', { exact: true }).fill('140,00');
+  await second.getByRole('button', { name: 'Sačuvaj izmene' }).click();
+  await expect(second.locator('main').getByRole('alert')).toContainText(
+    'u međuvremenu izmenjen',
+  );
+  await second.reload();
+  await expect(second.getByLabel('Cena (RSD)', { exact: true })).toHaveValue(
+    '130,00',
+  );
+  await second.getByLabel('Cena (RSD)', { exact: true }).fill('125,00');
+  await second.getByRole('button', { name: 'Sačuvaj izmene' }).click();
+  await expect(second.locator('main').getByRole('status')).toContainText(
+    'sačuvan',
+  );
+  await second.close();
+});
 test('admin saves exact RSD and verified metadata; failed validation retains input and image preview', async ({
   page,
   seed,

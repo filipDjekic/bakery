@@ -34,6 +34,13 @@ export function CategoryForm({
       className="border-border bg-surface max-w-2xl space-y-6 rounded-xl border p-6"
     >
       {category ? <input type="hidden" name="id" value={category.id} /> : null}
+      {category ? (
+        <input
+          type="hidden"
+          name="expectedUpdatedAt"
+          value={category.updatedAt}
+        />
+      ) : null}
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="space-y-2">
           <span id="name-label" className="font-semibold">

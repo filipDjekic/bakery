@@ -9,6 +9,20 @@ import ts from 'typescript';
 const cacheMock = new URL('../mocks/next-cache.ts', import.meta.url).href;
 registerHooks({
   resolve(specifier, context, nextResolve) {
+    // Email HTML uses the real React DOM renderer. Keep server-only enabled,
+    // but resolve React's normal runtime rather than its RSC-only entry point.
+    if (
+      specifier === 'react' ||
+      specifier.startsWith('react/') ||
+      specifier === 'react-dom' ||
+      specifier.startsWith('react-dom/')
+    )
+      return nextResolve(specifier, {
+        ...context,
+        conditions: context.conditions.filter(
+          (condition) => condition !== 'react-server',
+        ),
+      });
     if (specifier === 'next/cache' || specifier === 'next/cache.js')
       return { url: cacheMock, shortCircuit: true };
     if (specifier.startsWith('next/') && !specifier.endsWith('.js')) {
